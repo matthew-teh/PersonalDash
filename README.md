@@ -1,2 +1,2 @@
-# CryptoDashboard
-A python CLI that fetches latest cryptocurrency market data, track your wishlist, all in one terminal
+# PersonalDash
+A rich library based python CLI that contains all daily needed widget in one terminal
