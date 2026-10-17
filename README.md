@@ -1,2 +1,2 @@
 # PersonalDash
-A rich library based python CLI that contains all daily needed widget in one terminal
+A reflex python based website that contains all daily needed widget in one website
