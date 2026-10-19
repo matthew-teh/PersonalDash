@@ -13,10 +13,6 @@ def render_single_card(card) -> rx.Component:
 
 def render_all_widgets() -> rx.Component:
     return rx.vstack(
-        rx.button(
-            "Add Crypto Card",
-            on_click=DashboardState.CreateCrypto,
-        ),
         rx.grid(
             rx.foreach(
                 DashboardState.cards,

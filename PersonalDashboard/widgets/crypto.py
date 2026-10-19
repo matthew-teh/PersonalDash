@@ -31,19 +31,43 @@ def CryptoCard(card) -> rx.Component:
                 data=card["data"],
                 width="100%",
                 height="100%",
+                is_animation_active= True,
+                wrapper_style={"backgroundColor" : "#403D39"},
             ),
             
             rx.hstack(
                 rx.vstack(
                     rx.heading(card["name"], size="3"), 
-                    rx.text(card["data"][-1]["price"]),
-                    
+                    rx.text(f"{card["data"][-1]["price"]} USD"),
                     top="0",  
                     left="0",  
                     z_index="0",
                     spacing="1",
                 ),
                 rx.spacer(),
+                rx.hover_card.root(
+                    rx.hover_card.trigger(rx.button(rx.icon("settings", color="#FFFCF2", size=16), variant="ghost"),),
+                    rx.hover_card.content(
+                        rx.vstack(
+                            rx.hstack(
+                                rx.vstack(
+                                    rx.text("Edit Card", size="3", weight="bold"),
+                                    spacing="0",
+                                ),
+                                rx.spacer(),
+                                rx.button(rx.icon("check", color="#FFFCF2"), variant="ghost", on_click=DashboardState.SaveEdit(card["id"])),
+                                justify="between",
+                                width="100%", 
+                            ),
+                            rx.text("Name", size="2"),
+                            rx.input(value=DashboardState.EditName, on_change=DashboardState.UpdateEditName,placeholder="eg: Solana"),
+                            rx.text("Crypto", size="2"),
+                            rx.input(value=DashboardState.EditCrypto, on_change=DashboardState.UpdateEditCrypto,placeholder="eg: SOL"),
+                        ),
+                        background_color = "#403D39",
+                    ),
+                ),
+                
                 rx.button(rx.icon("refresh_cw", color="#FFFCF2", size=16), variant="ghost", on_click=DashboardState.UpdateCrypto(card["id"])),
                 rx.button(rx.icon("trash_2", color="#FFFCF2", size=16), variant="ghost", on_click=DashboardState.DeleteCrypto(card["id"])),
                 width="100%",
@@ -51,14 +75,13 @@ def CryptoCard(card) -> rx.Component:
                 top="0",
                 left="0",
                 z_index="10",
-            ),
-
-            
+            ),  
             position="relative",
             width="100%",
             height="100%",
         ),
         size="1", 
         width="100%", 
-        height="25vh"
+        height="25vh",
+        background_color = "#403D39",
     )

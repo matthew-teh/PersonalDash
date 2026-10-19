@@ -1,12 +1,5 @@
 import reflex as rx
-
-def navbar_icons(icon, url) -> rx.Component:
-    return rx.link(
-        rx.hstack(
-            rx.icon(icon, size=20, color="#FFFCF2")
-        ),
-        href=url,
-    )
+from ..components.dropdown import dropdown
 
 def navbar() -> rx.Component:
     return rx.box(
@@ -16,8 +9,9 @@ def navbar() -> rx.Component:
                 align_items="center",
             ),
             rx.hstack(
-                rx.button(rx.icon("refresh_cw", size=20, color="#FFFCF2"), on_click=[], variant="ghost",), #type:ignore
-                navbar_icons("settings", "/#"),
+                dropdown(),
+                rx.button(rx.icon("refresh_cw", size=20, color="#FFFCF2"), on_click=rx.toast("Coming Soon", description="This feature under development",style={"background_color":"#403D39"}), variant="ghost"), 
+                rx.button(rx.icon("settings", size=20, color="#FFFCF2"), on_click=rx.toast("Coming Soon", description="This feature under development",style={"background_color":"#403D39"}),variant="ghost"),
                 justify="end",
                 spacing="5",
             ),

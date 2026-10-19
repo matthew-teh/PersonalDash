@@ -5,13 +5,13 @@ def footer() -> rx.Component:
             
             rx.hstack(
                 rx.hstack(
-                    rx.text("FlexDash, 2026", size="1", weight="bold")
+                    rx.text("FlexDash, 2026, crafted by Matthew, a hobbyist", size="1", weight="bold")
                 ),
                 rx.spacer(),
 
                 rx.hstack(
-                    rx.link(rx.text("FB", color="#FFFCF2"), size="1", href="https://google.com", weight="bold", underline="none"),
-                    rx.link(rx.text("IG", color="#FFFCF2"), size="1", href="https://google.com", weight="bold", underline="none"),
+                    rx.link(rx.text("FB", color="#FFFCF2"), size="1", href="https://www.facebook.com/share/1BTB3PN2CK/", weight="bold", underline="none"),
+                    rx.link(rx.text("IG", color="#FFFCF2"), size="1", href="https://www.instagram.com/matthew._.teh?exln=amUyZ2Y0ejR0MjZ5", weight="bold", underline="none"),
                 ),
                 
             ),  
