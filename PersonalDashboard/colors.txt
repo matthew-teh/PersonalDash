@@ -1,0 +1,7 @@
+Text and Icons : Floral White #FFFCF2
+Chart : Spicy Paparika #EB5E28
+Background : Carbon BLack #252422
+Widgets : Charcoal Brown #403D39
+
+Unassigned :
+SIlver : #CCC5B9
