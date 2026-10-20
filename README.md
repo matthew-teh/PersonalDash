@@ -31,15 +31,15 @@ At this stage, all four panels displayed *"Nothing yet"*. The plan was to connec
 
 ![PersonalDashboard initial layout](images/1017.png)
 
-#### 2. Migration from Rich to Reflex
+#### 2. Migration from Rich to Reflex · `6h 45m`
 
-**October 18, 2026** · `3h 56m`
+**October 18, 2026** 
 
 Moved the project from a terminal-based interface using Rich to a web-based interface using Reflex.
 
 ![PersonalDashboard Reflex migration](images/1018.png)
 
-#### 3. Interactive Crypto Cards
+#### 3. Interactive Crypto Cards · `3h 28m`
 
 **October 19, 2026**
 
@@ -51,7 +51,7 @@ At this stage, the cards were still under development, with more interactive fea
 
 ![PersonalDashboard crypto cards](images/1019.png)
 
-#### 4. Real Live Market Data
+#### 4. Real Live Market Data · `3h 39m`
 
 **October 20, 2026**
 
