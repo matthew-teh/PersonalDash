@@ -13,8 +13,14 @@ def index():
         width="100%",
         spacing="0",
         color="#FFFCF2",      
-        background_color="#252422", 
+        background_color="#090C08", 
     ), 
 
-app = rx.App()
-app.add_page(index)
+app = rx.App(
+    head_components=[
+        rx.el.link(rel="stylesheet", href="/styles.css"),
+    ]
+)
+app.add_page(
+    index, 
+)

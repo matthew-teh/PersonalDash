@@ -1,7 +1,10 @@
+
 import reflex as rx
 import random
 from ..components.state import DashboardState
-# Format : card.cards.append({"id": "1", "type ":"Crypto", "name": "", "data" : [{"price": 100},{"price": 150},{"price": 200},{"price": 250}]})
+
+# Format: card.cards.append({"id": "1", "type ": "Crypto", "name": "", "data": [{"price": 100}, {"price": 150}, {"price": 200}, {"price": 250}]})
+
 def CryptoCard(card) -> rx.Component:
     return rx.card(
         rx.box(
@@ -9,44 +12,53 @@ def CryptoCard(card) -> rx.Component:
                 rx.el.svg.defs(
                     rx.el.svg.linear_gradient(
                         rx.el.svg.stop(
-                            offset="0%", stop_color="#EB5E28", stop_opacity=1
+                            offset="0%", stop_color="#F64740", stop_opacity=0.9
                         ),
                         rx.el.svg.stop(
-                            offset="100%", stop_color="#EB5E28", stop_opacity=0.1
+                            offset="100%", stop_color="#F64740", stop_opacity=0.2
                         ),
-                        id="area_gradient",x1=0,x2=0,y1=0,y2=1,
+                        id="area_gradient", x1=0, x2=0, y1=0, y2=1,
                     ),
                 ),
                 rx.recharts.area(
                     data_key="price",
-                    stroke="#EB5E28",
+                    stroke="#F64740",
                     fill="url(#area_gradient)",
-                    
                 ),
                 rx.recharts.y_axis(
-                    domain=["auto", "auto"],  
+                    domain=["auto", "auto"],
                     hide=True,
                 ),
                 rx.recharts.graphing_tooltip(),
                 data=card["data"],
                 width="100%",
                 height="100%",
-                is_animation_active= True,
-                wrapper_style={"backgroundColor" : "#403D39"},
+                is_animation_active=True,
+                wrapper_style={"backgroundColor": "#F64740"},
             ),
-            
+
             rx.hstack(
                 rx.vstack(
-                    rx.heading(card["name"], size="3"), 
-                    rx.text(f"{card["data"][-1]["price"]} USD"),
-                    top="0",  
-                    left="0",  
-                    z_index="0",
-                    spacing="1",
+                    rx.heading(card["name"], size="3"),
+                    rx.text(f'{card["data"][-1]["price"]} USD   {round(((card["data"][-1]["price"]-card["data"][0]["price"])/card["data"][-1]["price"])*100, 2)}%'),
+                    rx.spacer(),
+                    rx.text("Last 25 minutes data", size="1",pointer_events="none",),
+                    rx.text("Crypto data provided by Binance Public API", size="1",pointer_events="none",),
+                    spacing="0",
+                    height="100%",
+                    width="100%",
+                    align="start",
+                    pointer_events="none",
                 ),
                 rx.spacer(),
                 rx.hover_card.root(
-                    rx.hover_card.trigger(rx.button(rx.icon("settings", color="#FFFCF2", size=16), variant="ghost"),),
+                    rx.hover_card.trigger(
+                        rx.button(
+                            rx.icon("settings", color="#E8E9ED", size=16),
+                            variant="ghost",
+                            pointer_events="auto",
+                        ),
+                    ),
                     rx.hover_card.content(
                         rx.vstack(
                             rx.hstack(
@@ -55,33 +67,54 @@ def CryptoCard(card) -> rx.Component:
                                     spacing="0",
                                 ),
                                 rx.spacer(),
-                                rx.button(rx.icon("check", color="#FFFCF2"), variant="ghost", on_click=DashboardState.SaveEdit(card["id"])),
+                                rx.button(
+                                    rx.icon("check", color="#E8E9ED"),
+                                    variant="ghost",
+                                    on_click=[DashboardState.SaveEdit(card["id"]),DashboardState.UpdateCrypto(card["id"])],
+                                    pointer_events="auto",
+                                ),
                                 justify="between",
-                                width="100%", 
+                                width="100%",
                             ),
-                            rx.text("Name", size="2"),
-                            rx.input(value=DashboardState.EditName, on_change=DashboardState.UpdateEditName,placeholder="eg: Solana"),
-                            rx.text("Crypto", size="2"),
-                            rx.input(value=DashboardState.EditCrypto, on_change=DashboardState.UpdateEditCrypto,placeholder="eg: SOL"),
+                            rx.text("Symbol", size="2"),
+                            rx.input(
+                                value=DashboardState.EditName,
+                                on_change=DashboardState.UpdateEditName,
+                                placeholder="eg: BTCUSDT",
+                            ),
                         ),
-                        background_color = "#403D39",
+                        background_color="#1E221D",
+                        pointer_events="auto",
                     ),
                 ),
-                
-                rx.button(rx.icon("refresh_cw", color="#FFFCF2", size=16), variant="ghost", on_click=DashboardState.UpdateCrypto(card["id"])),
-                rx.button(rx.icon("trash_2", color="#FFFCF2", size=16), variant="ghost", on_click=DashboardState.DeleteCrypto(card["id"])),
+                rx.button(
+                    rx.icon("refresh_cw", color="#E8E9ED", size=16),
+                    variant="ghost",
+                    on_click=DashboardState.UpdateCrypto(card["id"]),
+                    disabled=DashboardState.cooldown,
+                    pointer_events="auto",
+                ),
+                rx.button(
+                    rx.icon("trash_2", color="#E8E9ED", size=16),
+                    variant="ghost",
+                    on_click=DashboardState.DeleteCrypto(card["id"]),
+                    pointer_events="auto",
+                ),
                 width="100%",
+                height="100%",
                 position="absolute",
                 top="0",
                 left="0",
                 z_index="10",
-            ),  
+                pointer_events="none",
+            ),
+
             position="relative",
             width="100%",
             height="100%",
         ),
-        size="1", 
-        width="100%", 
-        height="25vh",
-        background_color = "#403D39",
+        size="1",
+        width="100%",
+        height="30vh",
+        background_color="#1E221D",
     )
