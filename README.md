@@ -62,6 +62,7 @@ Users now edit the name to correct symbol eg:"BTCUSDT","SOLUSDT". It will pull d
 At this stage, the cryptocurrency cards now have 5 seconds cooling time, to prevent rate-limited by Binance Public API.
 
 The reload button at the top right works now, click to reload all card.
+
 ![PersonalDashboard crypto cards](images/1020.png)
 ---
 
