@@ -64,6 +64,21 @@ At this stage, the cryptocurrency cards now have 5 seconds cooling time, to prev
 The reload button at the top right works now, click to reload all card.
 
 ![PersonalDashboard crypto cards](images/1020.png)
+
+#### 5. Real Live Market Data · `3h 34m`
+
+**October 20, 2026**
+
+Introduced real live market prices on cryptocurrency cards.
+
+Users now edit the name to correct symbol eg:"BTCUSDT","SOLUSDT". It will pull data from Binance WebSocket Stream.
+
+At this stage, the cryptocurrency cards can now pull live data with no delay, by using Live Crypto Card in "+"
+
+It is still in beta as code doesn really works.
+
+![PersonalDashboard crypto cards](images/1021.png)
+
 ---
 
 ## Tech Stack

@@ -11,7 +11,7 @@ def navbar() -> rx.Component:
             rx.hstack(
                 dropdown(),
                 
-                rx.button(rx.icon("refresh_cw", size=20, color="#E8E9ED"), on_click=DashboardState.UpdateAll, variant="ghost", disabled=DashboardState.cooldown), 
+                rx.button(rx.icon("refresh_cw", size=20, color="#E8E9ED"), on_click=DashboardState.UpdateAll, variant="ghost"), 
                 rx.button(rx.icon("settings", size=20, color="#E8E9ED"), on_click=rx.toast("Coming Soon", description="This feature under development",style={"background_color":"#1E221D"}),variant="ghost"),
                 justify="end",
                 spacing="5",

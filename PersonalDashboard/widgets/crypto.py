@@ -1,6 +1,5 @@
 
 import reflex as rx
-import random
 from ..components.state import DashboardState
 
 # Format: card.cards.append({"id": "1", "type ": "Crypto", "name": "", "data": [{"price": 100}, {"price": 150}, {"price": 200}, {"price": 250}]})
@@ -42,8 +41,8 @@ def CryptoCard(card) -> rx.Component:
                     rx.heading(card["name"], size="3"),
                     rx.text(f'{card["data"][-1]["price"]} USD   {round(((card["data"][-1]["price"]-card["data"][0]["price"])/card["data"][-1]["price"])*100, 2)}%'),
                     rx.spacer(),
-                    rx.text("Last 25 minutes data", size="1",pointer_events="none",),
-                    rx.text("Crypto data provided by Binance Public API", size="1",pointer_events="none",),
+                    rx.text(f"Window of {card["data1"]} data", size="1",pointer_events="none",),
+                    rx.text("Crypto data provided by Binance REST API", size="1",pointer_events="none",),
                     spacing="0",
                     height="100%",
                     width="100%",
@@ -70,7 +69,7 @@ def CryptoCard(card) -> rx.Component:
                                 rx.button(
                                     rx.icon("check", color="#E8E9ED"),
                                     variant="ghost",
-                                    on_click=[DashboardState.SaveEdit(card["id"]),DashboardState.UpdateCrypto(card["id"])],
+                                    on_click=DashboardState.SaveEdit(card["id"]),
                                     pointer_events="auto",
                                 ),
                                 justify="between",
@@ -79,8 +78,23 @@ def CryptoCard(card) -> rx.Component:
                             rx.text("Symbol", size="2"),
                             rx.input(
                                 value=DashboardState.EditName,
-                                on_change=DashboardState.UpdateEditName,
+                                on_change=DashboardState.SetEditName,
                                 placeholder="eg: BTCUSDT",
+                                width="100%",
+                            ),
+                            rx.cond(
+                                card["name"] != "NaN", 
+                                rx.box(
+                                rx.text("Window", size="2"),
+                                    rx.segmented_control.root(
+                                    rx.segmented_control.item(rx.text("1m"), value="1m"),
+                                    rx.segmented_control.item(rx.text("15m"), value="15m"),
+                                    rx.segmented_control.item(rx.text("1H"), value="1h"),
+                                    rx.segmented_control.item(rx.text("4H"), value="4h"),
+                                    rx.segmented_control.item(rx.text("1D"), value="1d"),
+                                    default_value=card["data1"],
+                                    on_change=lambda val: DashboardState.SaveEdit(card["id"], val)),),
+                                rx.box(),
                             ),
                         ),
                         background_color="#1E221D",
@@ -91,7 +105,6 @@ def CryptoCard(card) -> rx.Component:
                     rx.icon("refresh_cw", color="#E8E9ED", size=16),
                     variant="ghost",
                     on_click=DashboardState.UpdateCrypto(card["id"]),
-                    disabled=DashboardState.cooldown,
                     pointer_events="auto",
                 ),
                 rx.button(

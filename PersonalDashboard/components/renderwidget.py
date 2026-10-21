@@ -1,12 +1,14 @@
 import reflex as rx
 
 from ..widgets.crypto import CryptoCard
+from ..widgets.aggcrypto import AggCryptoCard
 from ..components.state import DashboardState
 
-def render_single_card(card) -> rx.Component:
-    return rx.cond(
-        card["type"] == "Crypto",
-        CryptoCard(card),
+def render_single_card(card) -> rx.Component | rx.Var:
+    return rx.match(
+        card["type"],
+        ("Crypto", CryptoCard(card)),
+        ("AggCrypto", AggCryptoCard(card)),
         rx.box(),
     )
 

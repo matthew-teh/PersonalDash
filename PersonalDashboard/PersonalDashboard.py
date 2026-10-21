@@ -1,6 +1,7 @@
 import reflex as rx 
 import random
 from . import components
+from .components.state import DashboardState
 
 def index():
     return rx.vstack(
@@ -16,11 +17,5 @@ def index():
         background_color="#090C08", 
     ), 
 
-app = rx.App(
-    head_components=[
-        rx.el.link(rel="stylesheet", href="/styles.css"),
-    ]
-)
-app.add_page(
-    index, 
-)
+app = rx.App()
+app.add_page(index)
