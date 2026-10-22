@@ -17,11 +17,11 @@ def footer() -> rx.Component:
             ),  
             width="100%",
         ),
-        background_color="#1E221D",
+        background_color="#090C08",
         margin="1vh",
         width="calc(100vw - 1vh)",
         padding="1em",
-    
+        border="1px solid var(--gray-7)",
         margin_x="auto",
         border_radius="5px",
     )

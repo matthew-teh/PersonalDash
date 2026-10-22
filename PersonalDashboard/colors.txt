@@ -14,6 +14,5 @@ Text and Icons : Platinum #E8E9ED
 Chart : Cinnabar : #F64740
 Background : Onyx #090C08
 Widgets : Palm Leaf #8E8358
-
-Unassigned :
-Aquamarine #7CFFCB
+Logo text : Cinnabar : #F64740
+Logo bg : Aquamarine : #FFFFFF

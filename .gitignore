@@ -1,4 +1,6 @@
 assets/external/
+assets/cryptoimages/
+assets/weatherimages/
 *.py[cod]
 *.db
 .web

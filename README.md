@@ -16,9 +16,9 @@ PersonalDashboard aims to provide a convenient place to access useful tools and 
 
 ### PersonalDashboard Beta
 
-#### 1. Initial Layout
+#### 1. Initial Layout · V1 `1h 3m`
 
-**October 17, 2026** · `1h 3m`
+**October 17, 2026** 
 
 Built the initial dashboard layout with four panels:
 
@@ -31,7 +31,7 @@ At this stage, all four panels displayed *"Nothing yet"*. The plan was to connec
 
 ![PersonalDashboard initial layout](images/1017.png)
 
-#### 2. Migration from Rich to Reflex · `6h 45m`
+#### 2. Migration from Rich to Reflex · V1 `6h 45m`
 
 **October 18, 2026** 
 
@@ -39,7 +39,7 @@ Moved the project from a terminal-based interface using Rich to a web-based inte
 
 ![PersonalDashboard Reflex migration](images/1018.png)
 
-#### 3. Interactive Crypto Cards · `3h 28m`
+#### 3. Interactive Crypto Cards · V1.10 `3h 28m`
 
 **October 19, 2026**
 
@@ -51,7 +51,7 @@ At this stage, the cards were still under development, with more interactive fea
 
 ![PersonalDashboard crypto cards](images/1019.png)
 
-#### 4. Real Live Market Data · `3h 39m`
+#### 4. Real Live Market Data · V1.11 `3h 39m`
 
 **October 20, 2026**
 
@@ -65,9 +65,9 @@ The reload button at the top right works now, click to reload all card.
 
 ![PersonalDashboard crypto cards](images/1020.png)
 
-#### 5. Real Live Market Data · `3h 34m`
+#### 5. Real Live Market Data · V.1.12 `3h 34m`
 
-**October 20, 2026**
+**October 21, 2026**
 
 Introduced real live market prices on cryptocurrency cards.
 
@@ -79,6 +79,17 @@ It is still in beta as code doesn really works.
 
 ![PersonalDashboard crypto cards](images/1021.png)
 
+#### 6. Updated Crypto and Weather Card · V1.13 `5h 24m`
+
+**October 22, 2026**
+Removes cryptocurrency live market prices card. As it is too complicated for me
+
+Introduces weather card, now still in random data state, will connect to public api in the next update
+
+Updated crypto card, now graphs color will react to price changes, there is also icons for them
+
+![PersonalDashboard weather cards](images/1022.png)
+
 ---
 
 ## Tech Stack
@@ -86,6 +97,7 @@ It is still in beta as code doesn really works.
 - **Python** — Application logic and backend
 - **Reflex** — Python-based web application framework
 - **Binance API** — API used for all crypto prices data, symbol data
+- **Cryptocurrency_Logos** — Source of cryptocurrency logos, see [Github Repository](https://github.com/Pymmdrza/Cryptocurrency_Logos)
 
 ## 📌 Project Status
 

@@ -3,7 +3,7 @@ import time
 session = requests.Session()
 URL = "https://api.binance.com/api/v3/klines"
 
-def GetPrice(symbol="BTCUSDT", window="1m"):
+def get_price(symbol="BTCUSDT", window="1m"):
     params = {
         "symbol": symbol.upper(),
         "interval": window,
