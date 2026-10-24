@@ -1,9 +1,12 @@
 import reflex as rx
 import random
 import json
+import uuid
+import asyncio
+from ..api import weather
 from typing import TypedDict, Any
 from ..api.crypto import get_price
-import asyncio
+
 
 
 class CardData(TypedDict):
@@ -40,7 +43,36 @@ class DashboardState(rx.State):
             self.cooldown = False
         
     # ---- RX WEATHER SPECIFIC EVENT HERE ----
-
+    edit_name_weather: str = ""
+    @rx.event
+    def save_edit_weather(self, card_id):
+        for card in self.cards:
+            if card_id == card["id"]:
+                card["name"] = self.edit_name_weather
+                card["data1"] = ""
+                self.edit_name_weather = ""
+                self.dump_json(self.cards)
+                return type(self).update_weather(card_id, True)
+            
+    @rx.event
+    def update_weather(self, card_id, passthrough=True):
+        for card in self.cards:
+            if card_id == card["id"]:
+                name, datas = weather.get_data(card["name"])
+                if name == "NaN":
+                    return rx.toast("Cannot Update Data, invalid location", style={"background-color" :"#403D39"})
+                else:
+                    card["data"] = datas
+                    self.dump_json(self.cards)
+        
+    @rx.event
+    def set_name_weather(self, value: str, card_id):
+        self.edit_name_weather = value
+        for card in self.cards:
+            if card["id"] == card_id:
+                card["data1"] = weather.get_name(value)
+                self.dump_json(self.cards)
+                
     # ---- RX crypto SPEICFIC EVENT HERE ----
     edit_name_crypto: str = ""
     edit_window_crypto: str = ""
@@ -49,7 +81,6 @@ class DashboardState(rx.State):
     def save_edit_crypto(self, card_id: str, value={}):
         for card in self.cards:
             if card["id"] == card_id and card["type"] == "crypto":
-                print("got")
                 if not isinstance(value, dict) and not card["name"] == "NaN":
                     card["data1"] = value
                     return type(self).update_crypto(card_id, False)
@@ -92,32 +123,28 @@ class DashboardState(rx.State):
             self.cooldown = False
         return DashboardState.delay_reset
 
-    @rx.event
-    def delete_crypto(self, card_id: str):
-        for card in self.cards:
-            print(card)
-            if card["id"] == card_id and card["type"] == "crypto":
-                self.cards.remove(card)
-        self.cards_json = json.dumps(self.cards_json)
     
     # ---- RX ALL EVENT HERE ----
     @rx.event 
     def create_card(self, card):
         if card["type"] == "crypto":
             self.cards.append({
-                "id": str(len(self.cards) + 1),
+                "id": str(uuid.uuid4()),    
                 "type": "crypto",
-                "name": "NaN",
-                "data": [{"price": random.randint(0, 100)} for _ in range(25)],
+                "name": "BTCUSDT",
+                "data": get_price(symbol="btcusdt", window="15m"),
                 "data1" : "15m",
             })
             self.dump_json(self.cards)
         if card["type"] == "weather":
+            # Format [{"lat": lat, "lng": lng, "relative_humid": rlthumid, "precip", precip, "wetcode", wetcode, "temp", temp, "windspd", windspd, "feeltemp", feeltemp}]
+            name, datas = weather.get_data("Bukit Mertajam")
+            print(datas)
             self.cards.append({
-                "id": str(len(self.cards) + 1),
+                "id": str(uuid.uuid4()),
                 "type": "weather",
-                "name": "NaN",
-                "data": [{}],
+                "name": name,
+                "data": datas,
                 "data1" : "",
             })
             self.dump_json(self.cards)
@@ -129,6 +156,8 @@ class DashboardState(rx.State):
         for card in self.cards:
             if card["type"] == "crypto":
                 self.update_crypto(card["id"], True)
+            if card["type"] == "weather":
+                self.update_weather(card["id"], True)
         return DashboardState.delay_reset()
 
     @rx.event
@@ -140,9 +169,7 @@ class DashboardState(rx.State):
 
     @rx.event
     def delete_card(self, card_id):
-        for card in self.cards:
-            if card["id"] == card_id:
-                self.cards.remove(card)
+        self.cards.clear()
         self.dump_json(self.cards)
 
     @rx.event

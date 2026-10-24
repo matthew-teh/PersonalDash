@@ -1,6 +1,6 @@
 
 import reflex as rx
-from ..components.state import DashboardState
+from ..components.state import DashboardState   
 def crypto_card(card) -> rx.Component:
     return rx.card(
         rx.box(
@@ -13,7 +13,7 @@ def crypto_card(card) -> rx.Component:
                         ),
                         rx.vstack(
                             rx.heading(card["name"], size="3"),
-                            rx.text(f'{card["data"][-1]["price"]} USD   {round(((card["data"][-1]["price"]-card["data"][0]["price"])/card["data"][-1]["price"])*100, 2)}%'),
+                            rx.text(f'{card["data"][-1]["price"]} USD   {-round(((card["data"][0]["price"] - card["data"][-1]["price"]) / card["data"][0]["price"]) * 100, 2)}%'),
                             spacing="0",
                         ),
                         rx.spacer(),

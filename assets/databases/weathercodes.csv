@@ -1,0 +1,29 @@
+wetcode,description,image
+0,Clear sky,clear-day.svg
+1,Mainly clear,clear-day.svg
+2,Partly cloudy,cloudy-1-day.svg
+3,Overcast,cloudy.svg
+45,Fog,fog-day.svg
+48,Fog,fog-day.svg
+51,Light drizzle,hail.svg
+53,Medium drizzle,hail.svg
+55,Heavy drizzle,hail.svg
+56,Light Freezing drizzle,rainy-2.svg
+57,Dense Freezing drizzle,rainy-3.svg
+61,Slight rain,rainy-1.svg
+63,Moderate rain,rainy-2.svg
+65,Heavy rain,rainy-3.svg
+66,Freezing rain,snow-and-sleet-mix.svg
+67,Freezing rain,snow-and-sleet-mix.svg
+71,Slight snow,snowy-1.svg
+73,Moderate snow,snowy-2.svg
+75,Heavy snow,snowy-3.svg
+77,Snow grains,frost.svg
+80,Light rain showers,rainy-1.svg
+81,Moderate rain showers,rainy-2.svg
+82,Violent rain showers,rainy-3.svg
+85,Snow showers,rain-and-snow-mix.svg
+86,Snow showers,rain-and-snow-mix.svg
+95,Slight Thunderstorms,thunderstroms.svg
+96,Moderate thunderstorms,scattered-thunderstorms.svg
+99,Heavy thunderstorms,severe-thunderstorm.svg
