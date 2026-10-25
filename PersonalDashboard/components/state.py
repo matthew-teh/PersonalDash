@@ -161,14 +161,15 @@ class DashboardState(rx.State):
         return DashboardState.delay_reset()
 
     @rx.event
-    def delete_all(self):
+    def delete_card(self, card_id):
         for card in self.cards:
-            self.cards.remove(card)
-            print("Removed card")
+            if card_id == card["id"]:
+                self.cards.remove(card)
+                print("Removed card")
         self.dump_json(self.cards)
 
     @rx.event
-    def delete_card(self, card_id):
+    def delete_all(self):
         self.cards.clear()
         self.dump_json(self.cards)
 

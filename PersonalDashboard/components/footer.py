@@ -13,6 +13,7 @@ def footer() -> rx.Component:
                     rx.link(rx.text("GitHub", color="#E8E9ED"), size="1", href="https://github.com/matthew-teh/PersonalDash", weight="bold", underline="none", is_external=True),
                     rx.link(rx.text("FB", color="#E8E9ED"), size="1", href="https://www.facebook.com/share/1BTB3PN2CK/", weight="bold", underline="none", is_external=True),
                     rx.link(rx.text("IG", color="#E8E9ED"), size="1", href="https://www.instagram.com/matthew._.teh?exln=amUyZ2Y0ejR0MjZ5", weight="bold", underline="none", is_external=True),
+                    rx.link(rx.text("Built with Reflex place", color="#E8E9ED"), size="1", href="https://reflex.dev/", weight="bold", underline="none", is_external=True),
                     height="100%",
                 ),
 

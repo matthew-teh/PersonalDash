@@ -15,9 +15,9 @@ PersonalDashboard aims to provide a convenient place to access useful tools and 
 
 ## Development Timeline
 
-### PersonalDashboard V1.14 Latest
+### PersonalDashboard V1.17 Latest
 
-#### 7. Weather Card · V1.14 `4h 42m`
+#### 7. Weather Card · V1.17 `4h 42m`
 
 **October 23/24 , 2026**
 
