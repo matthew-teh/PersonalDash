@@ -6,6 +6,7 @@
     "export": "react-router build"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "1.1.23",
     "@radix-ui/themes": "3.3.0",
     "@react-router/node": "8.4.0",
     "isbot": "5.2.2",
@@ -20,7 +21,8 @@
     "recharts": "3.10.1",
     "socket.io-client": "4.8.4",
     "sonner": "2.0.8",
-    "universal-cookie": "8.1.2"
+    "universal-cookie": "8.1.2",
+    "vaul": "1.1.2"
   },
   "devDependencies": {
     "@emotion/react": "11.14.0",

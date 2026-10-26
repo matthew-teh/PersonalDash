@@ -17,6 +17,14 @@ PersonalDashboard aims to provide a convenient place to access useful tools and 
 
 ### PersonalDashboard V1.17 Latest
 
+#### 8. Light and Dark Theme · V1.17 `3h 49m`
+
+**October 26 , 2026**
+
+Introduces Light and Dark themes for PersonalDashboard, it can be changed with the top right settings
+
+![PersonalDashboard weather cards](assets/images/10261.png) ![PersonalDashboard weather cards](assets/images/10262.png)
+
 #### 7. Weather Card · V1.17 `4h 42m`
 
 **October 23/24 , 2026**

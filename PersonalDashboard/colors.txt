@@ -8,11 +8,16 @@ Widgets : Charcoal Brown #403D39
 Unassigned :
 SIlver : #CCC5B9
 
-V1.1
+V1 and V2
 
+[Dark]
 Text and Icons : Platinum #E8E9ED
 Chart : Cinnabar : #F64740
 Background : Onyx #090C08
 Widgets : Palm Leaf #8E8358
-Logo text : Cinnabar : #F64740
-Logo bg : Aquamarine : #FFFFFF
+
+[Light]
+Text and Icons : Onyx #090C08
+Chart : Cinnabar : #F64740
+Background : Platinum #E8E9ED
+Widgets : Palm Leaf #8E8358

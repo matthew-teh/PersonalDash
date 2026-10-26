@@ -1,5 +1,6 @@
 import requests
 import time
+from datetime import datetime
 session = requests.Session()
 URL = "https://api.binance.com/api/v3/klines"
 
@@ -15,9 +16,9 @@ def get_price(symbol="BTCUSDT", window="1m"):
         response = session.get(URL, params=params, timeout=3)
         response.raise_for_status()
         candles = response.json()
-        print(f"API: Crypto done {(time.perf_counter()-start)*1000:.2f}")
+        print(f"{datetime.now().strftime("%H:%M:%S")} API: Crypto done {(time.perf_counter()-start)*1000:.2f}")
         return [{"price": float(c[4])} for c in candles]
     
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
-        return []
+        raise ValueError

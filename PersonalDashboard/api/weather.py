@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from functools import lru_cache
 import openmeteo_requests
-
+from datetime import datetime
 DB_PATH = "assets/databases/worldcities.sqlite3"
 CSV_PATH = Path("assets/databases/weathercodes.csv")
 
@@ -84,7 +84,6 @@ def get_data(name: str):
         return "NaN", [{}]
 
     city_name, country_name, lat, lng = item
-    print(city_name, country_name)
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": lat,
@@ -109,7 +108,7 @@ def get_data(name: str):
     wetcode = current.Variables(2).Value()
     weather_info = get_weather(wetcode)
 
-    print(f"API: Weather done {(time.perf_counter() - start) * 1000:.2f}")
+    print(f"{datetime.now().strftime("%H:%M:%S")} API: Weather done {(time.perf_counter() - start) * 1000:.2f}")
     result = [{
         "lat": response.Latitude(),
         "lng": response.Longitude(),
@@ -122,7 +121,7 @@ def get_data(name: str):
         "useimg": weather_info["image"],
         "cloudcvr" : current.Variables(6).Value(),
     }]
-    print(f"Wet code raw: {current.Variables(2).Value()}")
+    
     return name, result
 # Setup the Open-Meteo API clients
 

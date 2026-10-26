@@ -22,7 +22,7 @@ def weather_card(card) -> rx.Component:
                         rx.hover_card.root(
                             rx.hover_card.trigger(
                                 rx.button(
-                                    rx.icon("settings", color="#E8E9ED", size=16),
+                                    rx.icon("settings", size=16),
                                     variant="ghost",
                                     pointer_events="auto",
                                 ),
@@ -36,7 +36,7 @@ def weather_card(card) -> rx.Component:
                                         ),
                                         rx.spacer(),
                                         rx.button(
-                                            rx.icon("check", color="#E8E9ED"),
+                                            rx.icon("check"),
                                             variant="ghost",
                                             on_click=DashboardState.save_edit_weather(card["id"]),
                                             pointer_events="auto",
@@ -53,18 +53,17 @@ def weather_card(card) -> rx.Component:
                                     ),
                                     rx.text(f"Recommended: {card["data1"]}", size="2"),
                                 ),
-                                background_color="#1E221D",
                                 pointer_events="auto",
                             ),
                         ),
                         rx.button(
-                            rx.icon("refresh_cw", color="#E8E9ED", size=16),
+                            rx.icon("refresh_cw", size=16),
                             variant="ghost",
                             on_click=DashboardState.update_weather(card["id"]),
                             pointer_events="auto",
                         ),
                         rx.button(
-                            rx.icon("trash_2", color="#E8E9ED", size=16),
+                            rx.icon("trash_2", size=16),
                             variant="ghost",
                             on_click=DashboardState.delete_card(card["id"]),
                             pointer_events="auto",
@@ -141,5 +140,4 @@ def weather_card(card) -> rx.Component:
         size="1",
         width="100%",
         height="30vh",
-        background_color="#090C08",
     )
