@@ -15,9 +15,9 @@ PersonalDashboard aims to provide a convenient place to access useful tools and 
 
 ## Development Timeline
 
-### PersonalDashboard V1.17 Latest
+### PersonalDashboard V2.1Latest
 
-#### 8. Light and Dark Theme · V1.17 `3h 49m`
+#### 8. Light and Dark Theme · V2.1 `3h 49m`
 
 **October 26 , 2026**
 
