@@ -21,7 +21,6 @@ def navbar() -> rx.Component:
             justify="between",
             align_items="center",
         ),
-        border="1px solid",
         margin="1vh",
         width="calc(100vw - 1vh)",
         padding="1em",

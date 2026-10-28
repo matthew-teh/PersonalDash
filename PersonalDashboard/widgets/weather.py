@@ -7,12 +7,16 @@ def weather_card(card) -> rx.Component:
             rx.hstack(
                 rx.vstack(
                     rx.hstack(
-                        rx.image(src=f"{card["data"][0]["useimg"]}", 
-                                width="60px", 
-                                height="auto",
-                                object_fit="contain",
-                                object_position="center",
-                                ),
+                        rx.box(
+                            rx.image(
+                                src=f"{card["data"][0]["useimg"]}", 
+                                    width="60px", 
+                                    height="auto",
+                                    object_fit="contain",
+                                    object_position="center",
+                            ),
+                            height="60px",
+                        ),
                             rx.vstack(
                                 rx.heading(card["name"], size="3"),
                                 rx.text(card["data"][0]["wetcode"]),
@@ -44,7 +48,7 @@ def weather_card(card) -> rx.Component:
                                         justify="between",
                                         width="100%",
                                     ),
-                                    rx.text("Location", size="2"),
+                                    rx.text("City", size="2"),
                                     rx.input(
                                         value=DashboardState.edit_name_weather,
                                         on_change=lambda value, cid=card["id"]: DashboardState.set_name_weather(value, cid),
@@ -53,6 +57,7 @@ def weather_card(card) -> rx.Component:
                                     ),
                                     rx.text(f"Recommended: {card["data1"]}", size="2"),
                                 ),
+                                side="left",
                                 pointer_events="auto",
                             ),
                         ),

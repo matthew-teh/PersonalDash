@@ -8,7 +8,7 @@ Widgets : Charcoal Brown #403D39
 Unassigned :
 SIlver : #CCC5B9
 
-V1 and V2
+V1
 
 [Dark]
 Text and Icons : Platinum #E8E9ED
@@ -21,3 +21,5 @@ Text and Icons : Onyx #090C08
 Chart : Cinnabar : #F64740
 Background : Platinum #E8E9ED
 Widgets : Palm Leaf #8E8358
+
+V2 : Changed to Redix UI, colors.txt stops here.

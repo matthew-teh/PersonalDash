@@ -105,25 +105,24 @@ def get_data(name: str):
     assert current is not None
     assert current.Variables is not None
 
-    wetcode = current.Variables(2).Value()
+    wetcode = current.Variables(2).Value() #type:ignore
     weather_info = get_weather(wetcode)
 
     print(f"{datetime.now().strftime("%H:%M:%S")} API: Weather done {(time.perf_counter() - start) * 1000:.2f}")
     result = [{
         "lat": response.Latitude(),
         "lng": response.Longitude(),
-        "relative_humid": current.Variables(0).Value(),
-        "precip": current.Variables(1).Value(),
-        "wetcode": weather_info["description"],
-        "temp": current.Variables(3).Value(),
-        "windspd": current.Variables(4).Value(),
-        "feeltemp": current.Variables(5).Value(),
+        "relative_humid": current.Variables(0).Value(), #type:ignore
+        "precip": current.Variables(1).Value(), #type:ignore
+        "wetcode": weather_info["description"], 
+        "temp": current.Variables(3).Value(), #type:ignore
+        "windspd": current.Variables(4).Value(), #type:ignore
+        "feeltemp": current.Variables(5).Value(), #type:ignore
         "useimg": weather_info["image"],
-        "cloudcvr" : current.Variables(6).Value(),
+        "cloudcvr" : current.Variables(6).Value(), #type:ignore
     }]
     
     return name, result
-# Setup the Open-Meteo API clients
 
 '''import pandas as pd
 import sqlite3

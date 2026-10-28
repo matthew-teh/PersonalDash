@@ -7,9 +7,12 @@ def crypto_card(card) -> rx.Component:
             rx.hstack(
                 rx.vstack(
                     rx.hstack(
-                        rx.image(
-                            src=f"/cryptoimages/{(card["name"].lower()).replace('usdt', '')}.png",
-                            height="185%",
+                        rx.box(
+                            rx.image(
+                                src=f"/cryptoimages/{(card["name"].lower()).replace('usdt', '')}.png",
+                                width="45px",
+                            ),
+                            height="60px",
                         ),
                         rx.vstack(
                             rx.heading(card["name"], size="3"),
@@ -64,6 +67,7 @@ def crypto_card(card) -> rx.Component:
                                         rx.box(),
                                     ),
                                 ),
+                                side="left",
                                 pointer_events="auto",
                             ),
                         ),

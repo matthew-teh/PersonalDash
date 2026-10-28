@@ -23,7 +23,6 @@ def footer() -> rx.Component:
         margin="1vh",
         width="calc(100vw - 1vh)",
         padding="1em",
-        border="1px solid",
         margin_x="auto",
         border_radius="5px",
     )

@@ -4,6 +4,7 @@ from . import components
 from .components.state import DashboardState
 from typing import Any
 
+#@rx.page(on_load=)
 def index() -> rx.Component:
     return rx.vstack(
         components.header.navbar(),
@@ -14,13 +15,11 @@ def index() -> rx.Component:
         min_height="100vh",
         width="100%",
         spacing="0",
+        overflow_x = "hidden",
+        overflow_y = "auto",
     )
-
 
 app = rx.App(
     stylesheets=["/styles.css"], # type:ignore
-    theme=rx.theme( # type:ignore 
-        appearance="light", has_background=True, radius="medium", accent_color="teal"
-    )
 )
 app.add_page(index)

@@ -19,8 +19,6 @@ class DashboardState(rx.State):
     cooldown: bool = False
     is_updating: bool = False
     # ---- RX VAR HERE ----
-
-        
     @rx.var
     def cards(self) -> list[CardData]:
         try:
@@ -41,7 +39,13 @@ class DashboardState(rx.State):
         await asyncio.sleep(2.5)
         async with self:
             self.cooldown = False
+
     # ---- RX SETTINGS SPECIFIC EVENT HERE ----
+    edit_column: str = "4"
+    @rx.event
+    def set_column(self, value):
+        self.edit_column = value
+        yield
 
 
     # ---- RX WEATHER SPECIFIC EVENT HERE ----
@@ -75,7 +79,7 @@ class DashboardState(rx.State):
                 card["data1"] = weather.get_name(value)
                 self.dump_json(self.cards)
                 
-    # ---- RX crypto SPEICFIC EVENT HERE ----
+    # ---- RX CRYPTO SPEICFIC EVENT HERE ----
     edit_name_crypto: str = ""
     edit_window_crypto: str = ""
 
@@ -143,7 +147,6 @@ class DashboardState(rx.State):
             self.update_crypto(card_id, True)
 
         if card == "weather":
-            # Format [{"lat": lat, "lng": lng, "relative_humid": rlthumid, "precip", precip, "wetcode", wetcode, "temp", temp, "windspd", windspd, "feeltemp", feeltemp}]
             card_id = str(uuid.uuid4())
             self.cards.append({
                 "id": card_id,
@@ -155,6 +158,17 @@ class DashboardState(rx.State):
             self.dump_json(self.cards)
             yield
             self.update_weather(card_id)
+
+        if card == "world_clock":
+            card_id = str(uuid.uuid4())
+            self.cards.append({
+                "id": card_id,
+                "type": "world_clock",
+                "name": "Malaysia",
+                "data": [{}],
+                "data1": "",
+            })
+            self.dump_json(self.cards)
 
     @rx.event
     def update_all(self):
