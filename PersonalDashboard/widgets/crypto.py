@@ -1,4 +1,4 @@
-
+'''
 import reflex as rx
 from ..components.state import DashboardState   
 def crypto_card(card) -> rx.Component:
@@ -120,4 +120,4 @@ def crypto_card(card) -> rx.Component:
         size="1",
         width="100%",
         height="30vh",
-    )
+    )'''

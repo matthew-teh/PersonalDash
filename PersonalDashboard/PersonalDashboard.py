@@ -4,13 +4,20 @@ from . import components
 from .components.state import DashboardState
 from typing import Any
 
-#@rx.page(on_load=)
+@rx.page(on_load=DashboardState.update_world_clock)
 def index() -> rx.Component:
     return rx.vstack(
         components.header.navbar(),
         components.renderwidget.render_all_widgets(),
         rx.spacer(),
         components.footer.footer(),
+
+        rx.moment(
+            interval=1000,
+            on_change=DashboardState.update_world_clock,
+            display="None",
+        ),
+
         justify="between",
         min_height="100vh",
         width="100%",
@@ -22,4 +29,3 @@ def index() -> rx.Component:
 app = rx.App(
     stylesheets=["/styles.css"], # type:ignore
 )
-app.add_page(index)

@@ -20,7 +20,7 @@ def template(card) -> rx.Component:
                                 rx.button(
                                     rx.icon("check"),
                                     variant="ghost",
-                                    on_click=DashboardState.save_edit_crypto(card["id"]),
+                                    #on_click=DashboardState.save_edit_crypto(card["id"]),
                                 ),
                                 justify="between",
                                 width="100%"

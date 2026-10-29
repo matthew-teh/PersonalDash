@@ -3,15 +3,17 @@ import random
 import json
 import uuid
 import asyncio
-from ..api import weather
 from typing import TypedDict, Any
+
+from ..api import weather
 from ..api.crypto import get_price
+from ..api.worldclock import get_timezone, get_time
 
 class CardData(TypedDict):
     id: str
     type: str
     name: str
-    data: list[dict[str, float]]
+    data: dict[str, str]
     data1: str
 
 class DashboardState(rx.State):
@@ -47,99 +49,126 @@ class DashboardState(rx.State):
         self.edit_column = value
         yield
 
-
-    # ---- RX WEATHER SPECIFIC EVENT HERE ----
-    edit_name_weather: str = ""
-    @rx.event
-    def save_edit_weather(self, card_id):
-        for card in self.cards:
-            if card_id == card["id"]:
-                card["name"] = self.edit_name_weather
-                card["data1"] = ""
-                self.edit_name_weather = ""
-                self.dump_json(self.cards)
-                return type(self).update_weather(card_id)
-            
-    @rx.event
-    def update_weather(self, card_id):
-        for card in self.cards:
-            if card_id == card["id"]:
-                name, datas = weather.get_data(card["name"])
-                if name == "NaN":
-                    return rx.toast("Cannot Update Data, invalid location", style={"background-color" :"#403D39"})
-                else:
-                    card["data"] = datas
+    '''
+        # ---- RX WEATHER SPECIFIC EVENT HERE ----
+        edit_name_weather: str = ""
+        @rx.event
+        def save_edit_weather(self, card_id):
+            for card in self.cards:
+                if card_id == card["id"]:
+                    card["name"] = self.edit_name_weather
+                    card["data1"] = ""
+                    self.edit_name_weather = ""
                     self.dump_json(self.cards)
-        
-    @rx.event
-    def set_name_weather(self, value: str, card_id):
-        self.edit_name_weather = value
-        for card in self.cards:
-            if card["id"] == card_id:
-                card["data1"] = weather.get_name(value)
-                self.dump_json(self.cards)
+                    return type(self).update_weather(card_id)
                 
-    # ---- RX CRYPTO SPEICFIC EVENT HERE ----
-    edit_name_crypto: str = ""
-    edit_window_crypto: str = ""
-
-    @rx.event
-    def save_edit_crypto(self, card_id: str, value={}):
-        for card in self.cards:
-            if card["id"] == card_id and card["type"] == "crypto":
-                if not isinstance(value, dict) and not card["name"] == "NaN":
-                    card["data1"] = value
-                    return type(self).update_crypto(card_id, False)
-                elif self.edit_name_crypto:
-                    card["name"] = self.edit_name_crypto
-                    self.edit_name_crypto = ""
+        @rx.event
+        def update_weather(self, card_id):
+            for card in self.cards:
+                if card_id == card["id"]:
+                    name, datas = weather.get_data(card["name"])
+                    if name == "NaN":
+                        return rx.toast("Cannot Update Data, invalid location", style={"background-color" :"#403D39"})
+                    else:
+                        card["data"] = datas
+                        self.dump_json(self.cards)
+            
+        @rx.event
+        def set_name_weather(self, value: str, card_id):
+            self.edit_name_weather = value
+            for card in self.cards:
+                if card["id"] == card_id:
+                    card["data1"] = weather.get_name(value)
                     self.dump_json(self.cards)
-                    return type(self).update_crypto(card_id, True)
-                else:
-                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
+                    
+        # ---- RX CRYPTO SPEICFIC EVENT HERE ----
+        edit_name_crypto: str = ""
+        edit_window_crypto: str = ""
+
+        @rx.event
+        def save_edit_crypto(self, card_id: str, value={}):
+            for card in self.cards:
+                if card["id"] == card_id and card["type"] == "crypto":
+                    if not isinstance(value, dict) and not card["name"] == "NaN":
+                        card["data1"] = value
+                        return type(self).update_crypto(card_id, False)
+                    elif self.edit_name_crypto:
+                        card["name"] = self.edit_name_crypto
+                        self.edit_name_crypto = ""
+                        self.dump_json(self.cards)
+                        return type(self).update_crypto(card_id, True)
+                    else:
+                        return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
+
+        @rx.event
+        def set_name_crypto(self, value: str):
+            self.edit_name_crypto = value
+        @rx.event
+        def set_window_crypto(self, value: str):
+            self.edit_window_crypto = value
+
+        @rx.event
+        def update_crypto(self, card_id: str, passthrough=False):
+            if passthrough:
+                self.cooldown = False 
+            if self.cooldown: return rx.toast("Cooling Down", style={"background-color" :"#403D39"})
+            self.cooldown = True
+            found = False
+            for card in self.cards:
+                if card["id"] == card_id:
+                    found = True
+                    if card["name"] != "NaN":
+                        try:
+                            card["data"] = get_price(symbol=card["name"],window=card["data1"])
+                            self.dump_json(self.cards)
+                        except Exception as e: 
+                            print(f"ERR : {e}")
+                            return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
+                    else:
+                        return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
+                    break
+            if not found:
+                self.cooldown = False
+            return DashboardState.delay_reset'''
+
+    # ---- RX WORLDCLOCK SPECIFIC EVENT HERE ----
+    @rx.event
+    def update_world_clock(self):
+        for card in self.cards:
+            if card["type"] == "world_clock":
+
+                    card["data"] = get_time(card["data"]["timezone"])
+            self.dump_json(self.cards)
+
+    edit_world_clock_name: str = ""
 
     @rx.event
-    def set_name_crypto(self, value: str):
-        self.edit_name_crypto = value
-    @rx.event
-    def set_window_crypto(self, value: str):
-        self.edit_window_crypto = value
-
-    @rx.event
-    def update_crypto(self, card_id: str, passthrough=False):
-        if passthrough:
-            self.cooldown = False 
-        if self.cooldown: return rx.toast("Cooling Down", style={"background-color" :"#403D39"})
-        self.cooldown = True
-        found = False
+    def set_name_world_clock(self, value: str, card_id):
+        self.edit_world_clock_name = value
+        print(value, card_id)
         for card in self.cards:
             if card["id"] == card_id:
-                found = True
-                if card["name"] != "NaN":
-                    try:
-                        card["data"] = get_price(symbol=card["name"],window=card["data1"])
-                        self.dump_json(self.cards)
-                    except Exception as e: 
-                        print(f"ERR : {e}")
-                        return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
-                else:
-                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
-                break
-        if not found:
-            self.cooldown = False
-        return DashboardState.delay_reset
+                card["data1"] = get_timezone(self.edit_world_clock_name)
+                print(self.edit_world_clock_name)
 
-    
+    # on_change=lambda value, cid=card["id"]: DashboardState.set_name_weather(value, cid)
+    @rx.event
+    def save_edit_world_clock(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                card["data"]["timezone"] = get_timezone(self.edit_world_clock_name)
+                card["name"] = get_timezone(self.edit_world_clock_name).split("/")[1]
+
     # ---- RX ALL EVENT HERE ----
     @rx.event 
     def create_card(self, card: str = " "):
-        if card == "crypto":
+        '''if card == "crypto":
             card_id = str(uuid.uuid4())
             self.cards.append({
                 "id": card_id,    
                 "type": "crypto",
                 "name": "BTCUSDT",
-                "data": [{}],
+                "data": {},
                 "data1" : "15m",
             })
             self.dump_json(self.cards)
@@ -152,20 +181,21 @@ class DashboardState(rx.State):
                 "id": card_id,
                 "type": "weather",
                 "name": "Los Angeles",
-                "data": [{}],
+                "data": {},
                 "data1" : "",
             })
             self.dump_json(self.cards)
             yield
-            self.update_weather(card_id)
+            self.update_weather(card_id)'''
 
         if card == "world_clock":
+            print(get_time('Asia/Singapore'))
             card_id = str(uuid.uuid4())
             self.cards.append({
                 "id": card_id,
                 "type": "world_clock",
-                "name": "Malaysia",
-                "data": [{}],
+                "name": "Singapore Time",
+                "data": get_time('Asia/Singapore'),
                 "data1": "",
             })
             self.dump_json(self.cards)
@@ -177,10 +207,12 @@ class DashboardState(rx.State):
         yield
         self.cooldown = True
         for card in self.cards:
+            '''
             if card["type"] == "crypto":
                 self.update_crypto(card["id"], True)
             if card["type"] == "weather":
                 self.update_weather(card["id"])
+            '''
         rx.toast("Done Refresh.", style={"background-color" :"#403D39"})
         self.is_updating = False
         yield
