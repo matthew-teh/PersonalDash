@@ -112,14 +112,14 @@ def get_data(name: str):
     result = [{
         "lat": response.Latitude(),
         "lng": response.Longitude(),
-        "relative_humid": current.Variables(0).Value(), #type:ignore
+        "relative_humid": round(current.Variables(0).Value()), #type:ignore
         "precip": current.Variables(1).Value(), #type:ignore
         "wetcode": weather_info["description"], 
-        "temp": current.Variables(3).Value(), #type:ignore
-        "windspd": current.Variables(4).Value(), #type:ignore
-        "feeltemp": current.Variables(5).Value(), #type:ignore
+        "temp": round(current.Variables(3).Value()), #type:ignore
+        "windspd": round(current.Variables(4).Value()), #type:ignore
+        "feeltemp": round(current.Variables(5).Value()), #type:ignore
         "useimg": weather_info["image"],
-        "cloudcvr" : current.Variables(6).Value(), #type:ignore
+        "cloudcvr" : round(current.Variables(6).Value()), #type:ignore
     }]
     
     return name, result

@@ -28,15 +28,16 @@ def get_timezone(term: str = ""):
         cur.execute(query, params)
         result = cur.fetchone()
         #print(result[0].replace('_', ' ')) # DEBUGGING USE
+
         if result:
-            return result[0]
+            return str(result[0])
         else:
             return ""
 
 def get_time(term: str = ""):
     timezone_id = get_timezone(term)
     if timezone_id == "":
-        return {}
+        return [{}]
 
     client = ntplib.NTPClient()
     response = client.request('127.0.0.1', port="65500", version=3) # Self hosted backend on docker
@@ -47,5 +48,4 @@ def get_time(term: str = ""):
     dst = dt_local.dst() != timedelta(0)
 
     date, time, dst =f"{dt_local.strftime('%Y-%m-%d %H:%M:%S')} {dst}".split(' ')
-   
-    return {"timezone": timezone_id, "tz": dt_local.strftime('%z'), "date": date, "time": time, "dst": str(dst)}
+    return [{"timezone": timezone_id.replace("/", ", ").replace("_", " "), "tz": dt_local.strftime('%z'), "date": date, "time": time, "dst": str(dst)}]

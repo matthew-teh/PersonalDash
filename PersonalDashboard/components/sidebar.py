@@ -40,7 +40,7 @@ def sidebar() -> rx.Component:
                             rx.vstack(
                                 rx.text("World Clock Card"),
                                 rx.image(
-                                    src="",
+                                    src="sidebarimages/world_clock.png",
                                     alt="weatherimage",
                                     border_radius="5px"),
                                 spacing="1",

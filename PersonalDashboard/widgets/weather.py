@@ -1,148 +1,91 @@
-'''import reflex as rx
+import reflex as rx
 from ..components.state import DashboardState
 
 def weather_card(card) -> rx.Component:
     return rx.card(
-         rx.box(
-            rx.hstack(
-                rx.vstack(
-                    rx.hstack(
-                        rx.box(
-                            rx.image(
-                                src=f"{card["data"][0]["useimg"]}", 
-                                    width="60px", 
-                                    height="auto",
-                                    object_fit="contain",
-                                    object_position="center",
-                            ),
-                            height="60px",
-                        ),
-                            rx.vstack(
-                                rx.heading(card["name"], size="3"),
-                                rx.text(card["data"][0]["wetcode"]),
-                                spacing="0",
-                            ),
-                        rx.spacer(),
-                        rx.hover_card.root(
-                            rx.hover_card.trigger(
-                                rx.button(
-                                    rx.icon("settings", size=16),
-                                    variant="ghost",
-                                    pointer_events="auto",
-                                ),
-                            ),
-                            rx.hover_card.content(
-                                rx.vstack(
-                                    rx.hstack(
-                                        rx.vstack(
-                                            rx.text("Edit Card", size="3", weight="bold"),
-                                            spacing="0",
-                                        ),
-                                        rx.spacer(),
-                                        rx.button(
-                                            rx.icon("check"),
-                                            variant="ghost",
-                                            on_click=DashboardState.save_edit_weather(card["id"]),
-                                            pointer_events="auto",
-                                        ),
-                                        justify="between",
-                                        width="100%",
-                                    ),
-                                    rx.text("City", size="2"),
-                                    rx.input(
-                                        value=DashboardState.edit_name_weather,
-                                        on_change=lambda value, cid=card["id"]: DashboardState.set_name_weather(value, cid),
-                                        placeholder="Los Angeles",
-                                        width="100%",
-                                    ),
-                                    rx.text(f"Recommended: {card["data1"]}", size="2"),
-                                ),
-                                side="left",
-                                pointer_events="auto",
-                            ),
-                        ),
-                        rx.button(
-                            rx.icon("refresh_cw", size=16),
-                            variant="ghost",
-                            on_click=DashboardState.update_weather(card["id"]),
-                            pointer_events="auto",
-                        ),
-                        rx.button(
-                            rx.icon("trash_2", size=16),
-                            variant="ghost",
-                            on_click=DashboardState.delete_card(card["id"]),
-                            pointer_events="auto",
-                        ),
-                        width="100%",
-                    ),
-                    rx.hstack(
+        rx.hstack(
+            rx.image(
+                src=card["data"][0]["useimg"],
+                height= "42px",
+            ),
+            rx.vstack(
+                rx.heading(card["name"], size="3"),
+                rx.text(card["data"][0]["wetcode"]),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.hover_card.root(
+                rx.hover_card.trigger(rx.button(rx.icon("settings", size=16), variant="ghost")),
+                rx.hover_card.content(
+                    rx.vstack(
                         rx.hstack(
-                            rx.text(f"{round(card["data"][0]["temp"])}",font_size="120px",weight="bold"),
-                            rx.text("℃"),
-                            width="50%",
-                            height="100%",
-                            align="center",
-                            justify="center",
+                            rx.heading("Edit Card", size="3"),
+                            rx.button(rx.icon("check"), variant="ghost", on_click=DashboardState.save_edit_weather(card["id"])),
+                            width="100%",
+                            justify="between",
                         ),
-                        rx.vstack(
-                            rx.card(
-                                rx.vstack(
-                                    rx.text(f"Feels Like", font_size="14px"),
-                                    rx.text(f"{round(card["data"][0]["feeltemp"])}℃",size="7", weight="bold"),
-                                    spacing="2",
-                                    align="center",
-                                    justify="center",   
-                                ), width="100%", height="50%"),
-                            rx.card(
-                                rx.vstack(
-                                    rx.text(f"Wind speed", font_size="14px"),
-                                    rx.text(f"{round(card["data"][0]["windspd"])}km/h",size="7", weight="bold"),
-                                    spacing="2",
-                                    align="center",
-                                ), width="100%", height="50%"),
-                            width="25%",
-                            height="100%",
-                            spacing="1",
-                            align="center"
+                        rx.text(f"City: {card["data1"]}", size="2"),
+                        rx.input(
+                            value=DashboardState.edit_name_weather,
+                            on_change=lambda val, cid=card["id"]: DashboardState.set_name_weather(val, cid),
+                            placeholder="New York",
                         ),
-                        rx.vstack(
-                            rx.card(
-                                rx.vstack(
-                                    rx.text(f"Humidity", font_size="14px"),
-                                    rx.text(f"{round(card["data"][0]["relative_humid"])}%",size="7", weight="bold"),
-                                    spacing="2",
-                                    align="center",
-                                    justify="center",   
-                                ), width="100%", height="50%"),
-                            rx.card(
-                                rx.vstack(
-                                    rx.text(f"Cloud Cover", font_size="14px"),
-                                    rx.text(f"{round(card["data"][0]["cloudcvr"])}%",size="7", weight="bold"),
-                                    spacing="2",
-                                    align="center",
-                                ), width="100%", height="50%"),
-                            width="25%",
-                            height="100%",
-                            spacing="1",
-                            align="center"
-                        ),
-                        
-                        spacing="1",
-                        width="100%",
-                        height="100%",
                     ),
-                    spacing="1",
-                    height="100%",
-                    width="100%",
-
+                    side="left",
                 ),
-                width="100%",
+            ),
+            rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=DashboardState.update_weather(card["id"])),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card["id"]))
+        ),
+        rx.hstack(
+            rx.hstack(
+                rx.text(f"{card["data"][0]["temp"]}", font_size="120px", weight="bold"),
+                rx.text("℃"),
+                width="50%",
+                height='100%',
+                align="center",
+                justify="center",
+            ),
+            rx.grid(
+                rx.card(
+                    rx.flex(rx.text("Feels Like", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(
+                        rx.text(f"{card["data"][0]["feeltemp"]}", font_size="42px", weight="bold"), 
+                        rx.text("℃", font_size="14px"),
+                        align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Humidity", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{card["data"][0]["relative_humid"]}", font_size="42px", weight="bold"), 
+                            rx.text("%", font_size="14"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Wind speed", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{card["data"][0]["windspd"]}", font_size="42px", weight="bold"), 
+                            rx.text("km/h", font_size="14px"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Cloud Cover", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{card["data"][0]["cloudcvr"]}", font_size="42px", weight="bold"), 
+                            rx.text("%", font_size="14px"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                columns="2",
+                width="49%",
                 height="100%",
+                gap="0.25rem",
             ),
             width="100%",
-            height="100%",
+            height="80%",
+            spacing="0",
         ),
-        size="1",
+        padding="0.8rem",
         width="100%",
-        height="30vh",
-    )'''
+        height="285px",
+    )

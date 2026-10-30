@@ -17,11 +17,21 @@ Added - Logged
 V2.3
 
 Added 
-- Animated Reload Button for all widgets
+- Animated Reload Button for all widgets # Cancelled
 - Completed world clock card
 
 V2.4
 
 Rewrote structure
-- crypto.py, weather.py, worldclock.py for clean and accurate alignment of widgets in webpage
+- crypto.py, weather.py, worldclock.py for clean code and precise alignment of cards. # weather left
 
+V2.5
+
+- Add card: Pomodoro timer, timer
+- Quote of the day
+- To-Do lists
+- QUICK links 
+
+V3
+- HTTPS enhancement
+- Add card: Hackatime , Spotify ( user self api )

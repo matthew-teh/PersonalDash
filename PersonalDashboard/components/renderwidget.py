@@ -1,7 +1,7 @@
 import reflex as rx
 from typing import Any
-#from ..widgets.crypto import crypto_card
-#from ..widgets.weather import weather_card
+from ..widgets.crypto import crypto_card
+from ..widgets.weather import weather_card
 from ..widgets.worldclock import world_clock_card
 from ..components.state import DashboardState
 
@@ -9,8 +9,8 @@ def render_single_card(card, index:int) -> rx.Component | rx.Var:
     return rx.box(
         rx.match(
             card["type"],
-            #("crypto", crypto_card(card)),
-            #("weather", weather_card(card)),
+            ("crypto", crypto_card(card)),
+            ("weather", weather_card(card)),
             ("world_clock", world_clock_card(card)),
             rx.box(),
         ),

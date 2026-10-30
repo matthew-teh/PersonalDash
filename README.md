@@ -2,9 +2,10 @@
 
 A website built with **Python Reflex**, includes daily needed widget.
 
-## Features
+## Features 
 - **Crypto** - Shows real market data in form of graph using Binance API
 - **Weather** - Shows real weather data with four little card using Open-Meteo API.
+- **World Clock** - Display live time of a city, auto refresh.
 
 ## Versions
 - Personal Dashboard V2  , Latest, Under Development

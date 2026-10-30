@@ -4,7 +4,7 @@ from . import components
 from .components.state import DashboardState
 from typing import Any
 
-@rx.page(on_load=DashboardState.update_world_clock)
+@rx.page()
 def index() -> rx.Component:
     return rx.vstack(
         components.header.navbar(),
