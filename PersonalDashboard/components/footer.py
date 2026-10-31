@@ -1,9 +1,8 @@
 import reflex as rx
-from ..components.state import DashboardState
+from ..components.state import DashboardState, ServerState
 
 def footer() -> rx.Component:
-    return rx.vstack(
-        rx.box(
+    return rx.card(
             rx.hstack(
                 rx.vstack(
                     rx.text("FlexDash, 2026, crafted by Matthew, a hobbyist", size="1", weight="bold"),
@@ -16,12 +15,22 @@ def footer() -> rx.Component:
                     height="100%",
                     spacing="0",
                 ),
+                rx.separator(
+                    orientation="vertical",
+                    height="100%",          # Makes it stretch to the height of the hstack
+                    min_height="30px",
+                ),
+                rx.vstack(
+                    rx.text("Server uptime:", size="1"),
+                    rx.text(f"{ServerState.uptime}", size="1"),
+                    spacing="1",
+                ),
+                
+                height="100%",
+                width="100%",
             ),  
-            width="100%",
-        ),
-        margin="1vh",
-        width="calc(100vw - 1vh)",
-        padding="1em",
-        margin_x="auto",
-        border_radius="5px",
-    )
+            margin_bottom="4px",
+            width="calc(100% - 8px - 8px)",
+            padding="1em",
+            margin_x="auto",
+        )

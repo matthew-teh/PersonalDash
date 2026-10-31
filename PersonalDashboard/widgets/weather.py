@@ -35,7 +35,9 @@ def weather_card(card) -> rx.Component:
                 ),
             ),
             rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=DashboardState.update_weather(card["id"])),
-            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card["id"]))
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card["id"])),
+            width="100%",
+            height="53.8px",
         ),
         rx.hstack(
             rx.hstack(
@@ -77,15 +79,15 @@ def weather_card(card) -> rx.Component:
                     height="100%"
                 ),
                 columns="2",
-                width="49%",
+                width="50%",
                 height="100%",
                 gap="0.25rem",
             ),
             width="100%",
-            height="80%",
+            height="215.2px",
             spacing="0",
         ),
-        padding="0.8rem",
+        padding="8px",
         width="100%",
         height="285px",
     )

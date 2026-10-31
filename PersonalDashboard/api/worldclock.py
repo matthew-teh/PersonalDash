@@ -1,8 +1,8 @@
+import ntplib
+import sqlite3
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from contextlib import closing
-import ntplib
-import sqlite3
 
 DB_PATH = '/home/matthew/Desktop/PersonalDashboardVersions/PersonalDashboard/assets/databases/timezones.sqlite3' # PYTHON USE
 #DB_PATH = 'assets/databases/timezones.sqlite3'# PROD USE
@@ -47,5 +47,6 @@ def get_time(term: str = ""):
     dt_local = dt_utc.astimezone(zoneinfo)
     dst = dt_local.dst() != timedelta(0)
 
-    date, time, dst =f"{dt_local.strftime('%Y-%m-%d %H:%M:%S')} {dst}".split(' ')
-    return [{"timezone": timezone_id.replace("/", ", ").replace("_", " "), "tz": dt_local.strftime('%z'), "date": date, "time": time, "dst": str(dst)}]
+    date, timex, dst =f"{dt_local.strftime('%Y-%m-%d %H:%M:%S')} {dst}".split(' ')
+
+    return [{"timezone": timezone_id.replace("/", ", ").replace("_", " "), "tz": dt_local.strftime('%z'), "date": date, "time": timex, "dst": str(dst)}]

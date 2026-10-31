@@ -29,6 +29,7 @@ def crypto_card(card) -> rx.Component:
                             value=DashboardState.edit_name_crypto,
                             on_change=DashboardState.set_name_crypto,
                             placeholder="BTCUSDT",
+                            width="100%",
                         ),
                         rx.cond(
                             card["name"] != "NaN",
@@ -43,8 +44,9 @@ def crypto_card(card) -> rx.Component:
                                     default_value=card["data1"],
                                     on_change=lambda val: DashboardState.save_edit_crypto(card["id"], val),
                                 ),
-                                rx.box(),
                             ),
+                            
+                            rx.box(),
                         ),
                     ),
                     side="left",
@@ -53,7 +55,7 @@ def crypto_card(card) -> rx.Component:
             rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=DashboardState.update_crypto(card["id"])),
             rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card["id"])),
             width="100%",
-            height="20%",
+            height="53.8px",
         ),
         rx.vstack(
             rx.recharts.area_chart(
@@ -73,12 +75,13 @@ def crypto_card(card) -> rx.Component:
                 rx.recharts.graphing_tooltip(),
                 data=card["data"],
                 wrapper_style={"backgroundColor": rx.cond(card["data"][-1]["price"] >= card["data"][0]["price"],"#40F698","#F64740",)},
+                margin={ "top": 0, "right": 0, "bottom": 0, "left": 0 },
             ),
-            height="80%",
+            height="215.2px",
             width="100%",
             spacing="0"
         ),
-        padding="0.8rem",
+        padding="8px",
         width="100%",
         height="285px"
     )

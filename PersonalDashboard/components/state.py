@@ -2,7 +2,8 @@ import reflex as rx
 import json
 import uuid
 import asyncio
-from typing import TypedDict
+import time 
+from typing import TypedDict, Literal
 from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
@@ -45,12 +46,14 @@ class DashboardState(rx.State):
     edit_world_clock_name = ""
 
     @rx.event
-    def update_world_clock(self):
+    async def update_world_clock(self):
         for card in self.cards:
             if card["type"] == "world_clock":
-                name = card["data"][0]["timezone"].replace(", ", "/").replace(" ", "_")
-                card["data"] = get_time(name)
-        self.dump_json(self.cards)
+                async with self:
+                    name = card["data"][0]["timezone"].replace(", ", "/").replace(" ", "_")
+                    card["data"] = get_time(name)
+        async with self:
+            self.dump_json(self.cards)
         
     @rx.event
     def set_name_world_clock(self, value, card_id):
@@ -163,10 +166,14 @@ class DashboardState(rx.State):
 
     # ---- RX SETTING SPECIFIC EVENT HERE ----
     edit_column = "4"
-
+    edit_radius: Literal["none", "small", "medium", "large", "full"] = "medium"
     @rx.event
     def set_column(self, value):
         self.edit_column = value
+
+    @rx.event
+    def set_radius(self, value):
+        self.edit_radius = value
 
     # ---- RX ALL EVENT HERE ----
     @rx.event 
@@ -213,6 +220,7 @@ class DashboardState(rx.State):
 
     @rx.event
     def update_all(self):
+        print(self.cooldown)
         if self.cooldown: return rx.toast("Reload All: Cooling Down", style={"background-color" :"#403D39"})
         self.is_updating = True
         self.cooldown = True
@@ -223,8 +231,7 @@ class DashboardState(rx.State):
             if card["type"] == "weather":
                 self.update_weather(card["id"])
         rx.toast("Done Refresh.", style={"background-color" :"#403D39"})
-        self.is_updating= False
-        yield
+        self.is_updating= False 
         return DashboardState.delay_reset()
 
     @rx.event
@@ -243,3 +250,23 @@ class DashboardState(rx.State):
     def dump_json(self, cards):
         self.cards_json = json.dumps(cards)
 
+
+# ---- SERVER ONLY STATE ----
+
+class ServerState(rx.State):
+    cpu = 0
+    mem = 0
+    uptime = ""
+    start = time.time()
+
+    @rx.event
+    async def updateSystem(self):
+        sec = int(time.time() - self.start)
+
+        days = sec // 86400
+        hours = (sec % 86400) // 3600
+        minutes = ( sec % 3600) // 60
+        seconds = sec % 60
+
+        async with self:
+            self.uptime =  f"{days}d {hours}h {minutes}m {seconds}s"

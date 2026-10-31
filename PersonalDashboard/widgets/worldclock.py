@@ -40,7 +40,7 @@ def world_clock_card(card) -> rx.Component:
             rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card['id'])),
             
             width="100%",
-            height="20%"
+            height="53.8px"
         ),
         rx.vstack(
             rx.box(rx.text(card["data"][0]["time"], font_size="68px", weight="bold"),
@@ -52,8 +52,8 @@ def world_clock_card(card) -> rx.Component:
             rx.vstack(
                 rx.card(f"Universal Time Coordinates: {card["data"][0]["tz"]}", width="100%"),
                 rx.hstack(
-                    rx.card(f"{card["data"][0]["date"]} {card["data"][0]["time"]}", width="50%"),
-                    rx.card(f"DST: {card["data"][0]["dst"]}", width="50%"),
+                    rx.card(f"{card["data"][0]["date"]} {card["data"][0]["time"]}", width="50%", display="flex", height="100%", align_items="center", padding="0", padding_left="12px"),
+                    rx.card(f"DST: {card["data"][0]["dst"]}", width="50%", height="100%", display="flex", align_items="center", padding="0", padding_left="12px"),
                     height='50%',
                     width='100%',
                     spacing="1", 
@@ -61,12 +61,13 @@ def world_clock_card(card) -> rx.Component:
                 spacing="1",   
                 width="100%",
                 height="50%",
+                flex="1",
             ),
             spacing="1",
             width="100%",
-            height="80%"
+            height="215.2px"
         ),
-        padding="0.8rem",
+        padding="8px",
         width="100%",
         height="285px",
     )

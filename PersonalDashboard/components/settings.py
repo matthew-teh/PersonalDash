@@ -39,6 +39,7 @@ def settings() -> rx.Component:
                             ),
                             width="100%",
                             justify="between",
+                            align_items="center",
                         ),
                         rx.hstack(
                             rx.vstack(rx.text("Cards Per Row: ", size="3"),),
@@ -77,6 +78,27 @@ def settings() -> rx.Component:
                             ),
                             width="100%",
                             justify="between",
+                            align_items="center",
+                        ),
+                        rx.hstack(
+                            rx.vstack(rx.text("Border smoothness: ", size="3")),
+                            rx.vstack(
+                                rx.segmented_control.root(
+                                    rx.segmented_control.item("0", value="none"),
+                                    rx.segmented_control.item("1", value="small"),
+                                    rx.segmented_control.item("2", value="medium"),
+                                    rx.segmented_control.item("3", value="large"),
+                                    rx.segmented_control.item("4", value="full"),
+                                    on_change=DashboardState.set_radius,
+                                    value=DashboardState.edit_radius,
+                                    variant="classic",
+                                    radius="large",
+                                    width="18em",
+                                ),
+                            ),
+                            width="100%",
+                            justify="between",
+                            align_items="center"
                         ),
                         width="95%",
                     ),
