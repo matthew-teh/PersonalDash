@@ -21,8 +21,9 @@ A website built with **Python Reflex**, includes daily needed widget.
 
 **Personal Dashboard V2:** [Click when you done command below](http://localhost:65003)
 ```bash
-docker pull nuggetteh/personal-dashboard:reflex-app-v2
-docker run -d -p 65503:65503 --name Reflex-PDash-V2 reflex-app-v2
+docker network create reflex-net
+docker run -d --network reflex-net -p 65500:123/udp --name ntp-server cturra/ntp:latest
+docker run -d --network reflex-net -p 65503:65503 --name Reflex-PDash-V2 nuggetteh/personal-dashboard:reflex-app-v2
 ```
   
 **Personal Dashboard V1:**

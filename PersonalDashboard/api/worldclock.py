@@ -39,7 +39,7 @@ def get_time(term: str = ""):
         return [{}]
 
     client = ntplib.NTPClient()
-    response = client.request('127.0.0.1', port="65500", version=3) # Self hosted backend on docker
+    response = client.request('ntp-server', port="123", version=3, timeout=1)
 
     dt_utc = datetime.fromtimestamp(response.tx_time, tz=timezone.utc)
     zoneinfo = ZoneInfo(timezone_id)

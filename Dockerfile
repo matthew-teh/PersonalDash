@@ -20,11 +20,12 @@ RUN uv add reflex openmeteo-requests requests
 
 COPY . .
 
-EXPOSE 65502
+EXPOSE 65503
+EXPOSE 65500
 
 CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "65503", "--loglevel", "debug"]
 
 # uv run reflex run --env prod --frontend-port 65503 --loglevel debug
 # docker build -t reflex-app-v2 .
-# docker run -d -p 65503:65503 --name Reflex-PDash-V2 reflex-app-v2
+# docker run -d -p 65500:65500 -p 65503:65503 --name Reflex-PDash-V2 reflex-app-v2
 # docker rm Reflex-PDash-V2
