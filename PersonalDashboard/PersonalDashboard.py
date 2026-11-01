@@ -15,7 +15,7 @@ def index() -> rx.Component:
 
             rx.moment(
                 interval=1000,
-                on_change=DashboardState.update_world_clock,
+                on_change=[DashboardState.update_world_clock, DashboardState.update_pomodoro],
                 display="None",
             ),
 

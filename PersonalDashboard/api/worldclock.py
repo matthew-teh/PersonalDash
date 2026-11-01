@@ -4,8 +4,7 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from contextlib import closing
 
-DB_PATH = '/home/matthew/Desktop/PersonalDashboardVersions/PersonalDashboard/assets/databases/timezones.sqlite3' # PYTHON USE
-#DB_PATH = 'assets/databases/timezones.sqlite3'# PROD USE
+DB_PATH = 'assets/databases/timezones.sqlite3'
 def get_timezone(term: str = ""):
     term = term.strip().replace(' ', '_') # Remove spaces " "
     if term == "":

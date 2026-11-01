@@ -32,7 +32,9 @@ def weather_card(card) -> rx.Component:
                         ),
                     ),
                     side="left",
+                    width="250px",
                 ),
+                
             ),
             rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=DashboardState.update_weather(card["id"])),
             rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=DashboardState.delete_card(card["id"])),

@@ -7,6 +7,7 @@ from typing import TypedDict, Literal
 from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
+from ..api.tictactoe import check_win, computer_decide
 
 class CardData(TypedDict):
     id: str
@@ -15,6 +16,7 @@ class CardData(TypedDict):
     data: list[dict[str, str]]
     data1: str
     data2: float
+    data3: list[int]
 
 class DashboardState(rx.State):
     cards_json: str = rx.LocalStorage("[]", name="dashboard_cards", sync=True)
@@ -164,6 +166,161 @@ class DashboardState(rx.State):
         change = -round(((first - last) / first) * 100, 2)
         return str(change)
 
+    # ---- RX POMODORO SPECIFIC EVENT HERE ----
+    pomodoro, short, long = "25", "5", "15"
+
+    @rx.event
+    def edit_pomodoro_pomodoro(self, value):
+        self.pomodoro = value
+        print(self.pomodoro)
+    @rx.event
+    def edit_short_pomodoro(self, value):
+        self.short = value
+    @rx.event
+    def edit_long_pomodoro(self, value):
+        self.long = value
+
+    @rx.event
+    def save_edit_pomodoro(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                print("set")
+                card["data"][0]["pomodoro"] = self.pomodoro
+                card["data"][0]["short"] = self.short
+                card["data"][0]["long"] = self.long
+
+                self.pomodoro, self.short, self.long = "25", "5", "15"
+                print(card)
+        self.dump_json(self.cards)
+        self.command_pomodoro(card_id, "reset")
+
+    @rx.event
+    def command_pomodoro(self, card_id, command):
+        for card in self.cards:
+            if card["id"] == card_id:
+                if command == "start":
+                    card["data"][0]["started"] = "true"
+                    if not float(card["data"][0]["sec_left"]) < float(card["data"][0]["pomodoro"])*60: # If below than settings, means it is going
+                        print("trigger")
+                        card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
+                        card["data"][0]["mode"] = "pomodoro"
+                        card["data"][0]["intervals"] = "1"
+                elif command == "stop":
+                    card["data"][0]["started"] = "false"
+                elif command == "reset":
+                    print(card)
+                    card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
+                    card["data"][0]["started"] = "false"
+                    card["data"][0]["mode"] = "pomodoro"
+                    card["data"][0]["intervals"] = "1"
+                    sec = float(card["data"][0]["sec_left"])
+                    minutes = round(( sec % 3600) // 60)
+                    seconds = round(sec % 60)
+                    if len(str(minutes)) == 1:
+                        minutes = f"0{minutes}"
+                    if len(str(seconds)) == 1:
+                        seconds = f"0{seconds}"
+                    card["data"][0]["timing"] = f"{minutes}:{seconds}" # Calculate differences.
+        self.dump_json(self.cards)
+
+    @rx.event
+    def update_pomodoro(self):
+        for card in self.cards:
+            if card["type"] == "pomodoro" and card["data"][0]["started"].lower() == "true": # If is running
+                sec = round(float(card["data"][0]["sec_left"])) - 1
+                card["data"][0]["sec_left"] = str(float(card["data"][0]["sec_left"]) - 1)
+                if sec == 0: 
+                    card["data"][0]["timing"] ="00:00"
+                    intervals = int(card["data"][0]["intervals"])
+                    mode = card["data"][0]["mode"]
+                    print(mode)
+                    print(intervals)
+                    if mode == "pomodoro":
+                        if intervals >= 4:
+                            card["data"][0]["sec_left"] = str(float(card["data"][0]["long"])*60)
+                            card["data"][0]["mode"] = "long"
+                        else:
+                            card["data"][0]["sec_left"] = str(float(card["data"][0]["short"])*60)
+                            card["data"][0]["intervals"] = str(intervals +1)
+                            card["data"][0]["mode"] = "short"
+                    elif mode == "short":
+                        card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
+                        card["data"][0]["mode"] = "pomodoro"
+
+                    elif mode == "long":
+                        print(f"Set {str(float(card["data"][0]["pomodoro"])*60)}")
+                        card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
+                        card["data"][0]["intervals"] = "1"
+                        card["data"][0]["mode"] = "pomodoro"
+
+                else:
+                    minutes = round((sec % 3600) // 60)
+                    seconds = round(sec % 60)
+                    if len(str(minutes)) == 1:
+                        minutes = f"0{minutes}"
+                    if len(str(seconds)) == 1:
+                        seconds = f"0{seconds}"
+                    card["data"][0]["timing"] = f"{minutes}:{seconds}" # Calculate differences.
+
+
+        self.dump_json(self.cards)
+
+    # ---- RX tic_tac_toe SPECIFIC EVENT HERE
+    edit_diff_tic_tac_toe = ""
+    @rx.event
+    def set_diff_tic_tac_toe(self, value):
+        self.edit_diff_tic_tac_toe = value
+
+    @rx.event
+    def setup_tic_tac_toe(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                grids = []
+                for r in range(3):
+                    for c in range(3):
+                        grids.append({
+                            "id" : str(r*3+c),
+                            "data" : "0",
+                        })
+                card["data"] = grids
+        self.dump_json(self.cards)
+
+    @rx.event
+    def register_click(self, card_id, button_id):
+        for card in self.cards:
+            if card["id"] == card_id and card["data2"] == 0: # 0 player 1 computer
+                for item in card["data"]:
+                    if item["id"] == button_id and item["data"] != "X":
+                        item["data"] = "O"
+                        self.dump_json(self.cards)
+                        yield
+                        self.calculate(card_id)
+                        break
+    @rx.event
+    def calculate(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                status = check_win(card["data"])
+                time.sleep(0.1)
+                if status == "none":
+                    move = computer_decide(card["data"])
+                    print(move)
+                    print(card["data"]) 
+                    if not move == {}:
+                        for item in card["data"]:
+                            if item["id"] == move["id"]:
+                                item["data"] = move["data"]
+                status = check_win(card["data"])
+                if status == "player":
+                    card["data3"][0] += 1
+                    self.setup_tic_tac_toe(card_id)
+                if status == "computer":
+                    card["data3"][1] += 1
+                    self.setup_tic_tac_toe(card_id)
+                if status == "tie":
+                    self.setup_tic_tac_toe(card_id)
+                self.dump_json(self.cards)
+        
     # ---- RX SETTING SPECIFIC EVENT HERE ----
     edit_column = "4"
     edit_radius: Literal["none", "small", "medium", "large", "full"] = "medium"
@@ -186,7 +343,8 @@ class DashboardState(rx.State):
                 "name": "BTCUSDT",
                 "data": [{}],
                 "data1": "15m",
-                "data2": 0
+                "data2": 0,
+                "data3": [],
             })
             self.dump_json(self.cards)
             yield
@@ -200,7 +358,8 @@ class DashboardState(rx.State):
                 "name": "London",
                 "data": [{}],
                 "data1": "",
-                "data2": 0
+                "data2": 0,
+                "data3": [],
             })
             self.dump_json(self.cards)
             yield
@@ -214,9 +373,37 @@ class DashboardState(rx.State):
                 "name": f"{result[0]["timezone"].split(", ")[1]} Time",
                 "data": result, 
                 "data1": "",
-                "data2": 0
+                "data2": 0,
+                "data3": [],
             })
             self.dump_json(self.cards)
+
+        if card == "pomodoro":
+            self.cards.append({
+                "id": card_id,
+                "type": "pomodoro",
+                "name": "Pomodoro Timer",
+                "data": [{"pomodoro":"25", "short":"5", "long":"15", "intervals": "1", "started": "false", "sec_left":"0", "mode":"pomodoro"}], 
+                "data1": "",
+                "data2": 0,
+                "data3" : [], 
+            })
+            self.command_pomodoro(card_id, "reset")
+            self.dump_json(self.cards)
+
+        if card == "tic_tac_toe":
+            self.cards.append({
+                "id": card_id,
+                "type": "tic_tac_toe",
+                "name": "Tic Tac Toe",
+                "data": [{}], 
+                "data1": "easy",
+                "data2": 0,
+                "data3": [0, 0],
+            })
+            self.setup_tic_tac_toe(card_id)
+            self.dump_json(self.cards)
+            
 
     @rx.event
     def update_all(self):

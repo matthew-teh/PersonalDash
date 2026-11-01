@@ -31,12 +31,10 @@ V2.5 - Logged
 - Dark light mode fully compatible with all components
 - Add cards sidebar now have compatibility to dark, light mode.
 
-V2.6
+V2.6 - Last Update
 
-- Add card: Pomodoro timer, timer
-- Quote of the day
-- To-Do lists
-- QUICK links 
+- Add card: Pomodoro timer
+- Terra Theme Special Edition : Tic Tac Toe
 
 V3
 - HTTPS enhancement
