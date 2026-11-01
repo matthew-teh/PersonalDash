@@ -19,7 +19,7 @@ A website built with **Python Reflex**, includes daily needed widget.
 - Make sure you have **python** and **git** installed  
 - Run command below  
 
-**Personal Dashboard V2:** [Click when you done command below](http://localhost:65003)
+**Personal Dashboard V2 Docker(Install docker first.)** [Click when you done command below](http://localhost:65003)
 ```bash
 docker network create reflex-net
 docker run -d --network reflex-net -p 65500:123/udp --name ntp-server cturra/ntp:latest
