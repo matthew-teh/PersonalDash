@@ -37,10 +37,13 @@ def get_time(term: str = ""):
     timezone_id = get_timezone(term)
     if timezone_id == "":
         return [{}]
-
+    # DOCKER USE
+    #client = ntplib.NTPClient()
+    #response = client.request('ntp-server', port="123", version=3, timeout=1)
+    
+    # DEV USE 
     client = ntplib.NTPClient()
-    response = client.request('ntp-server', port="123", version=3, timeout=1)
-
+    response = client.request('localhost', port="65500", version=3, timeout=1)
     dt_utc = datetime.fromtimestamp(response.tx_time, tz=timezone.utc)
     zoneinfo = ZoneInfo(timezone_id)
     dt_local = dt_utc.astimezone(zoneinfo)

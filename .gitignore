@@ -1,6 +1,7 @@
 assets/external/
 assets/cryptoimages/
 assets/weatherimages/
+assets/databases/users.sqlite3
 *.py[cod]
 *.db
 .web
@@ -8,3 +9,4 @@ assets/weatherimages/
 __pycache__/
 __pycache__
 .venv
+.env

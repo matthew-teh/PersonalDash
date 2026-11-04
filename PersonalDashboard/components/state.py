@@ -8,6 +8,9 @@ from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
 from ..api.tictactoe import check_win, computer_decide
+from ..api.auth import register, check_exist, login, check_cookie
+
+start = time.time()
 
 class CardData(TypedDict):
     id: str
@@ -20,6 +23,7 @@ class CardData(TypedDict):
 
 class DashboardState(rx.State):
     cards_json: str = rx.LocalStorage("[]", name="dashboard_cards", sync=True)
+    
     cooldown: bool = False
     is_updating = False
     # ---- RX VAR HERE ----
@@ -172,7 +176,6 @@ class DashboardState(rx.State):
     @rx.event
     def edit_pomodoro_pomodoro(self, value):
         self.pomodoro = value
-        print(self.pomodoro)
     @rx.event
     def edit_short_pomodoro(self, value):
         self.short = value
@@ -184,13 +187,11 @@ class DashboardState(rx.State):
     def save_edit_pomodoro(self, card_id):
         for card in self.cards:
             if card["id"] == card_id:
-                print("set")
                 card["data"][0]["pomodoro"] = self.pomodoro
                 card["data"][0]["short"] = self.short
                 card["data"][0]["long"] = self.long
 
                 self.pomodoro, self.short, self.long = "25", "5", "15"
-                print(card)
         self.dump_json(self.cards)
         self.command_pomodoro(card_id, "reset")
 
@@ -201,14 +202,13 @@ class DashboardState(rx.State):
                 if command == "start":
                     card["data"][0]["started"] = "true"
                     if not float(card["data"][0]["sec_left"]) < float(card["data"][0]["pomodoro"])*60: # If below than settings, means it is going
-                        print("trigger")
+
                         card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
                         card["data"][0]["mode"] = "pomodoro"
                         card["data"][0]["intervals"] = "1"
                 elif command == "stop":
                     card["data"][0]["started"] = "false"
                 elif command == "reset":
-                    print(card)
                     card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
                     card["data"][0]["started"] = "false"
                     card["data"][0]["mode"] = "pomodoro"
@@ -233,8 +233,6 @@ class DashboardState(rx.State):
                     card["data"][0]["timing"] ="00:00"
                     intervals = int(card["data"][0]["intervals"])
                     mode = card["data"][0]["mode"]
-                    print(mode)
-                    print(intervals)
                     if mode == "pomodoro":
                         if intervals >= 4:
                             card["data"][0]["sec_left"] = str(float(card["data"][0]["long"])*60)
@@ -248,7 +246,6 @@ class DashboardState(rx.State):
                         card["data"][0]["mode"] = "pomodoro"
 
                     elif mode == "long":
-                        print(f"Set {str(float(card["data"][0]["pomodoro"])*60)}")
                         card["data"][0]["sec_left"] = str(float(card["data"][0]["pomodoro"])*60)
                         card["data"][0]["intervals"] = "1"
                         card["data"][0]["mode"] = "pomodoro"
@@ -304,8 +301,6 @@ class DashboardState(rx.State):
                 time.sleep(0.1)
                 if status == "none":
                     move = computer_decide(card["data"])
-                    print(move)
-                    print(card["data"]) 
                     if not move == {}:
                         for item in card["data"]:
                             if item["id"] == move["id"]:
@@ -444,16 +439,117 @@ class ServerState(rx.State):
     cpu = 0
     mem = 0
     uptime = ""
-    start = time.time()
 
+    
     @rx.event
     async def updateSystem(self):
-        sec = int(time.time() - self.start)
 
+        sec = int(time.time() - start)
         days = sec // 86400
         hours = (sec % 86400) // 3600
         minutes = ( sec % 3600) // 60
         seconds = sec % 60
-
         async with self:
             self.uptime =  f"{days}d {hours}h {minutes}m {seconds}s"
+
+class AuthState(rx.State):
+    logged_in : bool = False
+    user = ""
+    cookie: str = rx.Cookie("")
+    user_cookie: str = rx.Cookie("")
+
+    tries = 0
+    username = ""
+    password = ""
+    disabled : bool = True
+    
+    @rx.event(background=True)
+    async def rate_limit(self):
+        await asyncio.sleep(5)
+        async with self:
+            self.tries = 0
+            self.disabled = False
+
+    @rx.event
+    def set_username(self, value):
+        self.username = value
+        return type(self).check_registrable
+    
+    @rx.event
+    def set_password(self, value):
+        self.password = value
+        return type(self).check_registrable
+
+    @rx.event
+    def check_registrable(self):
+
+        if self.username == "" or self.password == "": 
+            self.disabled = True
+        else:
+            self.disabled = False
+
+    @rx.event
+    def check_signedin(self):
+        if not self.cookie == "" and not self.user_cookie == "": # User have cookie
+            result = check_cookie(self.cookie, self.user_cookie)
+            if result:
+                self.logged_in = True
+                self.user = self.user_cookie
+                return rx.redirect("/home")
+
+    @rx.event
+    def route_protect(self):
+        if not self.cookie == "" and not self.user_cookie == "": # User have cookie
+            result = check_cookie(self.cookie, self.user_cookie)
+            if not result:
+                return rx.redirect("/")
+        else:
+            return rx.redirect("/")
+
+    @rx.event
+    def submit_signin(self):
+        
+        if not self.tries > 10:
+            result, token = login(self.username, self.password)
+            if result:
+                # LOG IN
+                self.logged_in = True
+                self.user = self.username
+                yield rx.toast.success(f"Welcome, {self.username}.", position="top-center")
+            
+                # SET TOKEN
+                self.cookie = token 
+                self.user_cookie = self.username
+                # RESET field
+                self.username, self.password = "", ""
+                return rx.redirect('/home')
+            else:
+                self.tries += 1
+                self.username, self.password = "", ""
+                return rx.toast.error("Incorrect username or password.", position="top-center")
+        else:
+            self.disabled = True
+
+            yield rx.toast.error("Login rate-limited, please try later.", position="top-center") 
+            return type(self).rate_limit
+
+    @rx.event
+    def submit_signup(self):
+        if not self.username == "" or not self.password == "" :
+            if check_exist(self.username) == False:
+                result = register(self.username, self.password)
+                if result: 
+                    return self.submit_signin()
+            else:
+                return rx.toast.error("Username used, try another one.", position="top-center")
+        else:
+            return rx.toast.error("Username/Password cannot be blank.", position="top-center")
+
+    @rx.event
+    def logout(self):
+        self.logged_in = False
+        self.user = ""
+        self.cookie = ""
+        self.user_cookie = ""
+        yield rx.toast.success("Logged out.", position="top-center")
+        return rx.redirect("/")

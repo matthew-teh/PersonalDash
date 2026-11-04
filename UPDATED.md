@@ -37,8 +37,12 @@ V2.6 - Last Update
 - Terra Theme Special Edition : Tic Tac Toe
 
 V3
-- HTTPS enhancement
-- Add card: Hackatime , Spotify ( user self api )
+- A complete login system with security-
+- Session persistance 
+- Rate limit of login works.
+
+V3.1
+- Migrating localstroage to sqlite3, enable multi device. 
 
 V3.1
 - Phone compatibility for website base.

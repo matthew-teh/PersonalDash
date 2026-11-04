@@ -106,8 +106,8 @@ def settings() -> rx.Component:
                 spacing="2",
                 width="100%"
                 ),
-                height= "50vh",
-                width = "50vw",
+                height= "496.5px",
+                width = "960px",
             ),
         ),
   
