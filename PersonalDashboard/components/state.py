@@ -3,12 +3,12 @@ import json
 import uuid
 import asyncio
 import time 
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, cast
 from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
 from ..api.tictactoe import check_win, computer_decide
-from ..api.auth import register, check_exist, login, check_cookie
+from ..api.auth import register, check_exist, login, check_cookie, get_cards, update_cards
 
 start = time.time()
 
@@ -22,31 +22,38 @@ class CardData(TypedDict):
     data3: list[int]
 
 class DashboardState(rx.State):
-    cards_json: str = rx.LocalStorage("[]", name="dashboard_cards", sync=True)
-    
-    cooldown: bool = False
-    is_updating = False
+    # DB
+    cards_json: str = "[]" 
     # ---- RX VAR HERE ----
     @rx.var
     def cards(self) -> list[CardData]:
         try:
+            # Parse from state, not from SQLite
             data = json.loads(self.cards_json)
             if not isinstance(data, list):
                 return []
-            valid_cards = []
-            for item in data:
-                if isinstance(item, dict) and "id" in item:
-                    valid_cards.append(item)
-            return valid_cards
+            return [cast(CardData, item) for item in data if isinstance(item, dict) and "id" in item]
         except (json.JSONDecodeError, TypeError):
             return []
-        
-    # ---- RX EVENT BACKGROUND HERE ----
-    @rx.event(background=True)
-    async def delay_reset(self):
-        await asyncio.sleep(2.5)
-        async with self:
-            self.cooldown = False
+
+    @rx.event
+    async def load_cards(self):
+        auth = await self.get_state(AuthState)
+        data = get_cards(auth.user)
+        if isinstance(data, list):
+            self.cards_json = json.dumps(data)
+        else:
+            self.cards_json = "[]"
+
+    @rx.event
+    async def dump_json(self, cards: list[CardData]):
+        self.cards_json = json.dumps(cards)
+        auth = await self.get_state(AuthState)
+        update_cards(auth.user, cards)
+
+    is_updating = False
+    # ---- RX EVENT BACKGROUND HERE ----\
+
 
     # ---- RX WORLD CLOCK SPECIFIC EVENT HERE ----
     edit_world_clock_name = ""
@@ -58,19 +65,18 @@ class DashboardState(rx.State):
                 async with self:
                     name = card["data"][0]["timezone"].replace(", ", "/").replace(" ", "_")
                     card["data"] = get_time(name)
-        async with self:
-            self.dump_json(self.cards)
+        await self.dump_json(self.cards)
         
     @rx.event
-    def set_name_world_clock(self, value, card_id):
+    async def set_name_world_clock(self, value, card_id):
         self.edit_world_clock_name = value
         for card in self.cards:
             if card["id"] == card_id:
                 card["data1"] = get_timezone(self.edit_world_clock_name).replace("_", " ")
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     @rx.event
-    def save_edit_world_clock(self, card_id):
+    async def save_edit_world_clock(self, card_id):
         for card in self.cards:
             if card["id"] == card_id:
                 card["name"] = card["data1"].split("/")[1]
@@ -78,22 +84,22 @@ class DashboardState(rx.State):
                 card["data1"] = ""
                 self.edit_world_clock_name = ""
                 
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     # ---- RX WEATHER SPECIFIC EVENT HERE ----
     edit_name_weather: str = ""
     @rx.event
-    def save_edit_weather(self, card_id):
+    async def save_edit_weather(self, card_id):
         for card in self.cards:
             if card_id == card["id"]:
                 card["name"] = card["data1"]
                 card["data1"] = ""
                 self.edit_name_weather = ""
-                self.dump_json(self.cards)
+                await self.dump_json(self.cards)
                 return type(self).update_weather(card_id)
             
     @rx.event
-    def update_weather(self, card_id):
+    async def update_weather(self, card_id):
         for card in self.cards:
             if card_id == card["id"]:
                 name, datas = weather.get_data(card["name"])
@@ -101,22 +107,22 @@ class DashboardState(rx.State):
                     return rx.toast("Cannot Update Data, invalid location", style={"background-color" :"#403D39"})
                 else:
                     card["data"] = datas
-                    self.dump_json(self.cards)
+                    await self.dump_json(self.cards)
         
     @rx.event
-    def set_name_weather(self, value: str, card_id):
+    async def set_name_weather(self, value: str, card_id):
         self.edit_name_weather = value
         for card in self.cards:
             if card["id"] == card_id:
                 card["data1"] = weather.get_name(value)
-                self.dump_json(self.cards)
+                await self.dump_json(self.cards)
                 
     # ---- RX CRYPTO SPECIFIC EVENT HERE ----
     edit_name_crypto: str = ""
     edit_window_crypto: str = ""
 
     @rx.event
-    def save_edit_crypto(self, card_id: str, value={}):
+    async def save_edit_crypto(self, card_id: str, value={}):
         for card in self.cards:
             if card["id"] == card_id and card["type"] == "crypto":
                 if not isinstance(value, dict) and not card["name"] == "NaN":
@@ -125,7 +131,7 @@ class DashboardState(rx.State):
                 elif self.edit_name_crypto:
                     card["name"] = self.edit_name_crypto
                     self.edit_name_crypto = ""
-                    self.dump_json(self.cards)
+                    await self.dump_json(self.cards)
                     return type(self).update_crypto(card_id, True)
                 else:
                     return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
@@ -138,12 +144,7 @@ class DashboardState(rx.State):
         self.edit_window_crypto = value
 
     @rx.event
-    def update_crypto(self, card_id: str, passthrough=False):
-        if passthrough:
-            self.cooldown = False 
-        if self.cooldown: return rx.toast("Cooling Down", style={"background-color" :"#403D39"})
-        self.cooldown = True
-        found = False
+    async def update_crypto(self, card_id: str, passthrough=False): # PASSTHROUGH deprecated
         for card in self.cards:
             if card["id"] == card_id:
                 found = True
@@ -152,16 +153,13 @@ class DashboardState(rx.State):
                         result = get_price(symbol=card["name"],window=card["data1"])
                         card["data"] = result 
                         card["data2"] = -round(((float(result[0]["price"]) - float(result[-1]["price"])) / float(result[0]["price"])) * 100, 2)
-                        self.dump_json(self.cards)
+                        await self.dump_json(self.cards)
                     except Exception as e: 
                         print(f"ERR : {e}")
                         return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
                 else:
                     return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
                 break
-        if not found:
-            self.cooldown = False
-        return DashboardState.delay_reset
     
     
     def price_diff(self, card: CardData) -> str:
@@ -184,7 +182,7 @@ class DashboardState(rx.State):
         self.long = value
 
     @rx.event
-    def save_edit_pomodoro(self, card_id):
+    async def save_edit_pomodoro(self, card_id):
         for card in self.cards:
             if card["id"] == card_id:
                 card["data"][0]["pomodoro"] = self.pomodoro
@@ -192,11 +190,11 @@ class DashboardState(rx.State):
                 card["data"][0]["long"] = self.long
 
                 self.pomodoro, self.short, self.long = "25", "5", "15"
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
         self.command_pomodoro(card_id, "reset")
 
     @rx.event
-    def command_pomodoro(self, card_id, command):
+    async def command_pomodoro(self, card_id, command):
         for card in self.cards:
             if card["id"] == card_id:
                 if command == "start":
@@ -221,10 +219,10 @@ class DashboardState(rx.State):
                     if len(str(seconds)) == 1:
                         seconds = f"0{seconds}"
                     card["data"][0]["timing"] = f"{minutes}:{seconds}" # Calculate differences.
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     @rx.event
-    def update_pomodoro(self):
+    async def update_pomodoro(self):
         for card in self.cards:
             if card["type"] == "pomodoro" and card["data"][0]["started"].lower() == "true": # If is running
                 sec = round(float(card["data"][0]["sec_left"])) - 1
@@ -260,7 +258,7 @@ class DashboardState(rx.State):
                     card["data"][0]["timing"] = f"{minutes}:{seconds}" # Calculate differences.
 
 
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     # ---- RX tic_tac_toe SPECIFIC EVENT HERE
     edit_diff_tic_tac_toe = ""
@@ -269,7 +267,7 @@ class DashboardState(rx.State):
         self.edit_diff_tic_tac_toe = value
 
     @rx.event
-    def setup_tic_tac_toe(self, card_id):
+    async def setup_tic_tac_toe(self, card_id):
         for card in self.cards:
             if card["id"] == card_id:
                 grids = []
@@ -280,21 +278,21 @@ class DashboardState(rx.State):
                             "data" : "0",
                         })
                 card["data"] = grids
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     @rx.event
-    def register_click(self, card_id, button_id):
+    async def register_click(self, card_id, button_id):
         for card in self.cards:
             if card["id"] == card_id and card["data2"] == 0: # 0 player 1 computer
                 for item in card["data"]:
                     if item["id"] == button_id and item["data"] != "X":
                         item["data"] = "O"
-                        self.dump_json(self.cards)
+                        await self.dump_json(self.cards)
                         yield
                         self.calculate(card_id)
                         break
     @rx.event
-    def calculate(self, card_id):
+    async def calculate(self, card_id):
         for card in self.cards:
             if card["id"] == card_id:
                 status = check_win(card["data"])
@@ -314,7 +312,7 @@ class DashboardState(rx.State):
                     self.setup_tic_tac_toe(card_id)
                 if status == "tie":
                     self.setup_tic_tac_toe(card_id)
-                self.dump_json(self.cards)
+                await self.dump_json(self.cards)
         
     # ---- RX SETTING SPECIFIC EVENT HERE ----
     edit_column = "4"
@@ -329,7 +327,7 @@ class DashboardState(rx.State):
 
     # ---- RX ALL EVENT HERE ----
     @rx.event 
-    def create_card(self, card):
+    async def create_card(self, card):
         card_id =  str(uuid.uuid4())
         if card == "crypto":
             self.cards.append({
@@ -341,7 +339,7 @@ class DashboardState(rx.State):
                 "data2": 0,
                 "data3": [],
             })
-            self.dump_json(self.cards)
+            await self.dump_json(self.cards)
             yield
             self.update_crypto(card_id, True)
 
@@ -356,7 +354,7 @@ class DashboardState(rx.State):
                 "data2": 0,
                 "data3": [],
             })
-            self.dump_json(self.cards)
+            await self.dump_json(self.cards)
             yield
             self.update_weather(card_id)
 
@@ -371,7 +369,7 @@ class DashboardState(rx.State):
                 "data2": 0,
                 "data3": [],
             })
-            self.dump_json(self.cards)
+            await self.dump_json(self.cards)
 
         if card == "pomodoro":
             self.cards.append({
@@ -384,7 +382,7 @@ class DashboardState(rx.State):
                 "data3" : [], 
             })
             self.command_pomodoro(card_id, "reset")
-            self.dump_json(self.cards)
+            await self.dump_json(self.cards)
 
         if card == "tic_tac_toe":
             self.cards.append({
@@ -397,16 +395,11 @@ class DashboardState(rx.State):
                 "data3": [0, 0],
             })
             self.setup_tic_tac_toe(card_id)
-            self.dump_json(self.cards)
+            await self.dump_json(self.cards)
             
 
     @rx.event
     def update_all(self):
-        print(self.cooldown)
-        if self.cooldown: return rx.toast("Reload All: Cooling Down", style={"background-color" :"#403D39"})
-        self.is_updating = True
-        self.cooldown = True
-        yield
         for card in self.cards:
             if card["type"] == "crypto":
                 self.update_crypto(card["id"], True)
@@ -414,23 +407,19 @@ class DashboardState(rx.State):
                 self.update_weather(card["id"])
         rx.toast("Done Refresh.", style={"background-color" :"#403D39"})
         self.is_updating= False 
-        return DashboardState.delay_reset()
 
     @rx.event
-    def delete_card(self, card_id):
+    async def delete_card(self, card_id):
         for card in self.cards:
             if card_id == card["id"]:
                 self.cards.remove(card)
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
     @rx.event
-    def delete_all(self):
+    async def delete_all(self):
         self.cards.clear()
-        self.dump_json(self.cards)
+        await self.dump_json(self.cards)
 
-    @rx.event
-    def dump_json(self, cards):
-        self.cards_json = json.dumps(cards)
 
 
 # ---- SERVER ONLY STATE ----

@@ -7,7 +7,7 @@ from .components.login import signin, signup
 from .components.state import DashboardState, ServerState, AuthState
 from typing import Any
 
-@rx.page("/home", title="FlexDash | Home", on_load=AuthState.route_protect)
+@rx.page("/home", title="FlexDash | Home", on_load=[DashboardState.load_cards, AuthState.route_protect])
 def home() -> rx.Component:
     return rx.theme(
         rx.vstack(

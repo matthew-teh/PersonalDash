@@ -6,6 +6,7 @@ def weather_card(card) -> rx.Component:
         rx.hstack(
             rx.image(
                 src=card["data"][0]["useimg"],
+                alt=card["data"][0]["useimg"],
                 height= "42px",
             ),
             rx.vstack(

@@ -18,7 +18,6 @@ def _safe_client_del(self):
 
 openmeteo_requests.Client.__del__ = _safe_client_del
 
-@lru_cache(maxsize=1)
 def _load_weather_mapping():
     weather_mapping = {}
     if CSV_PATH.exists():

@@ -42,7 +42,7 @@ V3
 - Rate limit of login works.
 
 V3.1
-- Migrating localstroage to sqlite3, enable multi device. 
+- Migrating localstroage to sqlite3, enable multi device ( desktop/laptop web only. )
 
 V3.1
 - Phone compatibility for website base.

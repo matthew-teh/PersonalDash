@@ -2,6 +2,7 @@ import sqlite3
 import hashlib
 import secrets
 import json
+import time
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 from contextlib import closing
@@ -97,3 +98,28 @@ def login(username, password):
     else:
         return False, ""
 
+def get_cards(username: str):
+    with closing(sqlite3.connect(DB)) as conn:
+        cur = conn.cursor()
+        try:
+            row = cur.execute("SELECT data FROM users WHERE user = ?", (username, )).fetchone()
+            if row[0] == "":
+                return ""
+            else:
+                return json.loads(row[0]) # Return a [{}]
+        except Exception as e:
+            print(e)
+            return ""
+
+def update_cards(username: str, cards: list):
+
+    with closing(sqlite3.connect(DB)) as conn:
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                "UPDATE users SET data = ? WHERE user = ?",
+                (json.dumps(cards), username)
+                )
+            conn.commit()
+        except Exception as e:
+            print(e)
