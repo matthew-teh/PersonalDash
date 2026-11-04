@@ -21,13 +21,11 @@ def home() -> rx.Component:
                 on_change=[DashboardState.update_world_clock, DashboardState.update_pomodoro],
                 display="None",
             ),
-
             rx.moment(
-                interval=10000,
+                interval=5000,
                 on_change=ServerState.updateSystem,
-                display="None",
+                display="None"
             ),
-
             radius=DashboardState.edit_radius,
             justify="between",
             min_height="100vh",

@@ -50,7 +50,7 @@ def crypto_card(card) -> rx.Component:
                         ),
                     ),
                     side="left",
-                    width="350px",
+                    width="335px",
                 ),
             ),
             rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=DashboardState.update_crypto(card["id"])),

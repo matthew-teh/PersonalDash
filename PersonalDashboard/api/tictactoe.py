@@ -27,7 +27,7 @@ def computer_decide(cards: list[dict]) -> dict:
     if not empty_spots:
         return {}
 
-    if random.random() < 0.3: # Minimax impossible chanigng to 70% impossible
+    if random.random() < 0.1: # Minimax impossible chanigng to 70% impossible
         idx = random.choice(empty_spots)
         return {"id": str(idx), "data": "X"}
 

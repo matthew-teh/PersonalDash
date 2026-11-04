@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: FlexDashRedis
+    restart: unless-stoppped
+    ports:
+      - "65499:6379"
+    volumes:
+      -redis_data:/data
+    command: redis-server --save 300 1
+
+  ntp:
+    image: cturra/ntp:latest
+    container_name: FlexDashNTP
+    restart: unless-stopped
+    ports:
+      - "65500:123/udp"
+    environment:
+      - NTP_SERVERS=time.cloudflare.com, time.google.com
+
+# TODO Personal Dashboard V3
+volumes:
+  redis_data:

@@ -5,6 +5,7 @@ from ..widgets.weather import weather_card
 from ..widgets.worldclock import world_clock_card
 from ..widgets.pomodoro import pomodoro_card
 from ..widgets.tictactoe import tic_tac_toe_card
+from ..widgets.quicknotes import quick_notes
 from ..components.state import DashboardState
 
 def render_single_card(card, index:int) -> rx.Component | rx.Var:
@@ -16,6 +17,7 @@ def render_single_card(card, index:int) -> rx.Component | rx.Var:
             ("world_clock", world_clock_card(card)),
             ("pomodoro", pomodoro_card(card)),
             ("tic_tac_toe", tic_tac_toe_card(card)),
+            ("quick_notes", quick_notes(card)),
             rx.box(),
         ),
         class_name="card-pop",
@@ -25,20 +27,23 @@ def render_single_card(card, index:int) -> rx.Component | rx.Var:
     )
 
 def render_all_widgets() -> rx.Component:
-    return rx.vstack(
-        rx.grid(
-            rx.foreach(
-                DashboardState.cards,
-                lambda card, index: render_single_card(card, index),
+    return rx.flex(
+        rx.scroll_area(
+            rx.grid(
+                rx.foreach(
+                    DashboardState.cards,
+                    lambda card, index: render_single_card(card, index),
+                ),
+                columns=DashboardState.edit_column,
+                width="100%",
+                spacing="1",
             ),
-            columns=DashboardState.edit_column,
+            height="86vh", 
             width="100%",
-            spacing="1",
+            type="hover", 
         ),
-        width="calc(100% - 4px - 4px)",
-        padding_top="4px",
-        padding_left = "4px",
-        padding_right = "4px",
-        margin_x="auto",
-        align="center",
+        width="100%",
+        padding_left="8px", 
+        padding_top ="4px",
+        padding_bottom="4px",
     )

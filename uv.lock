@@ -602,6 +602,7 @@ dependencies = [
     { name = "ntplib" },
     { name = "openmeteo-requests" },
     { name = "pandas" },
+    { name = "redis" },
     { name = "reflex" },
     { name = "requests" },
 ]
@@ -612,6 +613,7 @@ requires-dist = [
     { name = "ntplib", specifier = ">=0.4.0" },
     { name = "openmeteo-requests", specifier = ">=1.7.5" },
     { name = "pandas", specifier = ">=3.1.0" },
+    { name = "redis", specifier = ">=7.4.1" },
     { name = "reflex", specifier = ">=0.10.0" },
     { name = "requests", specifier = ">=2.34.2" },
 ]

@@ -44,6 +44,13 @@ V3
 V3.1
 - Migrating localstroage to sqlite3, enable multi device ( desktop/laptop web only. )
 
+V3.2 
+- Optimizing sqlite3 from disk read to redis server, ram only. Periodically save to disk.
+- Now cloud syncting
+- New card: Quick Notes, support syncing between devices.
+
+
+# Delayed
 V3.1
 - Phone compatibility for website base.
 - Phone compatibility for Crypto card.

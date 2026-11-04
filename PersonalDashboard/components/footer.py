@@ -21,11 +21,17 @@ def footer() -> rx.Component:
                     min_height="30px",
                 ),
                 rx.vstack(
-                    rx.text("Server uptime:", size="1"),
+                    rx.text("Server and database uptime", size="1"),
                     rx.text(f"{ServerState.uptime}", size="1"),
                     spacing="1",
+                    align="center",
+                    
                 ),
-                
+                rx.separator(
+                    orientation="vertical",
+                    height="100%",
+                    min_height="30px"
+                ),
                 height="100%",
                 width="100%",
             ),  
@@ -33,4 +39,5 @@ def footer() -> rx.Component:
             width="calc(100% - 8px - 8px)",
             padding="1em",
             margin_x="auto",
+            height="6vh"
         )

@@ -14,7 +14,7 @@ def signin() -> rx.Component:
                 rx.vstack(
                     rx.vstack(
                         rx.text("Username"),
-                        rx.input(placeholder="Honey", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username),
+                        rx.input(placeholder="Charlotte", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username),
                         width="100%",
                     ),
                     rx.vstack(
