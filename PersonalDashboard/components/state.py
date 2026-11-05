@@ -8,7 +8,8 @@ from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
 from ..api.tictactoe import check_win, computer_decide
-from ..api.auth import register, check_exist, login, check_cookie, get_cards, update_cards
+from ..api.auth import register, check_exist, login, check_cookie, delete_acc, logout
+from ..api.database import get_cards, update_cards, get_redis_uptime
 
 start = time.time()
 
@@ -459,8 +460,8 @@ class DashboardState(rx.State):
 class ServerState(rx.State):
     cpu = 0
     mem = 0
-    uptime = ""
-
+    server_uptime = ""
+    redis_uptime = ""
     
     @rx.event
     async def updateSystem(self):
@@ -469,9 +470,9 @@ class ServerState(rx.State):
         days = sec // 86400
         hours = (sec % 86400) // 3600
         minutes = ( sec % 3600) // 60
-        seconds = sec % 60
         async with self:
-            self.uptime =  f"{days}d {hours}h {minutes}m {seconds}s"
+            self.server_uptime =  f"{days}d {hours}h {minutes}m"
+            self.redis_uptime = get_redis_uptime()
 
 class AuthState(rx.State):
     logged_in : bool = False
@@ -503,7 +504,6 @@ class AuthState(rx.State):
 
     @rx.event
     def check_registrable(self):
-
         if self.username == "" or self.password == "": 
             self.disabled = True
         else:
@@ -528,7 +528,7 @@ class AuthState(rx.State):
             return rx.redirect("/")
 
     @rx.event
-    def submit_signin(self):
+    def signin(self):
         
         if not self.tries > 10:
             result, token = login(self.username, self.password)
@@ -555,22 +555,48 @@ class AuthState(rx.State):
             return type(self).rate_limit
 
     @rx.event
-    def submit_signup(self):
+    def signup(self):
         if not self.username == "" or not self.password == "" :
             if check_exist(self.username) == False:
                 result = register(self.username, self.password)
                 if result: 
-                    return self.submit_signin()
+                    return self.signin()
             else:
                 return rx.toast.error("Username used, try another one.", position="top-center")
         else:
             return rx.toast.error("Username/Password cannot be blank.", position="top-center")
 
     @rx.event
-    def logout(self):
-        self.logged_in = False
-        self.user = ""
-        self.cookie = ""
-        self.user_cookie = ""
-        yield rx.toast.success("Logged out.", position="top-center")
-        return rx.redirect("/")
+    def signout(self, needed=True):
+        status = logout(self.user, self.cookie)
+        print(status)
+        if status:
+            self.logged_in = False
+            self.user = ""
+            self.cookie = ""
+            self.user_cookie = ""
+            self.password = ""
+            self.username = ""
+            if needed: 
+                yield rx.toast.success("Logged out.", position="top-center")
+            else:
+                yield rx.toast.success("Account deleted, goodbye.", position="top-center")
+            return rx.redirect("/")
+        else:
+            yield rx.toast.error("404 Logout, contact admin", position="top-center")
+
+
+    @rx.event
+    def delete_account(self):
+        if not self.password == "" : 
+            if check_exist(self.user):
+                result = delete_acc(self.user, self.password)
+                print(result)
+                if result == "Success":
+                    yield type(self).signout(False)
+                elif result == "Incorrect password":
+                    yield rx.toast.warning("Wrong password.", position="top-center")
+                elif result == "404":
+                    yield rx.toast.error("404 Delete Account, contact admin", position="top-center")
+                else:
+                    yield rx.toast.error(f"Unknown error: {result}", position="top-center")

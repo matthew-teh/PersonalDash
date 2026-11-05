@@ -14,7 +14,7 @@ def signin() -> rx.Component:
                 rx.vstack(
                     rx.vstack(
                         rx.text("Username"),
-                        rx.input(placeholder="Charlotte", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username),
+                        rx.input(placeholder="FlavorFocus", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username),
                         width="100%",
                     ),
                     rx.vstack(
@@ -24,7 +24,7 @@ def signin() -> rx.Component:
                     ),
                     rx.button("Sign in", width="100%", size="3", type="submit", disabled=AuthState.disabled),
                 ),
-                on_submit=AuthState.submit_signin
+                on_submit=AuthState.signin
             ),
             
             rx.hstack(
@@ -56,7 +56,7 @@ def signup() -> rx.Component:
                             width="100%",
                             justify="between",
                         ),
-                        rx.input(placeholder="Mochi", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username, required=True),
+                        rx.input(placeholder="SavorySymphony", width="100%", size="3", value=AuthState.username, on_change=AuthState.set_username, required=True),
                         width="100%",
                     ),
                     rx.vstack(
@@ -69,7 +69,7 @@ def signup() -> rx.Component:
                     width="100%",
                     align="center"
                 ),
-                on_submit = AuthState.submit_signup,
+                on_submit = AuthState.signup,
             ), 
             rx.hstack(
                 rx.text("Already have a account?"),

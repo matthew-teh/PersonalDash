@@ -22,7 +22,7 @@ def home() -> rx.Component:
                 display="None",
             ),
             rx.moment(
-                interval=5000,
+                interval=60000,
                 on_change=ServerState.updateSystem,
                 display="None"
             ),

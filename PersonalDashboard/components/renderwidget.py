@@ -44,6 +44,7 @@ def render_all_widgets() -> rx.Component:
         ),
         width="100%",
         padding_left="8px", 
+        padding_right="8px", 
         padding_top ="4px",
         padding_bottom="4px",
     )

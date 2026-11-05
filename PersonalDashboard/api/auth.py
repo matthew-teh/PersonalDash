@@ -1,17 +1,12 @@
-import sqlite3
 import hashlib
 import secrets
 import json
-import time
 import redis
 from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
-from contextlib import closing
 from typing import cast
 
 ph = PasswordHasher()
-DB = "assets/databases/users.sqlite3"
-
+# hash, pass, user, cards
 
 r = redis.Redis(host='localhost', port=65499, decode_responses=True)
 
@@ -29,7 +24,6 @@ def check_cookie(token: str, username: str):
         return token_hash in hashes
     except:
         return False
-
 
 def register(username, password):
     if not check_exist(username):
@@ -59,27 +53,36 @@ def login(username: str, password: str):
         except:
             return False, ""
     return False, ""
+
+
+def logout(username: str, cookie: str):
+    if check_exist(username):
+        user_data = cast(dict, r.hgetall(f"user:{username}"))
+        try:
+            token_hash = hashlib.sha256(cookie.encode()).hexdigest()
+            hashes = json.loads(user_data.get("hash", "[]"))
+            processed = [h for h in hashes if h != token_hash]
+
+            r.hset(f"user:{username}", "hash", json.dumps(processed))
+            return True
+        except:
+            return True
             
-def get_cards(username: str):
-    if not username:
-        return []
+    return True
 
-    data = cast(str | None, r.get(f"cards:{username}"))
+def delete_acc(username: str, password: str):
+    if check_exist(username):
+        user_data = cast(dict, r.hgetall(f"user:{username}"))
+        try:
+            ph.verify(user_data["pass"], password)
 
-    if not data:
-        return []
-
-    try:
-        return json.loads(data)
-    except Exception as e:
-        return []
-
-
-
-def update_cards(username: str, cards: list):
-    if not username: return 
-
-    try:
-        r.set(f"cards:{username}", json.dumps(cards))
-    except Exception as e:
-        print(f"ERR update cards {e}")
+            r.delete(f"user:{username}")
+            r.delete(f"pass:{username}")
+            r.delete(f"cards:{username}")
+            r.delete(f"hash:{username}")
+            return "Success"
+        except:
+            return "Incorrect password"
+    else:
+        return "404"
+    
