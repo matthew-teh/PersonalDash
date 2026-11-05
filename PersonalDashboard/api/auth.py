@@ -28,15 +28,18 @@ def check_cookie(token: str, username: str):
 def register(username, password):
     if not check_exist(username):
         hashed =  ph.hash(password)
-
+        # AUTH 
+        token = secrets.token_urlsafe(16) # PARSE user with raw token 
+        token_hash = hashlib.sha256(token.encode()).hexdigest() # ENCRYPT
         r.hset(f"user:{username}", mapping={
             "pass" : hashed,
-            "hash" : "[]"
+            "hash" : "[]",
+            "recovery" : token_hash
         })
-
+        # DATABASE
         r.set(f"cards:{username}", "[]")
-        return True
-    return False
+        return True, token
+    return False, ""
 
 def login(username: str, password: str):
     if check_exist(username):
@@ -77,12 +80,27 @@ def delete_acc(username: str, password: str):
             ph.verify(user_data["pass"], password)
 
             r.delete(f"user:{username}")
-            r.delete(f"pass:{username}")
             r.delete(f"cards:{username}")
-            r.delete(f"hash:{username}")
             return "Success"
         except:
             return "Incorrect password"
     else:
         return "404"
-    
+
+def forgot_password(username: str, recoverycode: str, newpassword: str):
+    if check_exist(username):
+        user_data = cast(dict, r.hgetall(f"user:{username}"))
+        hashed = hashlib.sha256(recoverycode.encode()).hexdigest()
+        stored_hash = user_data.get("recovery", "")
+        if secrets.compare_digest(stored_hash, hashed):
+            hashed_pass = ph.hash(newpassword)
+            r.hset(f"user:{username}", "pass", hashed_pass)
+            token = secrets.token_urlsafe(16) # PARSE user with raw token 
+            token_hash = hashlib.sha256(token.encode()).hexdigest() # ENCRYPT
+            r.hset(f"user:{username}", "recovery", token_hash) # GIVE USER A NEW TOKEN for next time
+
+            return True, token
+        else:
+            return False, ""
+    else:
+        return False, "NOUSERNAME"

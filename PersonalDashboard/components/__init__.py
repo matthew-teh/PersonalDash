@@ -1,1 +1,0 @@
-from . import footer, header, renderwidget, state, sidebar, settings

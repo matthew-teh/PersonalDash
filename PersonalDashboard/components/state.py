@@ -8,7 +8,7 @@ from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
 from ..api.tictactoe import check_win, computer_decide
-from ..api.auth import register, check_exist, login, check_cookie, delete_acc, logout
+from ..api.auth import register, check_exist, login, check_cookie, delete_acc, logout, forgot_password
 from ..api.database import get_cards, update_cards, get_redis_uptime
 
 start = time.time()
@@ -172,8 +172,7 @@ class DashboardState(rx.State):
                         card["data"] = result 
                         card["data2"] = -round(((float(result[0]["price"]) - float(result[-1]["price"])) / float(result[0]["price"])) * 100, 2)
                         await self.dump_json(self.cards)
-                    except Exception as e: 
-                        print(f"ERR : {e}")
+                    except:
                         return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
                 else:
                     return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
@@ -476,15 +475,20 @@ class ServerState(rx.State):
 
 class AuthState(rx.State):
     logged_in : bool = False
-    user = ""
+    user: str = ""
     cookie: str = rx.Cookie("")
     user_cookie: str = rx.Cookie("")
 
-    tries = 0
-    username = ""
-    password = ""
-    disabled : bool = True
     
+    tries: int = 0
+    username: str = ""
+    password: str = ""
+    password2: str = ""
+    disabled: bool = True
+    recovery_token: str = ""
+
+
+    # SIGNIN / SIGNUP 
     @rx.event(background=True)
     async def rate_limit(self):
         await asyncio.sleep(5)
@@ -503,11 +507,23 @@ class AuthState(rx.State):
         return type(self).check_registrable
 
     @rx.event
+    def set_password2(self, value):
+        self.password2 = value
+        return type(self).check_registrable
+
+    @rx.event
     def check_registrable(self):
         if self.username == "" or self.password == "": 
             self.disabled = True
         else:
             self.disabled = False
+
+    @rx.event
+    def reset_field(self):
+        self.password = ""
+        self.password2 = ""
+        self.username = ""
+        self.disabled = True
 
     @rx.event
     def check_signedin(self):
@@ -519,34 +535,20 @@ class AuthState(rx.State):
                 return rx.redirect("/home")
 
     @rx.event
-    def route_protect(self):
-        if not self.cookie == "" and not self.user_cookie == "": # User have cookie
-            result = check_cookie(self.cookie, self.user_cookie)
-            if not result:
-                return rx.redirect("/")
-        else:
-            return rx.redirect("/")
-
-    @rx.event
     def signin(self):
-        
         if not self.tries > 10:
             result, token = login(self.username, self.password)
             if result:
-                # LOG IN
                 self.logged_in = True
                 self.user = self.username
                 yield rx.toast.success(f"Welcome, {self.username}.", position="top-center")
-            
-                # SET TOKEN
                 self.cookie = token 
                 self.user_cookie = self.username
-                # RESET field
-                self.username, self.password = "", ""
+                self.reset_field()
                 return rx.redirect('/home')
             else:
                 self.tries += 1
-                self.username, self.password = "", ""
+                self.reset_field()
                 return rx.toast.error("Incorrect username or password.", position="top-center")
         else:
             self.disabled = True
@@ -558,25 +560,52 @@ class AuthState(rx.State):
     def signup(self):
         if not self.username == "" or not self.password == "" :
             if check_exist(self.username) == False:
-                result = register(self.username, self.password)
-                if result: 
-                    return self.signin()
+                if self.password == self.password2:
+                    result, token = register(self.username, self.password)
+                    if result: 
+                        self.recovery_token = token
+                        return rx.redirect("/security")
+                    else:
+                        yield rx.toast.error("Register failed, contact admin", position="top-center")
+                else:
+                    yield rx.toast.error("Password isn't same to confirm password.", position="top-center")
             else:
                 return rx.toast.error("Username used, try another one.", position="top-center")
         else:
             return rx.toast.error("Username/Password cannot be blank.", position="top-center")
 
+    # SECURITY 
+    @rx.event
+    def route_protect(self):
+        if not self.cookie == "" and not self.user_cookie == "": # User have cookie
+            result = check_cookie(self.cookie, self.user_cookie)
+            if not result:
+                return rx.redirect("/")
+        else:
+            return rx.redirect("/")
+
+    @rx.event
+    def route_protect_recovery(self):
+        if self.recovery_token == "":
+            return rx.redirect("/")
+
+
+    # REDIRECT
+    @rx.event
+    def token_done(self):
+        self.recovery_token = ""
+        return self.signin()
+    
+    # DANGEROUS AREA
     @rx.event
     def signout(self, needed=True):
         status = logout(self.user, self.cookie)
-        print(status)
         if status:
             self.logged_in = False
             self.user = ""
             self.cookie = ""
             self.user_cookie = ""
-            self.password = ""
-            self.username = ""
+            self.reset_field()
             if needed: 
                 yield rx.toast.success("Logged out.", position="top-center")
             else:
@@ -591,7 +620,6 @@ class AuthState(rx.State):
         if not self.password == "" : 
             if check_exist(self.user):
                 result = delete_acc(self.user, self.password)
-                print(result)
                 if result == "Success":
                     yield type(self).signout(False)
                 elif result == "Incorrect password":
@@ -600,3 +628,19 @@ class AuthState(rx.State):
                     yield rx.toast.error("404 Delete Account, contact admin", position="top-center")
                 else:
                     yield rx.toast.error(f"Unknown error: {result}", position="top-center")
+
+    @rx.event
+    def forgot_password(self):
+        if not self.password2 == "":
+            result, token = forgot_password(self.username, self.password, self.password2)
+            if result:
+                self.recovery_token = token
+                yield rx.toast.success("Password edited.", position="top-center")
+                self.password = self.password2 
+                return rx.redirect("/security")
+            elif not result and token == "NOUSERNAME":
+                yield rx.toast.error("Username not found.", position="top-center")
+            else:
+                yield rx.toast.error("Wrong recovery code.", position="top-center")
+        else:
+            yield rx.toast.error(f"New password cannot be blank.", position="top-center")
