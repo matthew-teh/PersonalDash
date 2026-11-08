@@ -1,6 +1,6 @@
 ## How to run locally (Linux only)
 
-**Personal Dashboard V3 LATEST, docker compose** 
+**FlexDash V3 LATEST, docker compose** 
 1. Install docker. If you haven't, visit [Docker Desktop Installation](https://docs.docker.com/desktop/)
 2. Download docker-compose.yml at release page
 3. Create a folder and move docker-compose.yml into it
