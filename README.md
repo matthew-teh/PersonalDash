@@ -1,6 +1,6 @@
-# PersonalDashboard
+# FlexDash
 
-A website built with **Python Reflex**, includes daily needed widget.
+A website built with **Python Reflex**, includes daily needed widget. ( Formerly Personal Dashboard ) 
 
 ## Features 
 - **Crypto** - Shows real market data in form of graph using Binance API
@@ -12,7 +12,7 @@ A website built with **Python Reflex**, includes daily needed widget.
 - **Terra countdown** - Shows how much hours you have left to code and ship.
 
 ## Versions
-- Personal Dashboard V3  , Latest Relased : [Website Link](https://flexdasboard.xyz)
+- FlexDash V3  , Latest Relased : [Website Link](https://flexdasboard.xyz)
 - Personal Dashboard V2  , Released: [Website Link](http://relaymatthew.duckdns.org:65503)
 - Personal Dashboard V1  , Released: [Website Link](http://relaymatthew.duckdns.org:65502)
 - Personal Dashboard Beta, Released: [Website Link](http://relaymatthew.duckdns.org:65501)
