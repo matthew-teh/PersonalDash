@@ -1,9 +1,13 @@
 ## How to run locally (Linux only)
-- Supported python versions : 3.11, 3.12, 3.13, 3.14 . Recommended 3.14
-- Make sure you have **python** and **git** installed  
-- Run command below  
 
-**Personal Dashboard V2 Docker(Install docker first.)** [Click when you done command below](http://localhost:65003)
+**Personal Dashboard V3 LATEST, docker compose** 
+1. Install docker. If you haven't, visit [Docker Desktop Installation](https://docs.docker.com/desktop/)
+2. Download docker-compose.yml at release page
+3. Create a folder and move docker-compose.yml into it
+4. Run `docker compose up` and visit [Website](localhost:3000)  
+Note: Running this will not have HTTPS.
+
+**Personal Dashboard V2 Docker (Install docker first.)** [Click when you done command below](http://localhost:65003)
 ```bash
 docker network create reflex-net
 docker run -d --network reflex-net -p 65500:123/udp --name ntp-server cturra/ntp:latest
@@ -11,6 +15,10 @@ docker run -d --network reflex-net -p 65503:65503 --name Reflex-PDash-V2 nuggett
 ```
   
 **Personal Dashboard V1:**
+- Supported python versions : 3.11, 3.12, 3.13, 3.14 . Recommended 3.14
+- Make sure you have **python** and **git** installed  
+- Run command below  
+
   ```bash
   git clone https://github.com/matthew-teh/PersonalDash.git
   cd PersonalDash
@@ -29,6 +37,10 @@ Personal Dashboard V1 Only:
 7. Delete original folder of `weather-icons` and `Cryptocurrency_Logos`
 
 **Personal Dashboard Beta:**
+- Supported python versions : 3.11, 3.12, 3.13, 3.14 . Recommended 3.14
+- Make sure you have **python** and **git** installed  
+- Run command below  
+
   ```bash 
   git clone https://github.com/matthew-teh/PersonalDash.git
   cd PersonalDash
