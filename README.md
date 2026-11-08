@@ -13,9 +13,9 @@ A website built with **Python Reflex**, includes daily needed widget. ( Formerly
 
 ## Versions
 - FlexDash V3  , Latest Relased : [Website Link](https://flexdasboard.xyz)
-- Personal Dashboard V2  , Released: [Website Link](http://relaymatthew.duckdns.org:65503)
-- Personal Dashboard V1  , Released: [Website Link](http://relaymatthew.duckdns.org:65502)
-- Personal Dashboard Beta, Released: [Website Link](http://relaymatthew.duckdns.org:65501)
+- Personal Dashboard V2  , Released
+- Personal Dashboard V1  , Released
+- Personal Dashboard Beta, Released
 
 ## How to run locally (Linux only)
 - SEE [Running.md](RUNNING.md)
