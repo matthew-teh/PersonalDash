@@ -147,10 +147,10 @@ def forgot_password() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("New Password"),
-                        rx.input(placeholder="p2wlvdOI4qAs3_QGeGSinw", width="100%", size="3", type="password", value=AuthState.password2, on_change=AuthState.set_password2),
+                        rx.input(placeholder="P2wlvdOI4qAF3_QGeGSinw", width="100%", size="3", type="password", value=AuthState.password2, on_change=AuthState.set_password2),
                         width='100%',   
                     ),
-                    rx.button("Sign in", width="100%", size="3", type="submit", disabled=AuthState.disabled),
+                    rx.button("Reset password", width="100%", size="3", type="submit", disabled=AuthState.disabled),
                     spacing="5",
                     width="100%",
                     align="center"

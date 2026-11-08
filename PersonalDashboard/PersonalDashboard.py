@@ -17,7 +17,7 @@ def home() -> rx.Component:
 
             rx.moment(
                 interval=1000,
-                on_change=[DashboardState.update_world_clock, DashboardState.update_pomodoro],
+                on_change=[DashboardState.update_world_clock, DashboardState.update_pomodoro, DashboardState.update_countdown],
                 display="None",
             ),
             rx.moment(
@@ -25,6 +25,8 @@ def home() -> rx.Component:
                 on_change=ServerState.updateSystem,
                 display="None"
             ),
+
+
             radius=DashboardState.edit_radius,
             justify="between",
             min_height="100vh",
@@ -36,13 +38,17 @@ def home() -> rx.Component:
         radius=DashboardState.edit_radius,
     )
 
-@rx.page("/", title="FlexDash | Sign In", on_load=[ServerState.updateSystem, AuthState.check_signedin, AuthState.reset_field])
+@rx.page("/", title="FlexDash | Sign In", on_load=[ServerState.updateSystem, 
+                                                   AuthState.check_signedin, 
+                                                   AuthState.reset_field, 
+                                                   rx.call_script("navigator.userAgent", callback=AuthState.receiveUA)])
 def landing() -> rx.Component:
     return rx.theme(
         rx.vstack(
             header(landing=True),
             rx.flex(signin(), height="100%", width="100%", justify="center", align_items="center"),
             footer(),
+            
             radius=DashboardState.edit_radius,
             justify="between",
             min_height="100vh",
@@ -50,8 +56,7 @@ def landing() -> rx.Component:
             spacing="0",
             overflow_x = "hidden",
             overflow_y = "auto",
-        ),
-
+        ),  
         radius=DashboardState.edit_radius,
     )
 
@@ -110,6 +115,9 @@ def reset_password() -> rx.Component:
         radius=DashboardState.edit_radius,
     )
 
+
 app = rx.App(
     stylesheets=["/styles.css"], # type:ignore
 )
+
+

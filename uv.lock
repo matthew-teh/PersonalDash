@@ -595,16 +595,18 @@ wheels = [
 
 [[package]]
 name = "personaldashboard"
-version = "0.1.0"
+version = "3.5"
 source = { editable = "." }
 dependencies = [
     { name = "argon2-cffi" },
     { name = "ntplib" },
     { name = "openmeteo-requests" },
     { name = "pandas" },
+    { name = "pytz" },
     { name = "redis" },
     { name = "reflex" },
     { name = "requests" },
+    { name = "user-agents" },
 ]
 
 [package.metadata]
@@ -613,9 +615,11 @@ requires-dist = [
     { name = "ntplib", specifier = ">=0.4.0" },
     { name = "openmeteo-requests", specifier = ">=1.7.5" },
     { name = "pandas", specifier = ">=3.1.0" },
+    { name = "pytz", specifier = ">=2026.6" },
     { name = "redis", specifier = ">=7.4.1" },
     { name = "reflex", specifier = ">=0.10.0" },
     { name = "requests", specifier = ">=2.34.2" },
+    { name = "user-agents", specifier = ">=2.2.0" },
 ]
 
 [[package]]
@@ -702,6 +706,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b9/04/8647675c93b5e74a3daa41a2a03930bac0cbdcfcf307900f0441ae6550ba/python_socketio-5.17.0.tar.gz", hash = "sha256:c3bbfc4937dcfea7c4d1b182afa94d4a30335d153987e8f2078b344beacf95a0", size = 134574, upload-time = "2026-09-14T22:51:02.968Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ee/be/44b558c944bc16618483967ecd3424c578705aa33ceee7df8c1e4ab43ea0/python_socketio-5.17.0-py3-none-any.whl", hash = "sha256:b5826fd2f8aa02e11347816349b74ac6b53e8a4f4e4b1cf1388e1aff19b7f3f4", size = 82548, upload-time = "2026-09-14T22:51:01.405Z" },
+]
+
+[[package]]
+name = "pytz"
+version = "2026.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/b0/168030b0bfcc334cf09fa3313afdb888d892c8a0027324683d1de0ec277e/pytz-2026.6.tar.gz", hash = "sha256:3b0fc2727707663d6e517936f444fd8a8b240f1fc32f4bf7ee03274245945284", size = 318520, upload-time = "2026-10-29T09:05:47.011Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/25/564f3fc5b70c1398d706c51f2b1470d0ea0b1b2f96fee67877b6f5bdf3b6/pytz-2026.6-py2.py3-none-any.whl", hash = "sha256:7fed3fee8fd6bd4a2b7b75a8d56021d0624127bf69bd5691f115db929ac570b3", size = 506321, upload-time = "2026-10-29T09:05:45.14Z" },
 ]
 
 [[package]]
@@ -1097,6 +1110,26 @@ wheels = [
 ]
 
 [[package]]
+name = "ua-parser"
+version = "1.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ua-parser-builtins" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/90/98/5e4b52d772a048af122a6fc5ce365c311efb9f5e79c55fd4fdd7c9f59e83/ua_parser-1.0.2.tar.gz", hash = "sha256:bab404ad42fb37f943107da2f6003ffc79724d11cc95076a7a539513371779da", size = 33239, upload-time = "2026-04-05T20:14:28.229Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a9/7c/6367995ff57aaa2d9e1055adbaec2519cf5a979780a83a93fdf8c6ec37be/ua_parser-1.0.2-py3-none-any.whl", hash = "sha256:0f8e6d0484af2a9ff804bba5a4fe696e87c028eaba98ad9a7dfae873fef7788a", size = 31219, upload-time = "2026-04-05T20:14:26.913Z" },
+]
+
+[[package]]
+name = "ua-parser-builtins"
+version = "202610"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/e4/16e330a5cc8b2fa66d01f1a71c21750693a60fe9fc02751c0d1f43a0269c/ua_parser_builtins-202610-py3-none-any.whl", hash = "sha256:ed4b7c4c665323a5f4b2f118af86369412a9bb92e349a120f58f210127e30586", size = 90695, upload-time = "2026-10-02T00:02:46.242Z" },
+]
+
+[[package]]
 name = "urllib3"
 version = "2.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1117,6 +1150,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/7b/69/e2eeaf260c29b21ecc48b5c8ba6ade1e2e79be6499a8367627d1ce4d4bb5/urllib3_future-2.25.904.tar.gz", hash = "sha256:2ea5bcd64433e6d05ff1684a3cef51e94f33506f08e8fed344108d2abd0f416b", size = 1703564, upload-time = "2026-10-27T04:41:22.716Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/02/89/f3c2b4db103a3a794da560355ec4bceb631128523d719b883a595df92d39/urllib3_future-2.25.904-py3-none-any.whl", hash = "sha256:530e6588ccaed48385098e98e35c4cf61439e18dc635995a9d1ab0c781d380d9", size = 890163, upload-time = "2026-10-27T04:41:20.659Z" },
+]
+
+[[package]]
+name = "user-agents"
+version = "2.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ua-parser" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e3/e1/63c5bfb485a945010c8cbc7a52f85573561737648d36b30394248730a7bc/user-agents-2.2.0.tar.gz", hash = "sha256:d36d25178db65308d1458c5fa4ab39c9b2619377010130329f3955e7626ead26", size = 9525, upload-time = "2020-08-23T06:01:56.382Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/1c/20bb3d7b2bad56d881e3704131ddedbb16eb787101306887dff349064662/user_agents-2.2.0-py3-none-any.whl", hash = "sha256:a98c4dc72ecbc64812c4534108806fb0a0b3a11ec3fd1eafe807cee5b0a942e7", size = 9614, upload-time = "2020-08-23T06:01:54.047Z" },
 ]
 
 [[package]]

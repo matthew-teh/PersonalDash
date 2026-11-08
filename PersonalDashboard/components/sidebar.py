@@ -12,18 +12,6 @@ def sidebar() -> rx.Component:
                         rx.vstack(
                             rx.card(
                                 rx.vstack(
-                                    rx.text("Tic Tac Toe - Terra Special"),
-                                    rx.image(
-                                        src=rx.color_mode_cond(light="sidebarimages/light_tic_tac_toe.png", dark="sidebarimages/dark_tic_tac_toe.png"),
-                                        alt="tictactoeimage",
-                                        border_radius="5px"),
-                                    spacing="1",
-                                    align="center",
-                                ),
-                                on_click=DashboardState.create_card("tic_tac_toe"), 
-                            ),
-                            rx.card(
-                                rx.vstack(
                                     rx.text("Crypto Card"),
                                     rx.image(src=rx.color_mode_cond(light="sidebarimages/light_crypto.png", dark="sidebarimages/dark_crypto.png"),
                                             alt="cryptoimage",
@@ -70,6 +58,18 @@ def sidebar() -> rx.Component:
                             ),
                             rx.card(
                                 rx.vstack(
+                                    rx.text("Tic Tac Toe - Terra Special"),
+                                    rx.image(
+                                        src=rx.color_mode_cond(light="sidebarimages/light_tic_tac_toe.png", dark="sidebarimages/dark_tic_tac_toe.png"),
+                                        alt="tictactoeimage",
+                                        border_radius="5px"),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                on_click=DashboardState.create_card("tic_tac_toe"), 
+                            ),
+                            rx.card(
+                                rx.vstack(
                                     rx.text("Quick Notes"),
                                     rx.image(
                                         src=rx.color_mode_cond(light="sidebarimages/light_quick_notes.png", dark="sidebarimages/dark_quick_notes.png"),
@@ -79,6 +79,18 @@ def sidebar() -> rx.Component:
                                     align="center",
                                 ),
                                 on_click=DashboardState.create_card("quick_notes"), 
+                            ),
+                            rx.card(
+                                rx.vstack(
+                                    rx.text("Countdown"),
+                                    rx.image(
+                                        src=rx.color_mode_cond(light="sidebarimages/light_countdown.png", dark="sidebarimages/dark_countdown.png"),
+                                        alt="pomodoroimage",
+                                        border_radius="5px"),
+                                    spacing="1",        
+                                    align="center",
+                                ),
+                                on_click=DashboardState.create_card("countdown"), 
                             ),
                             width="100%",
                             height="100%",       

@@ -5,8 +5,8 @@ def quick_notes(card) -> rx.Component:
     return rx.card(
         rx.hstack(
             rx.color_mode_cond(
-                light = rx.image(src="quicknotesimages/quick_notes_light.svg", height="42px", width="42px"),
-                dark  = rx.image(src="quicknotesimages/quick_notes_dark.svg", height="42px", width="42px")
+                light = rx.image(src="lucideicons/quick_notes_light.svg", height="42px", width="42px"),
+                dark  = rx.image(src="lucideicons/quick_notes_dark.svg", height="42px", width="42px")
             ),
             rx.vstack(
                 rx.heading(card["name"], size="3"),

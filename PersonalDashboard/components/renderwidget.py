@@ -6,6 +6,7 @@ from ..widgets.worldclock import world_clock_card
 from ..widgets.pomodoro import pomodoro_card
 from ..widgets.tictactoe import tic_tac_toe_card
 from ..widgets.quicknotes import quick_notes
+from ..widgets.countdown import countdown_card
 from ..components.state import DashboardState
 
 def render_single_card(card, index:int) -> rx.Component | rx.Var:
@@ -18,6 +19,7 @@ def render_single_card(card, index:int) -> rx.Component | rx.Var:
             ("pomodoro", pomodoro_card(card)),
             ("tic_tac_toe", tic_tac_toe_card(card)),
             ("quick_notes", quick_notes(card)),
+            ("countdown", countdown_card(card)),
             rx.box(),
         ),
         class_name="card-pop",

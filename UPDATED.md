@@ -49,22 +49,27 @@ V3.2 - Logged
 - Now cloud syncting
 - New card: Quick Notes, support syncing between devices.
 
-V3.3 Update
+V3.3 Update - Logged
 
 I added a delete account button
 Confirmation on sign out
 Separate auth.py to prevent two work in one file. Now database.py and auth.py
 
-V3.4 Update
+V3.4 Update - Logged
 - I optimized code structure
 - I added forget password in signin page, you can reset password incase you forget.
 - Recovery code added to help reseting password.
 
-# Delayed
-V3.1
-- Phone compatibility for website base.
-- Phone compatibility for Crypto card.
+V3.5 Update - Shipped
+- Optimized image icons file placement
+- Added new card: Terra Countdown, it can remind you how much time left to next week.
+- Moved tutorial how to run to RUNNING.md
+- Added 'device logged in' in user info button.
 
-V3.2
-- Phone compatibility for world clock and weather card.
+V4 - Planned
+- Optimize state.py ( it is too much code with many garbage, trying to use variables as useful as possible. )
+
+
+# Delayed
+- Phone compatibility
 

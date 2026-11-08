@@ -5,8 +5,9 @@ config = rx.Config(
     plugins=[
         rx.plugins.RadixThemesPlugin(
             theme=rx.theme(
+                appearance="dark",   
                 accent_color="violet", 
-                grayColor="olive",
+                grayColor="sand",
                 panelBackground="solid",
                 radius="none",
             )

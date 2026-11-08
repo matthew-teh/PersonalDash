@@ -8,8 +8,10 @@ from ..api.crypto import get_price
 from ..api.worldclock import get_time, get_timezone
 from ..api import weather
 from ..api.tictactoe import check_win, computer_decide
-from ..api.auth import register, check_exist, login, check_cookie, delete_acc, logout, forgot_password
+from ..api.auth import register, check_exist, login, check_cookie, delete_acc, logout, forgot_password, get_UAS
 from ..api.database import get_cards, update_cards, get_redis_uptime
+from ..api.countdown import get_countdown
+from user_agents import parse
 
 start = time.time()
 
@@ -23,6 +25,19 @@ class CardData(TypedDict):
     data3: list[int]
 
 class DashboardState(rx.State):
+    # VARIABLES ( Ungrouped to easier read names.)
+    is_updating = False
+    edit_name_crypto: str = ""
+    edit_window_crypto: str = ""
+    edit_world_clock_name = ""
+    edit_diff_tic_tac_toe = ""
+    editing_card_id: str = "" # SET EDITING.  # QUICKNOTES
+    editing_text: str = "" # QUICKNOTES
+    edit_name_countdown: str = ""
+    default_timezone: str = "UTC"
+    edit_column = "4" # SETTINGS 
+    edit_radius: Literal["none", "small", "medium", "large", "full"] = "medium" # SETTINGS
+
     # DB
     cards_json: str = "[]" 
     # ---- RX VAR HERE ----
@@ -52,59 +67,58 @@ class DashboardState(rx.State):
         auth = await self.get_state(AuthState)
         update_cards(auth.user, cards)
 
-    is_updating = False
+    
     # ---- RX EVENT BACKGROUND HERE ----
-
-    # ---- RX QUICK NOTES SPECIFIC EVENT HERE ----
-    editing_card_id: str = "" # SET EDITING. Not live syncing idk
-    editing_text: str = ""
-
+    # NONE HERE YET.
+                    
+    # ---- RX CRYPTO SPECIFIC EVENT HERE ----
     @rx.event
-    def start_editing(self, card_id, text):
-        self.editing_card_id = card_id
-        self.editing_text = text
-
-    @rx.event
-    async def live_update(self, text: str):
-        self.editing_text = text
-
+    async def save_edit_crypto(self, card_id: str, value={}):
         for card in self.cards:
-            if card["id"] == self.editing_card_id:
-                card["data"][0]["text"] = self.editing_text
-        await self.dump_json(self.cards)
-
-    # ---- RX WORLD CLOCK SPECIFIC EVENT HERE ----
-    edit_world_clock_name = ""
+            if card["id"] == card_id and card["type"] == "crypto":
+                if not isinstance(value, dict) and not card["name"] == "NaN":
+                    card["data1"] = value
+                    return type(self).update_crypto(card_id)
+                elif self.edit_name_crypto:
+                    card["name"] = self.edit_name_crypto
+                    self.edit_name_crypto = ""
+                    await self.dump_json(self.cards)
+                    return type(self).update_crypto(card_id)
+                else:
+                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
 
     @rx.event
-    async def update_world_clock(self):
-        for card in self.cards:
-            if card["type"] == "world_clock":
-                async with self:
-                    name = card["data"][0]["timezone"].replace(", ", "/").replace(" ", "_")
-                    card["data"] = get_time(name)
-        await self.dump_json(self.cards)
-        
+    def set_name_crypto(self, value: str):
+        self.edit_name_crypto = value
     @rx.event
-    async def set_name_world_clock(self, value, card_id):
-        self.edit_world_clock_name = value
+    def set_window_crypto(self, value: str):
+        self.edit_window_crypto = value
+
+    @rx.event
+    async def update_crypto(self, card_id: str): 
         for card in self.cards:
             if card["id"] == card_id:
-                card["data1"] = get_timezone(self.edit_world_clock_name).replace("_", " ")
-        await self.dump_json(self.cards)
+                found = True
+                if card["name"] != "NaN":
+                    try:
+                        result = get_price(symbol=card["name"],window=card["data1"])
+                        card["data"] = result 
+                        card["data2"] = -round(((float(result[0]["price"]) - float(result[-1]["price"])) / float(result[0]["price"])) * 100, 2)
+                        await self.dump_json(self.cards)
+                    except:
+                        return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
+                else:
+                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
+                break
+    
+    
+    def price_diff(self, card: CardData) -> str:
+        first = float(card["data"][0]["price"])
+        last = float(card["data"][-1]["price"])
+        change = -round(((first - last) / first) * 100, 2)
+        return str(change)
 
-    @rx.event
-    async def save_edit_world_clock(self, card_id):
-        for card in self.cards:
-            if card["id"] == card_id:
-                card["name"] = card["data1"].split("/")[1]
-                card["data"] = get_time(card["data1"].replace(" ", "_"))
-                card["data1"] = ""
-                self.edit_world_clock_name = ""
-                
-        await self.dump_json(self.cards)
-
-    # ---- RX WEATHER SPECIFIC EVENT HERE ----
+        # ---- RX WEATHER SPECIFIC EVENT HERE ----
     edit_name_weather: str = ""
     @rx.event
     async def save_edit_weather(self, card_id):
@@ -134,56 +148,36 @@ class DashboardState(rx.State):
             if card["id"] == card_id:
                 card["data1"] = weather.get_name(value)
                 await self.dump_json(self.cards)
-                
-    # ---- RX CRYPTO SPECIFIC EVENT HERE ----
-    edit_name_crypto: str = ""
-    edit_window_crypto: str = ""
+
+    # ---- RX WORLD CLOCK SPECIFIC EVENT HERE ----
 
     @rx.event
-    async def save_edit_crypto(self, card_id: str, value={}):
+    async def update_world_clock(self):
         for card in self.cards:
-            if card["id"] == card_id and card["type"] == "crypto":
-                if not isinstance(value, dict) and not card["name"] == "NaN":
-                    card["data1"] = value
-                    return type(self).update_crypto(card_id, False)
-                elif self.edit_name_crypto:
-                    card["name"] = self.edit_name_crypto
-                    self.edit_name_crypto = ""
-                    await self.dump_json(self.cards)
-                    return type(self).update_crypto(card_id, True)
-                else:
-                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
+            if card["type"] == "world_clock":
+                async with self:
+                    name = card["data"][0]["timezone"].replace(", ", "/").replace(" ", "_")
+                    card["data"] = get_time(name)
+        await self.dump_json(self.cards)
 
     @rx.event
-    def set_name_crypto(self, value: str):
-        self.edit_name_crypto = value
-    @rx.event
-    def set_window_crypto(self, value: str):
-        self.edit_window_crypto = value
-
-    @rx.event
-    async def update_crypto(self, card_id: str, passthrough=False): # PASSTHROUGH deprecated
+    async def set_name_world_clock(self, value, card_id):
+        self.edit_world_clock_name = value
         for card in self.cards:
             if card["id"] == card_id:
-                found = True
-                if card["name"] != "NaN":
-                    try:
-                        result = get_price(symbol=card["name"],window=card["data1"])
-                        card["data"] = result 
-                        card["data2"] = -round(((float(result[0]["price"]) - float(result[-1]["price"])) / float(result[0]["price"])) * 100, 2)
-                        await self.dump_json(self.cards)
-                    except:
-                        return rx.toast("Wrong Symbol, try ETHUSDT or BTCUSDT, aim something that ending with USDT", style={"background-color" :"#403D39"})
-                else:
-                    return rx.toast("Cannot Update Data, no symbol set.", style={"background-color" :"#403D39"})
-                break
-    
-    
-    def price_diff(self, card: CardData) -> str:
-        first = float(card["data"][0]["price"])
-        last = float(card["data"][-1]["price"])
-        change = -round(((first - last) / first) * 100, 2)
-        return str(change)
+                card["data1"] = get_timezone(self.edit_world_clock_name).replace("_", " ")
+        await self.dump_json(self.cards)
+
+    @rx.event
+    async def save_edit_world_clock(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                card["name"] = card["data1"].split("/")[1]
+                card["data"] = get_time(card["data1"].replace(" ", "_"))
+                card["data1"] = ""
+                self.edit_world_clock_name = ""
+
+        await self.dump_json(self.cards)
 
     # ---- RX POMODORO SPECIFIC EVENT HERE ----
     pomodoro, short, long = "25", "5", "15"
@@ -278,7 +272,6 @@ class DashboardState(rx.State):
         await self.dump_json(self.cards)
 
     # ---- RX TIC_TAC_TOE SPECIFIC EVENT HERE
-    edit_diff_tic_tac_toe = ""
     @rx.event
     def set_diff_tic_tac_toe(self, value):
         self.edit_diff_tic_tac_toe = value
@@ -330,10 +323,48 @@ class DashboardState(rx.State):
                 if status == "tie":
                     await self.setup_tic_tac_toe(card_id)
                 await self.dump_json(self.cards)
-        
+
+    # ---- RX QUICK NOTES SPECIFIC EVENT HERE ----
+
+    @rx.event
+    def start_editing(self, card_id, text):
+        self.editing_card_id = card_id
+        self.editing_text = text
+
+    @rx.event
+    async def live_update(self, text: str):
+        self.editing_text = text
+
+        for card in self.cards:
+            if card["id"] == self.editing_card_id:
+                card["data"][0]["text"] = self.editing_text
+        await self.dump_json(self.cards)
+
+    # ---- RX COUNTDOWN SPECIFIC EVENT HERE ----
+
+    @rx.event
+    async def set_name_countdown(self, value, card_id):
+        self.edit_name_countdown = value
+        for card in self.cards:
+            if card["id"] == card_id:
+                card["data1"] = get_timezone(value).replace("_", " ")
+        await self.dump_json(self.cards)
+
+    @rx.event
+    async def save_edit_countdown(self, card_id):
+        for card in self.cards:
+            if card["id"] == card_id:
+                card["data"][0]["timezone"] = get_timezone(self.edit_name_countdown)
+
+    @rx.event
+    async def update_countdown(self):
+        for card in self.cards:
+            if card["type"] == "countdown":
+                card["data"][0]["time"] = get_countdown()
+        await self.dump_json(self.cards)
+
     # ---- RX SETTING SPECIFIC EVENT HERE ----
-    edit_column = "4"
-    edit_radius: Literal["none", "small", "medium", "large", "full"] = "medium"
+
     @rx.event
     def set_column(self, value):
         self.edit_column = value
@@ -358,7 +389,7 @@ class DashboardState(rx.State):
             })
             await self.dump_json(self.cards)
             yield
-            await self.update_crypto(card_id, True)
+            await self.update_crypto(card_id)
 
         if card == "weather":
             # Format [{"lat": lat, "lng": lng, "relative_humid": rlthumid, "precip", precip, "wetcode", wetcode, "temp", temp, "windspd", windspd, "feeltemp", feeltemp}]
@@ -425,6 +456,18 @@ class DashboardState(rx.State):
                 "data3": [0, 0],
             })
             await self.dump_json(self.cards)
+
+        if card == "countdown":
+            self.cards.append({
+                "id": card_id,
+                "type": "countdown",
+                "name": "Terra Countdown",
+                "data": [{"time":"00:00:00"}], 
+                "data1": "",
+                "data2": 0,
+                "data3": [0, 0],
+            })
+            await self.dump_json(self.cards)
             
 
     @rx.event
@@ -433,7 +476,7 @@ class DashboardState(rx.State):
         yield 
         for card in self.cards:
             if card["type"] == "crypto":
-                await self.update_crypto(card["id"], True)
+                await self.update_crypto(card["id"])
             if card["type"] == "weather":
                 await self.update_weather(card["id"])
         rx.toast("Done Refresh.", style={"background-color" :"#403D39"})
@@ -453,9 +496,7 @@ class DashboardState(rx.State):
         await self.dump_json(self.cards)
 
 
-
 # ---- SERVER ONLY STATE ----
-
 class ServerState(rx.State):
     cpu = 0
     mem = 0
@@ -473,6 +514,7 @@ class ServerState(rx.State):
             self.server_uptime =  f"{days}d {hours}h {minutes}m"
             self.redis_uptime = get_redis_uptime()
 
+# ---- AUTH ONLY STATE ----
 class AuthState(rx.State):
     logged_in : bool = False
     user: str = ""
@@ -537,7 +579,7 @@ class AuthState(rx.State):
     @rx.event
     def signin(self):
         if not self.tries > 10:
-            result, token = login(self.username, self.password)
+            result, token = login(self.username, self.password, self.UA)
             if result:
                 self.logged_in = True
                 self.user = self.username
@@ -581,6 +623,9 @@ class AuthState(rx.State):
             result = check_cookie(self.cookie, self.user_cookie)
             if not result:
                 return rx.redirect("/")
+            else:
+                self.user = self.user_cookie #Login
+                yield DashboardState.load_cards()
         else:
             return rx.redirect("/")
 
@@ -644,3 +689,18 @@ class AuthState(rx.State):
                 yield rx.toast.error("Wrong recovery code.", position="top-center")
         else:
             yield rx.toast.error(f"New password cannot be blank.", position="top-center")
+
+    UAS: str = ""
+    UA: str = ""
+    @rx.event()
+    def receiveUA(self, value: str):
+
+        ua = parse(value)
+        browser = ua.browser.family
+        os = ua.os.family
+        
+        self.UA = f"{browser} on {os}"
+
+    @rx.event()
+    def createUAS(self):
+        self.UAS = get_UAS(self.user)

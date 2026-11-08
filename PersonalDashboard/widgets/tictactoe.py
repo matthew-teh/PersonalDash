@@ -5,8 +5,8 @@ def tic_tac_toe_card(card) -> rx.Component:
     return rx.card(
         rx.hstack(
             rx.color_mode_cond(
-                light=rx.image(src="tictactoeimages/tic-tac-toe-light.svg", height="42px", width="42px"),
-                dark=rx.image(src="tictactoeimages/tic-tac-toe-dark.svg", height="42px", width="42px")
+                light=rx.image(src="lucideicons/tic-tac-toe-light.svg", height="42px", width="42px"),
+                dark=rx.image(src="lucideicons/tic-tac-toe-dark.svg", height="42px", width="42px")
             ),
             rx.vstack(
                 rx.heading(card["name"], size="3"),

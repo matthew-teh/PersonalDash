@@ -1,31 +1,16 @@
 FROM python:3.14-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    git \
-    nodejs \
-    npm \
-    unzip \
+    curl unzip ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-
-ADD https://astral.sh/uv/install.sh /install.sh
-RUN chmod +x /install.sh && /install.sh && rm /install.sh
-ENV PATH="/root/.local/bin:${PATH}"
+COPY --from=ghcr.io/astral-sh/uv:0.12 /uv /bin/uv
+COPY --from=oven/bun:1 /usr/local/bin/bun /usr/local/bin/bun
 
 WORKDIR /app
-
-RUN uv init
-RUN uv add reflex openmeteo-requests requests 
-
 COPY . .
+RUN uv venv && uv pip install -r requirements.txt
+RUN uv run reflex export --frontend-only --no-zip
 
-EXPOSE 65503
-EXPOSE 65500
-
-CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "65503", "--loglevel", "debug"]
-
-# uv run reflex run --env prod --frontend-port 65503 --loglevel debug
-# docker build -t reflex-app-v2 .
-# docker run -d -p 65500:65500 -p 65503:65503 --name Reflex-PDash-V2 reflex-app-v2
-# docker rm Reflex-PDash-V2
+EXPOSE 3000
+CMD ["sh", "-c", "exec uv run reflex run --env prod --single-port --frontend-port 3000 --loglevel debug"]

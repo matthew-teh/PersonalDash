@@ -2,7 +2,6 @@ import sqlite3
 import csv
 import time
 from pathlib import Path
-from functools import lru_cache
 import openmeteo_requests
 from datetime import datetime
 DB_PATH = "assets/databases/worldcities.sqlite3"

@@ -1,12 +1,16 @@
 import json
 import redis
-from .auth import check_exist, check_cookie
 from argon2 import PasswordHasher
 from typing import cast
 
 ph = PasswordHasher()
 
-r = redis.Redis(host='localhost', port=65499, decode_responses=True)
+# DEV USE
+#r = redis.Redis(host='127.0.0.1', port=65499, decode_responses=True)
+
+
+# DOCKER USE 
+r = redis.Redis(host='redis', port=6379, decode_responses=True)
 
 def get_cards(username: str):
     if not username:

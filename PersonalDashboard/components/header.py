@@ -6,7 +6,11 @@ from ..components.user import user
 def header(landing) -> rx.Component:
     return rx.card(
         rx.hstack(
-            rx.heading("FlexDash", size="4", weight="bold"),
+            rx.hstack(
+                rx.image(src="favicon.ico"),
+                rx.heading("FlexDash", size="4", weight="bold"),
+                align_items="center",
+            ),
             rx.cond(
                 landing == False,
                 rx.hstack(

@@ -4,7 +4,7 @@ from ..components.state import AuthState
 def user() -> rx.Component:
     return rx.box(
         rx.dialog.root(
-            rx.dialog.trigger(rx.button(rx.icon("user_round", size=20), variant="ghost")),
+            rx.dialog.trigger(rx.button(rx.icon("user_round", size=20), variant="ghost", on_click=AuthState.createUAS)),
             rx.dialog.content(
                 rx.vstack(
                     rx.vstack(
@@ -16,6 +16,10 @@ def user() -> rx.Component:
                         ),
                         rx.text(f"Username: {AuthState.user}"),
                         width="100%",
+                    ),
+                    rx.scroll_area(
+                        rx.text("Device logged in: "),
+                        rx.text(AuthState.UAS, white_space="pre-wrap"),
                     ),
                     rx.vstack(
                         rx.text("Dangerous area", color_scheme="tomato"),
@@ -43,7 +47,6 @@ def user() -> rx.Component:
                             ),
                             rx.vstack(
                                 rx.dialog.root(
-                                    
                                 rx.dialog.trigger(rx.button("Delete Account", color_scheme="tomato", variant="outline")),
                                     rx.dialog.content(
                                         rx.vstack(
@@ -85,6 +88,6 @@ def user() -> rx.Component:
                 ),    
                 width="960px",
                 height="496.5px",
-            )
-        )
+            ),
+        ),
     )
