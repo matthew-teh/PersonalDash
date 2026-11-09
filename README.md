@@ -1,6 +1,6 @@
-# PersonalDashboard
+# FlexDash
 
-A website built with **Python Reflex**, includes daily needed widget.
+A website built with **Python Reflex**, includes daily needed widget. ( Formerly Personal Dashboard ) 
 
 ## Features 
 - **Crypto** - Shows real market data in form of graph using Binance API
@@ -14,9 +14,9 @@ A website built with **Python Reflex**, includes daily needed widget.
 ## Versions
 - FlexDash V4, Under Development
 - Personal Dashboard V3  , Latest Relased : [Website Link](http://relaymatthew.duckdns.org:65503)
-- Personal Dashboard V2  , Released: 
-- Personal Dashboard V1  , Released:
-- Personal Dashboard Beta, Released: 
+- Personal Dashboard V2  , Released
+- Personal Dashboard V1  , Released
+- Personal Dashboard Beta, Released:
 
 ## How to run locally (Linux only)
 - SEE [Running.md](RUNNING.md)
