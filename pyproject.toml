@@ -1,26 +1,19 @@
 [project]
-name = "personaldashboard"
-version = "3.5"
-description = "A website based personal dashboard"
+name = "flexdashv4"
+version = "0.1.0"
+description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "Matthew", email = "teheecheang@gmail.com" }
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "argon2-cffi>=25.1.0",
-    "ntplib>=0.4.0",
-    "openmeteo-requests>=1.7.5",
-    "pandas>=3.1.0",
-    "pytz>=2026.6",
-    "redis>=7.4.1",
-    "reflex>=0.10.0",
-    "requests>=2.34.2",
-    "user-agents>=2.2.0",
+    "reflex>=0.10.1",
+    "reflex-motion>=0.0.1",
 ]
 
 [project.scripts]
-personaldashboard = "personaldashboard:main"
+flexdashv4 = "flexdashv4:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
