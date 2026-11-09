@@ -16,7 +16,7 @@ A website built with **Python Reflex**, includes daily needed widget. ( Formerly
 - Personal Dashboard V3  , Latest Relased : [Website Link](http://relaymatthew.duckdns.org:65503)
 - Personal Dashboard V2  , Released
 - Personal Dashboard V1  , Released
-- Personal Dashboard Beta, Released:
+- Personal Dashboard Beta, Released
 
 ## How to run locally (Linux only)
 - SEE [Running.md](RUNNING.md)
