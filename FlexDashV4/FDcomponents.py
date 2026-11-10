@@ -1,6 +1,8 @@
 import reflex as rx
 
 from .FDstates import Dashboard
+from . import FDwidgetsV1
+from . import FDwidgetsV2
 
 # ---- SIDEBAR START
 def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Component:
@@ -22,6 +24,25 @@ def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Compon
         on_click= Dashboard.set_page(link, redirect),
     )
 
+def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
+    return rx.button(
+        rx.hstack(
+            rx.image(src=image),
+            rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
+            width="100%",
+            height="100%",
+            align="center",
+        ),
+        opacity = 0.5,
+        _hover={"opacity": 1.0},
+        transition="opacity 0.2s ease-in-out",
+        width="100%",
+        variant="ghost",
+        border_radius="8px",
+        height="32px",
+        on_click=function,
+    )
+
 def sidebar() -> rx.Component:
     return rx.box(
         rx.vstack(
@@ -35,16 +56,28 @@ def sidebar() -> rx.Component:
                 ),
                 align_items="center",
             ),  
-            rx.separator(),
             rx.vstack(
+                rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets home", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
                 sidebar_items("Dashboard", "/lucide_icons/house_dark.svg", "/", True),
                 sidebar_items("Add widgets", "/lucide_icons/shopping_bag_dark.svg", "/widgets", True),
-                rx.separator(),
-                sidebar_items("Refresh all", "/lucide_icons/refresh_cw_dark.svg", "", False),
-                sidebar_items("Delete all", "/lucide_icons/trash_dark.svg", "", False),
-                rx.separator(),
+                rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets control", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw_dark.svg", Dashboard.update_all_widget),
+                sidebar_items_functional("Delete all", "/lucide_icons/trash_dark.svg", Dashboard.delete_all_widget),
+                rx.hstack(rx.separator(max_width="25%"), rx.text("Cloud status", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync_dark.svg", Dashboard.update_all_widget),
+                rx.hstack(
+                    rx.image(src="lucide_icons/cloud_check_dark.svg"),
+                    rx.text(Dashboard.sync_status),
+                    opacity = 0.5,
+                    _hover={"opacity": 1.0},
+                    transition="opacity 0.2s ease-in-out",
+                    width="100%",
+                    variant="ghost",
+                    border_radius="8px",
+                    height="32px",
+                ),
                 rx.spacer(),
-                rx.separator(),
+                rx.hstack(rx.separator(max_width="25%"), rx.text("Preferences", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
                 sidebar_items("Account", "/lucide_icons/user_round_dark.svg", "/account", True),
                 sidebar_items("Settings", "/lucide_icons/settings_dark.svg", "/settings", True),
                 width="100%",
@@ -53,7 +86,7 @@ def sidebar() -> rx.Component:
             height="100%",
             align="center"
         ),
-        width="15%",
+        width="13%",
         height="100%",
         padding="8px",
         border_radius="8px",
@@ -61,8 +94,8 @@ def sidebar() -> rx.Component:
 # ---- SIDEBAR ENDS
 
 # ---- WIDGETS STARTS
-def widget(name: str, image: str, desc: str):
-    is_active = Dashboard.widget_name == name
+def widget(name: str, desc: str, available: bool):
+    is_active = Dashboard.widget_store_name == name
     return rx.card(
         rx.vstack(
             rx.text(name, weight="bold"),
@@ -70,9 +103,9 @@ def widget(name: str, image: str, desc: str):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius="8px", width="100%", background_color="#EEEEEE"),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius="8px", width="100%", background_color="#EEEEEE", on_click=Dashboard.add_widget(name)),
                     width="100%",
-                    opacity=rx.cond(is_active, 1, 0),
+                    opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
                     overflow="hidden",
                     max_height=rx.cond(is_active, "60px", "0px",),
@@ -85,8 +118,17 @@ def widget(name: str, image: str, desc: str):
             align = "center",
             justify="between",
         ),
-        on_mouse_enter=Dashboard.set_widget_name(name),
-        on_mouse_leave=Dashboard.set_widget_name(value=""),
+        on_mouse_enter=Dashboard.set_widget_store_name(name),
+        on_mouse_leave=Dashboard.set_widget_store_name(value=""),
         border_radius="8px",
+    )
+
+def render_widget(item: dict):
+    return rx.box(
+        rx.match(
+            item["type"].lower(),
+            ("crypto_v1", FDwidgetsV1.crypto_widget(item)),
+            rx.box(),
+        )
     )
 # ---- WIDGETS ENDS

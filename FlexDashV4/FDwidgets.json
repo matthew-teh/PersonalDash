@@ -1,0 +1,13 @@
+[
+        {
+            "name" : "Crypto Widget V1", 
+            "desc" : "Shows specific crypto coins info.", 
+            "available": true, 
+            "designed_name": "BTCUSDT", 
+            "designed_type": "crypto_v1",
+            "designed_data00": [{}], 
+            "designed_data01": "15m",
+            "designed_data02": "", 
+            "designed_data03": 0
+        }
+    ]

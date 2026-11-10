@@ -1,14 +1,53 @@
 import reflex as rx
 
 from .FDstates import Dashboard
-from .FDcomponents import sidebar, widget
+from .FDcomponents import sidebar, widget, render_widget
 
 @rx.page("/", title="FlexDash | Dashboard", on_load=Dashboard.init_page)
 def home() -> rx.Component:
+    empty = Dashboard.widgets.length() == 0 #type:ignore
     return rx.box(
         rx.hstack(
             sidebar(),
-            rx.box(width="85%", height="100%", background_color = Dashboard.colors["page_background"], border_radius="8px"),
+            rx.cond(
+                empty,
+                rx.box(
+                    rx.center(
+                        rx.vstack(
+                            rx.text("Nothing yet. Maybe add some widgets?"),
+                            rx.button(
+                                rx.text("Explore widgets", color=Dashboard.colors["text_alt"]),
+                                background_color=Dashboard.colors["text"],
+                                size="4",
+                                on_click=rx.redirect('/widgets')
+                            ),
+                            align="center",
+                        ),
+                        width="100%",
+                        height="100%"
+                    ),
+                    width="87%", 
+                    height="100%", 
+                    background_color = Dashboard.colors["page_background"], 
+                    border_radius="8px"
+                ),
+                rx.box(
+                    rx.grid(
+                        rx.foreach(
+                            Dashboard.widgets,
+                            lambda item: render_widget(item)
+                        ),
+                        padding="8px",
+                        columns="4",
+                        gap="8px",
+                    ),
+                    width="87%", 
+                    height="100%", 
+                    background_color = Dashboard.colors["page_background"], 
+                    border_radius="8px"
+                ),
+            ),
+            
             width="100%",
             height="100%",
         ),
@@ -29,8 +68,8 @@ def widgets() -> rx.Component:
                     rx.scroll_area(
                         rx.grid(
                             rx.foreach(
-                                Dashboard.widgets,
-                                lambda item : widget(item.name, item.image, item.desc),
+                                Dashboard.widgets_store,
+                                lambda item : widget(item.name, item.desc, item.available),
                             ),
                             gap="8px",
                             columns="4",
@@ -43,7 +82,7 @@ def widgets() -> rx.Component:
                     spacing="1",
                 ),
                 padding="8px",
-                width="85%", 
+                width="87%", 
                 height="100%", 
                 background_color = Dashboard.colors["page_background"], 
                 border_radius="8px"),
