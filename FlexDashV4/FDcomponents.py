@@ -19,7 +19,7 @@ def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Compon
         transition="opacity 0.2s ease-in-out",
         width="100%",
         variant="ghost",
-        border_radius="8px",
+        border_radius=Dashboard.smoothness,
         height="32px",
         on_click= Dashboard.set_page(link, redirect),
     )
@@ -38,7 +38,7 @@ def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
         transition="opacity 0.2s ease-in-out",
         width="100%",
         variant="ghost",
-        border_radius="8px",
+        border_radius=Dashboard.smoothness,
         height="32px",
         on_click=function,
     )
@@ -73,7 +73,7 @@ def sidebar() -> rx.Component:
                     transition="opacity 0.2s ease-in-out",
                     width="100%",
                     variant="ghost",
-                    border_radius="8px",
+                    border_radius=Dashboard.smoothness,
                     height="32px",
                 ),
                 rx.spacer(),
@@ -89,7 +89,7 @@ def sidebar() -> rx.Component:
         width="13%",
         height="100%",
         padding="8px",
-        border_radius="8px",
+        border_radius=Dashboard.smoothness,
         color=Dashboard.colors["text"]
     )
 # ---- SIDEBAR ENDS
@@ -106,7 +106,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
                     src=f"{image}_{Dashboard.colors["mode"]}.png",
                     width="260px",
                     height="260px",
-                    border_radius="8px",
+                    border_radius=Dashboard.smoothness,
                 ),
 
                 rx.text("Widget placeholder")
@@ -114,7 +114,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius="8px", width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
                     width="100%",
                     opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
@@ -132,7 +132,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
         ),
         on_mouse_enter=Dashboard.set_widget_store_name(name),
         on_mouse_leave=Dashboard.set_widget_store_name(value=""),
-        border_radius="8px",
+        border_radius=Dashboard.smoothness,
         color=Dashboard.colors["text"]
     )
 
@@ -144,7 +144,6 @@ def render_widget(item: dict):
             ("weather_v1", FDwidgetsV1.weather_widget(item)),
             ("worldclock_v1", FDwidgetsV1.worldclock_widget(item)),
             ("pomodoro_v1", FDwidgetsV1.pomodoro_widget(item)),
-            ("tictactoe_v1", FDwidgetsV1.tictactoe_widget(item)),
             ("quicknotes_v1", FDwidgetsV1.quicknotes_widget(item)),
             ("terracd_v1", FDwidgetsV1.terracd_widget(item)),
             rx.box(),   

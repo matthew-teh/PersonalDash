@@ -7,7 +7,6 @@ A website built with **Python Reflex**, includes daily needed widget. ( Formerly
 - **Weather** - Shows real weather data with four little card using Open-Meteo API.
 - **World Clock** - Display live time of a city, auto refresh.
 - **Pomodoro TImer** - Pomodoro based timer that let you focus
-- **Tic Tac Toe** - A mini game that can played with computer, based on Terra week theme: ANTIQUE 8 bit game
 - **Quick Notes** - A blank space for you to type anything
 - **Terra countdown** - Shows how much hours you have left to code and ship.
 

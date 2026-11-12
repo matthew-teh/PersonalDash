@@ -1,0 +1,24 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: FlexDashV4Redis
+    restart: unless-stopped
+    ports:
+      - "3001:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 300 1
+
+  ntp:
+    image: cturra/ntp:latest
+    container_name: FlexDashV4NTP
+    restart: unless-stopped
+    ports:
+      - "3002:123/udp"
+    environment:
+      - NTP_SERVERS=time.cloudflare.com, time.google.com
+
+
+
+volumes:
+  redis_data:

@@ -1,9 +1,9 @@
 import reflex as rx
-from reflex.style import set_color_mode
-from .FDstates import Dashboard
+from reflex.style import set_color_mode, color_mode
+from .FDstates import Dashboard, System
 from .FDcomponents import sidebar, widget, render_widget
 
-@rx.page("/", title="FlexDash | Dashboard", on_load=Dashboard.init_page)
+@rx.page("/", title="FlexDash | Dashboard", on_load=[Dashboard.init_page])
 def home() -> rx.Component:
     empty = Dashboard.widgets.length() == 0 #type:ignore
     return rx.box(
@@ -29,7 +29,7 @@ def home() -> rx.Component:
                     width="87%", 
                     height="100%", 
                     background_color = Dashboard.colors["page_background"], 
-                    border_radius="8px"
+                    border_radius=Dashboard.smoothness
                 ),
                 rx.box(
                     rx.grid(
@@ -44,16 +44,16 @@ def home() -> rx.Component:
                     rx.moment(
                         interval=1000,
                         on_change=[
-                            Dashboard.update_widget("",widget_type="pomodoro_v1"), 
-                            Dashboard.update_widget("", widget_type="worldclock_v1"),
-                            Dashboard.update_widget("", widget_type="terracd_v1")
+                            Dashboard.update_widget("",widget_type="pomodoro_v1"),  # type: ignore
+                            Dashboard.update_widget("", widget_type="worldclock_v1"), # type: ignore
+                            Dashboard.update_widget("", widget_type="terracd_v1") # type: ignore
                         ],
                         display="None",
                     ),
                     width="87%", 
                     height="100%", 
                     background_color = Dashboard.colors["page_background"], 
-                    border_radius="8px"
+                    border_radius=Dashboard.smoothness
                 ),
             ),
             width="100%",
@@ -95,7 +95,8 @@ def widgets() -> rx.Component:
                 width="87%", 
                 height="100%", 
                 background_color = Dashboard.colors["page_background"], 
-                border_radius="8px"),
+                border_radius=Dashboard.smoothness),
+                
             width="100%",
             height="100%",
         ),
@@ -106,45 +107,150 @@ def widgets() -> rx.Component:
         color=Dashboard.colors["text"]
     )
 
-@rx.page("/settings", title="FlexDash | Widgets", on_load=Dashboard.init_page)
+@rx.page("/settings", title="FlexDash | Widgets", on_load=[Dashboard.init_page, System.update_server_status])
 def settings() -> rx.Component:
         return rx.box(
         rx.hstack(
             sidebar(),
             rx.box(
                 rx.vstack(
-                    rx.text("FlexDash Settings", weight="bold", font_size="64px", opacity=0.95),
-                    rx.card(
-                        rx.text("Appearances", font_size="32px"),
-                        rx.hstack(
-                            rx.text("Light / Dark Mode", font_size="16px"),
-                            rx.spacer(),
-                            rx.segmented_control.root(
-                                 rx.segmented_control.item(
-                                      rx.icon('sun'),
-                                      value="light"
-                                 ),
-                                 rx.segmented_control.item(
-                                      rx.icon('moon'),
-                                      value="dark"
-                                 ),
-                                 default_value=Dashboard.colors["mode"],
-                                 on_change=[Dashboard.edit_theme, set_color_mode],    
+                    rx.text("FlexDash Settings & Preferences", weight="bold", font_size="64px", opacity=0.95, margin_bottom="16px",),                    
+                    rx.hstack(
+                        rx.vstack(
+                            rx.box(
+                                rx.vstack(
+                                    rx.text("Appearance", font_size="32px"),
+                                    rx.separator(),
+                                    margin_bottom="32px",
+                                ),
+                                rx.hstack(
+                                    rx.vstack(
+                                        rx.text("THEME", font_size="16px", weight="bold"),
+                                        rx.segmented_control.root(
+                                            rx.segmented_control.item(
+                                                rx.text("Light"),
+                                                value="light"
+                                            ),
+                                            rx.segmented_control.item(
+                                                rx.text("Dark"),
+                                                value="dark"
+                                            ),
+                                            value=color_mode,
+                                            on_change=[Dashboard.edit_theme, set_color_mode],     # type: ignore
+                                        ),
+                                        width="40%",
+                                    ),
+                                    rx.vstack(
+                                        rx.text("BORDER SMOOTHNESS", font_size="16px", weight="bold"),
+                                        rx.segmented_control.root(
+                                            rx.segmented_control.item(
+                                                rx.text("Sharp"),
+                                                value="0px", 
+                                            ),
+                                            rx.segmented_control.item(
+                                                rx.text("Soft"),
+                                                value="4px"
+                                            ),
+                                            rx.segmented_control.item(
+                                                rx.text("Rounded"),
+                                                value="8px"
+                                            ),
+                                            rx.segmented_control.item(
+                                                rx.text("Curved"),
+                                                value="16px"
+                                            ),
+                                            rx.segmented_control.item(
+                                                rx.text("Pill"),
+                                                value="32px"
+                                            ),
+                                            width="100%",
+                                            value=Dashboard.smoothness,
+                                            on_change=Dashboard.edit_smoothness,     # type: ignore
+                                        ),
+                                        width="60%"
+                                    ),
+                                    spacing="5",
+                                ),
+                                padding="32px",
+                                width="100%",
+                                border_radius=Dashboard.smoothness,
+                                border = "1px solid rgba(255, 255, 255, 0.2)",
                             ),
-                            width="100%",
-                            align="center",
+                            rx.box(
+                                rx.vstack(
+                                    rx.text("Server Status", font_size="32px"),
+                                    rx.separator(),
+                                    rx.hstack(rx.text(f"CPU Usage: {System.cpu}%"), rx.progress(value=System.cpu.to(int), width='80%'), width="100%", align="center"), # type: ignore
+                                    rx.hstack(rx.text(f"RAM Usage: {System.ram}%"), rx.progress(value=System.ram.to(int), width='80%'), width="100%", align="center"), # type: ignore
+                                    rx.text(f"Uptime: {System.formatted_uptime}"),
+                                    margin_bottom="32px",
+                                ),
+                                height="100%",
+                                padding="32px",
+                                width="100%",
+                                border_radius=Dashboard.smoothness,
+                                border = "1px solid rgba(255, 255, 255, 0.2)",
+                            ),
+                        width="50%"
                         ),
-                        width="20%",
-                        aspect_ratio="1/1",
+                        rx.box(
+                            rx.vstack(
+                                rx.text("Live Preview", font_size="32px"),
+                                rx.separator(),
+                                margin_bottom="32px",
+                            ),
+                            rx.center(
+                                rx.box(
+                                    rx.hstack(
+                                        rx.cond(
+                                            Dashboard.colors["mode"] == "dark",
+                                            rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="42px"),
+                                            rx.image(src="/lucide_icons/book_light.svg", height="42px", width="42px")
+                                        ),
+                                        rx.vstack(
+                                            rx.heading("Quick Notes", size="3"),
+                                            rx.text("A text area to note, auto saved."),
+                                            spacing="0",
+                                        ),
+                                        rx.spacer(),
+                                        rx.button(rx.icon("trash_2", size=16), variant="ghost"),
+                                        width="100%",
+                                        height="20%",
+                                    ),
+                                    rx.hstack(
+                                        rx.text_area(
+                                            placeholder="Start typing here...",
+                                            width="100%",
+                                            height="100%",
+                                            color=Dashboard.colors["text"]
+                                        ),
+                                        width="100%",
+                                        height="80%",
+                                        spacing="0",
+                                    ),
+                                    padding="8px",
+                                    overflow="hidden",
+                                    width="50%",
+                                    aspect_ratio=" 1/1",
+                                    style={"background_color": Dashboard.colors["widget_background"]},
+                                    border_radius=Dashboard.smoothness,
+                                    border = "1px solid rgba(255, 255, 255, 0.2)",
+                                ),
+                            ),
+                            padding="32px",
+                            width="50%",
+                            border_radius=Dashboard.smoothness,
+                            border = "1px solid rgba(255, 255, 255, 0.2)",
+                        ),
+                        spacing="2",
+                        width="100%",
                     ),
-                    width="100%",
-                    spacing="1",
                 ),
                 padding="8px",
                 width="87%", 
                 height="100%", 
                 background_color = Dashboard.colors["page_background"], 
-                border_radius="8px"),
+                border_radius=Dashboard.smoothness),
             width="100%",
             height="100%",
         ),

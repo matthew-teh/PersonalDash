@@ -71,7 +71,7 @@ def crypto_widget(widget) -> rx.Component:
         width="100%",
         aspect_ratio=" 1/1",
         style={"background_color": Dashboard.colors["widget_background"]},
-        border_radius="8px",
+        border_radius=Dashboard.smoothness,
         border = "1px solid rgba(255, 255, 255, 0.2)",
     
     )   
