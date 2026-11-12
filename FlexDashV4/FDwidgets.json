@@ -2,6 +2,7 @@
         {
             "name" : "Crypto Widget V1", 
             "desc" : "Shows specific crypto coins info.", 
+            "image": "/widget_store/crypto_v1",
             "available": true, 
             "designed_name": "BTCUSDT", 
             "designed_type": "crypto_v1",
@@ -9,5 +10,42 @@
             "designed_data01": "15m",
             "designed_data02": "", 
             "designed_data03": 0
+        },
+        {
+            "name" : "Weather Widget V1", 
+            "desc" : "Shows weather info for a city.", 
+            "image": "/widget_store/weather_v1",
+            "available": true, 
+            "designed_name": "London", 
+            "designed_type": "weather_v1",
+            "designed_data00": [{}], 
+            "designed_data01": "",
+            "designed_data02": "", 
+            "designed_data03": 0
+        },
+        {
+            "name" : "World Clock Widget V1", 
+            "desc" : "Shows UTC time info for a city.", 
+            "image": "/widget_store/worldclock_v1",
+            "available": true, 
+            "designed_name": "Singapore", 
+            "designed_type": "worldclock_v1",
+            "designed_data00": [{"timezone": "Asia, Singapore", "tz":"+0800", "date":"2026-06-12", "time":"18:42:01", "dst": false}], 
+            "designed_data01": "",
+            "designed_data02": "", 
+            "designed_data03": 0
+        },
+        {
+            "name" : "Pomodoro Timer V1", 
+            "desc" : "A countdown designed to focus work.", 
+            "image": "/widget_store/pomodoro_v1",
+            "available": true, 
+            "designed_name": "Pomodoro Timer", 
+            "designed_type": "pomodoro_v1",
+            "designed_data00": [{"pomodoro":"25", "short":"5", "long":"15", "intervals":"1", "started": "false", "sec_left":"0", "mode":"pomodoro"}], 
+            "designed_data01": "",
+            "designed_data02": "", 
+            "designed_data03": 0
         }
+
     ]

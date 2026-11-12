@@ -94,12 +94,22 @@ def sidebar() -> rx.Component:
 # ---- SIDEBAR ENDS
 
 # ---- WIDGETS STARTS
-def widget(name: str, desc: str, available: bool):
+def widget(name: str, image:str="", desc: str="", available: bool=False):
     is_active = Dashboard.widget_store_name == name
     return rx.card(
         rx.vstack(
             rx.text(name, weight="bold"),
-            rx.text("card placeholder"),
+            rx.cond(
+                image,
+                rx.image(
+                    src=f"{image}_{Dashboard.colors["mode"]}.png",
+                    width="260px",
+                    height="260px",
+                    border_radius="8px",
+                ),
+
+                rx.text("Widget placeholder")
+            ),
             rx.box(
                 rx.text(desc),
                 rx.flex(
@@ -113,6 +123,7 @@ def widget(name: str, desc: str, available: bool):
                 padding="0px",
                 width="100%",
             ),
+            overflow="hidden",
             width="100%",
             aspect_ratio="1 / 1",
             align = "center",
@@ -128,6 +139,9 @@ def render_widget(item: dict):
         rx.match(
             item["type"].lower(),
             ("crypto_v1", FDwidgetsV1.crypto_widget(item)),
+            ("weather_v1", FDwidgetsV1.weather_widget(item)),
+            ("worldclock_v1", FDwidgetsV1.worldclock_widget(item)),
+            ("pomodoro_v1", FDwidgetsV1.pomodoro_widget(item)),
             rx.box(),
         )
     )

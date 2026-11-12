@@ -20,8 +20,8 @@ def crypto_widget(widget) -> rx.Component:
                 rx.hover_card.content(
                     rx.vstack(
                         rx.hstack(
-                            rx.heading("Edit Card", size="3"),
-                            rx.button(rx.icon("check"), variant="ghost", on_click=Dashboard.save_edit_crypto(widget["id"])),
+                            rx.heading("Edit widget", size="3"),
+                            rx.button(rx.icon("check"), variant="ghost", on_click=Dashboard.save_edit_widget(widget["id"])),
                             width="100%",
                             justify="between",
                         ),
@@ -43,7 +43,7 @@ def crypto_widget(widget) -> rx.Component:
                                     rx.segmented_control.item("4H", value="4h"),
                                     rx.segmented_control.item("1D", value="1d"),
                                     default_value=widget["data01"],
-                                    on_change=lambda val: Dashboard.save_edit_crypto(widget["id"], val),
+                                    on_change=lambda val: Dashboard.save_edit_widget(widget["id"], val),
                                 ),
                             ),
                             
@@ -82,6 +82,259 @@ def crypto_widget(widget) -> rx.Component:
             height="80%",
             width="100%",
             spacing="0"
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )
+
+def weather_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.image(
+                src=f"/{widget["data00"][0]["useimg"]}",
+                alt=widget["data00"][0]["useimg"],
+                height= "42px",
+            ),
+            rx.vstack(
+                rx.heading(widget["name"], size="3"),
+                rx.text(widget["data00"][0]["wetcode"]),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.hover_card.root(
+                rx.hover_card.trigger(rx.button(rx.icon("settings", size=16), variant="ghost")),
+                rx.hover_card.content(
+                    rx.vstack(
+                        rx.hstack(
+                            rx.heading("Edit widget", size="3"),
+                            rx.button(rx.icon("check"), variant="ghost", on_click=Dashboard.save_edit_widget(widget["id"])),
+                            width="100%",
+                            justify="between",
+                        ),
+                        rx.text(f"City: {widget["data01"]}", size="2"),
+                        rx.input(
+                            value=Dashboard.widget_name,
+                            on_change=lambda val, cid=widget["id"]: Dashboard.edit_widget_name(val, cid),
+                            placeholder="New York",
+                        ),
+                    ),
+                    side="left",
+                    width="250px",
+                ),
+                
+            ),
+            rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=Dashboard.update_widget(widget["id"])),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget["id"])),
+            width="100%",
+            height="20%",
+        ),
+        rx.hstack(
+            rx.hstack(
+                rx.text(f"{widget["data00"][0]["temp"]}", font_size="120px", weight="bold"),
+                rx.text("℃"),
+                width="50%",
+                height='100%',
+                align="center",
+                justify="center",
+            ),
+            rx.grid(
+                rx.card(
+                    rx.flex(rx.text("Feels Like", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(
+                        rx.text(f"{widget["data00"][0]["feeltemp"]}", font_size="42px", weight="bold"), 
+                        rx.text("℃", font_size="14px"),
+                        align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Humidity", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{widget["data00"][0]["relative_humid"]}", font_size="42px", weight="bold"), 
+                            rx.text("%", font_size="14"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Wind speed", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{widget["data00"][0]["windspd"]}", font_size="42px", weight="bold"), 
+                            rx.text("km/h", font_size="14px"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                rx.card(
+                    rx.flex(rx.text("Cloud Cover", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                    rx.flex(rx.text(f"{widget["data00"][0]["cloudcvr"]}", font_size="42px", weight="bold"), 
+                            rx.text("%", font_size="14px"), 
+                            align_items="center", justify_content="center", width="100%", height="85%"),
+                    height="100%"
+                ),
+                columns="2",
+                width="50%",
+                height="100%",
+                gap="0.25rem",
+            ),
+            width="100%",
+            height="80%",
+            spacing="0",
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )
+
+def worldclock_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.hstack(            
+            rx.image(
+                src= "/matthew_icons/earth.png",
+                alt= "worldclockimages",
+                width= "42px",
+            ),
+            rx.vstack(
+                rx.heading(widget["name"], size="3"),
+                rx.text(widget["data00"][0]["timezone"]),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.hover_card.root(
+                rx.hover_card.trigger(rx.button(rx.icon("settings", size=16), variant="ghost")),
+                rx.hover_card.content(
+                    rx.vstack(
+                        rx.hstack(
+                            rx.heading("Edit Card", size="3"),
+                            rx.button(rx.icon("check"), variant="ghost", on_click=Dashboard.save_edit_widget(widget["id"])),
+                            width="100%",
+                            justify="between"
+                        ),
+                        rx.text(f"City: {widget["data01"]}", size="2"),
+                        rx.input(
+                            value=Dashboard.widget_name,
+                            on_change=lambda value, cid=widget["id"]: Dashboard.edit_widget_name(value, cid),
+                            placeholder = "Paris"
+                        ), 
+                    ),
+                    side="left",
+                ),
+            ),
+            rx.button(rx.icon("refresh_cw", size=16), variant="ghost", hidden=True),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget['id'])),
+            
+            width="100%",
+            height="20%"
+        ),
+        rx.vstack(
+            rx.box(rx.text(widget["data00"][0]["time"], font_size="68px", weight="bold"),
+                   display="flex",
+                   align_items="center",
+                   justify_content="center",
+                   height="50%",
+                   width="100%"),
+            rx.vstack(
+                rx.card(f"Universal Time Coordinates: {widget["data00"][0]["tz"]}", width="100%", height="50%", justify="center"),
+                rx.hstack(
+                    rx.card(f"{widget["data00"][0]["date"]} {widget["data00"][0]["time"]}", width="50%", display="flex", height="100%", align_items="center", padding="0", padding_left="12px"),
+                    rx.card(f"DST: {widget["data00"][0]["dst"]}", width="50%", height="100%", display="flex", align_items="center", padding="0", padding_left="12px"),
+                    height='50%',
+                    width='100%',
+                    spacing="1", 
+                ),
+                spacing="1",   
+                width="100%",
+                height="50%",
+                flex="1",
+            ),
+            spacing="1",
+            width="100%",
+            height="80%"
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )
+
+def pomodoro_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("apple", height="42px", width="42px", color='red'),
+            rx.vstack(
+                rx.heading(widget["name"], size="3"),
+                rx.match(
+                    widget["data00"][0]["mode"],
+                    ("pomodoro", rx.text("Pomodoro - Focus Mode")),
+                    ("short", rx.text("Short Break - Take a sip of coffee")),
+                    ("long", rx.text("Long Break - Get a snack")),
+                ),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.hover_card.root(
+                rx.hover_card.trigger(rx.button(rx.icon("settings", size=16), variant="ghost")),
+                rx.hover_card.content(
+                    rx.vstack(
+                        rx.hstack(
+                            rx.heading("Edit Card", size="3"),
+                            rx.button(rx.icon("check"), variant="ghost", on_click=Dashboard.save_edit_pomodoro(widget["id"])),
+                            width="100%",   
+                            justify="between",
+                        ),
+                        
+                        rx.text("Pomodoro Time (minutes)"),
+                        rx.input(
+                            value=Dashboard.pomodoro,
+                            on_change=Dashboard.edit_pomodoro,
+                            placeholder="25",
+                            width="100%",
+                        ),
+                        rx.text("Short and long breaks"),
+                        rx.hstack(
+                            rx.input(
+                                value=Dashboard.short,
+                                on_change=Dashboard.edit_short,
+                                width="50%",
+                                placeholder="5",
+                            ),
+                            rx.input(
+                                value=Dashboard.long,
+                                on_change=Dashboard.edit_long,
+                                width="50%",
+                                placeholder="15"
+                            ),
+                            width="100%", 
+                        ),
+                    ),
+                    side="left",
+                    width="250px",
+                )
+            ),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget["id"])),
+            width="100%",
+            height="20%",
+        ),
+        rx.vstack(
+            rx.text(widget["data00"][0]["timing"], font_size="132px", weight="bold"),
+            rx.hstack(
+                rx.button(rx.icon("play"), variant="ghost", on_click=Dashboard.command_pomodoro(widget["id"], "start")),
+                rx.button(rx.icon("pause"), variant="ghost", on_click=Dashboard.command_pomodoro(widget["id"], "stop")),
+                rx.button(rx.icon("timer-reset"), variant="ghost", on_click=Dashboard.command_pomodoro(widget["id"], "reset")),
+                spacing="5",
+            ),
+            align_items="center",
+            justify="center",
+            width="100%",
+            height="80%",
+            spacing="0",
         ),
         padding="8px",
         overflow="hidden",

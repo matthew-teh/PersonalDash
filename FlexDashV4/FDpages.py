@@ -46,11 +46,17 @@ def home() -> rx.Component:
                     background_color = Dashboard.colors["page_background"], 
                     border_radius="8px"
                 ),
+                
             ),
-            
+            rx.moment(
+                interval=800,
+                on_change=Dashboard.update_widget("", "pomodoro_v1"),
+                display="None",
+            ),
             width="100%",
             height="100%",
         ),
+
         width="100vw",
         height="100vh",
         padding="8px",
@@ -69,7 +75,7 @@ def widgets() -> rx.Component:
                         rx.grid(
                             rx.foreach(
                                 Dashboard.widgets_store,
-                                lambda item : widget(item.name, item.desc, item.available),
+                                lambda item : widget(item.name, item.image, item.desc, item.available),
                             ),
                             gap="8px",
                             columns="4",
