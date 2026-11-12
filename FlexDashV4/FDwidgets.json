@@ -42,7 +42,7 @@
             "available": true, 
             "designed_name": "Pomodoro Timer", 
             "designed_type": "pomodoro_v1",
-            "designed_data00": [{"pomodoro":"25", "short":"5", "long":"15", "intervals":"1", "started": "false", "sec_left":"0", "mode":"pomodoro"}], 
+            "designed_data00": [{"pomodoro":"25", "short":"5", "long":"15", "intervals":"1", "started": "false", "sec_left":"1500", "mode":"pomodoro", "timing":"25:00"}], 
             "designed_data01": "",
             "designed_data02": "", 
             "designed_data03": 0
@@ -50,8 +50,8 @@
         {
             "name" : "Tic Tac Toe V1", 
             "desc" : "A mini game to play with computer", 
-            "image": "/widget_store/tictactoe_v1",
-            "available": true, 
+            "image": "",
+            "available": false, 
             "designed_name": "Tic Tac Toe", 
             "designed_type": "tictactoe_v1",
             "designed_data00": [{}], 
@@ -78,7 +78,7 @@
             "available": true, 
             "designed_name": "Terra Countdown", 
             "designed_type": "terracd_v1",
-            "designed_data00": [{"text":""}], 
+            "designed_data00": [{"time":"000:00:00"}], 
             "designed_data01": "",
             "designed_data02": "", 
             "designed_data03": 0

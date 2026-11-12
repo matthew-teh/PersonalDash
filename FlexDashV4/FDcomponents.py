@@ -144,7 +144,8 @@ def render_widget(item: dict):
             ("pomodoro_v1", FDwidgetsV1.pomodoro_widget(item)),
             ("tictactoe_v1", FDwidgetsV1.tictactoe_widget(item)),
             ("quicknotes_v1", FDwidgetsV1.quicknotes_widget(item)),
-            rx.box(),
+            ("terracd_v1", FDwidgetsV1.terracd_widget(item)),
+            rx.box(),   
         )
     )
 # ---- WIDGETS ENDS

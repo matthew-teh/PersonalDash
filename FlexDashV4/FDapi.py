@@ -2,7 +2,7 @@ import requests, time, openmeteo_requests, sqlite3, csv, ntplib, random
 from zoneinfo import ZoneInfo
 from contextlib import closing
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, UTC
 from pytz import timezone
 
 ENV = "DEV" # DOCKER
@@ -186,11 +186,11 @@ def worldclock_get_time(term: str = ""):
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
-        response = client.request('localhost', port="3002", version=3, timeout=1) # DEV USE 
+        response = client.request('localhost', port="123", version=3, timeout=1) # DEV USE 
     else: 
         response = client.request('ntp', port="123", version=3, timeout=1) # DOCKER USE 
 
-    dt_utc = datetime.fromtimestamp(response.tx_time, tz=timezone.utc)
+    dt_utc = datetime.fromtimestamp(response.tx_time, tz=UTC)
     zoneinfo = ZoneInfo(timezone_id)
     dt_local = dt_utc.astimezone(zoneinfo)
     dst = dt_local.dst() != timedelta(0)
@@ -291,7 +291,7 @@ def terracd_get_countdown():
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
-        unix = client.request('172.20.192.1', port="3002", version=3, timeout=1).tx_time # DEV USE 
+        unix = client.request('localhost', port="123", version=3, timeout=1).tx_time # DEV USE 
     else: 
         unix = client.request('ntp', port="123", version=3, timeout=1).tx_time # DOCKER USE 
 

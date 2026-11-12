@@ -417,16 +417,17 @@ def tictactoe_widget(widget) -> rx.Component:
                                     ("X", rx.icon("x", size=40)),
                                     ("O", rx.icon("circle", size=45)),
                                 ),
+                                rx.text(item["id"]),
                                 height="100%",
                                 width="100%",
                             ), width="60px", height="60px", border_radius="8px", padding="0px",
                             _hover=rx.cond(
-                                widget["data02"] == 0, 
-                                {"backgroundColor" : "#454143"},
+                                True, 
+                                {"backgroundColor" : "#FFFFFF"},
                                 {}
                             ),
-                            on_click=Dashboard.register_click(widget["id"], item["id"])
-                            ),
+                            on_click=Dashboard.register_click(item["id"]),
+                        ),
                     ),
                     gap="8px",
                     columns="3",
@@ -456,9 +457,11 @@ def tictactoe_widget(widget) -> rx.Component:
 def quicknotes_widget(widget) -> rx.Component:
     return rx.card(
         rx.hstack(
-            rx.color_mode_cond(
-                light = rx.image(src="/lucideicons/quick_notes_light.svg", height="42px", width="42px"),
-                dark  = rx.image(src="/lucideicons/quick_notes_dark.svg", height="42px", width="42px")
+            
+            rx.cond(
+                Dashboard.colors["mode"] == "dark",
+                rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="42px"),
+                rx.image(src="/lucide_icons/book_light.svg", height="42px", width="42px")
             ),
             rx.vstack(
                 rx.heading(widget["name"], size="3"),
@@ -466,15 +469,15 @@ def quicknotes_widget(widget) -> rx.Component:
                 spacing="0",
             ),
             rx.spacer(),
-            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_card(widget["id"])),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget["id"])),
             width="100%",
             height="20%",
         ),
         rx.hstack(
             rx.text_area(
                 placeholder="Start typing here...",
-                value = widget["data00"][0]["text"],
-                # on_change upload 2 cloud.
+                value=widget["data00"][0]["text"],
+                on_change=lambda val: Dashboard.save_notes(widget["id"], val),
                 width="100%",
                 height="100%",
             ),

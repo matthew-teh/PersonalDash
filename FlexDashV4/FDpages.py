@@ -41,12 +41,20 @@ def home() -> rx.Component:
                         columns="4",
                         gap="8px",
                     ),
+                    rx.moment(
+                        interval=1000,
+                        on_change=[
+                            Dashboard.update_widget("",widget_type="pomodoro_v1"), 
+                            Dashboard.update_widget("", widget_type="worldclock_v1"),
+                            Dashboard.update_widget("", widget_type="terracd_v1")
+                        ],
+                        display="None",
+                    ),
                     width="87%", 
                     height="100%", 
                     background_color = Dashboard.colors["page_background"], 
                     border_radius="8px"
                 ),
-                
             ),
             width="100%",
             height="100%",
