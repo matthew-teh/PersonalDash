@@ -48,11 +48,6 @@ def home() -> rx.Component:
                 ),
                 
             ),
-            rx.moment(
-                interval=800,
-                on_change=Dashboard.update_widget("", "pomodoro_v1"),
-                display="None",
-            ),
             width="100%",
             height="100%",
         ),

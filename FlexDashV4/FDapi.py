@@ -1,8 +1,9 @@
-import requests, time, openmeteo_requests, sqlite3, csv, ntplib
+import requests, time, openmeteo_requests, sqlite3, csv, ntplib, random
 from zoneinfo import ZoneInfo
 from contextlib import closing
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from pytz import timezone
 
 ENV = "DEV" # DOCKER
 
@@ -185,7 +186,7 @@ def worldclock_get_time(term: str = ""):
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
-        response = client.request('172.20.192.1', port="3002", version=3, timeout=1) # DEV USE 
+        response = client.request('localhost', port="3002", version=3, timeout=1) # DEV USE 
     else: 
         response = client.request('ntp', port="123", version=3, timeout=1) # DOCKER USE 
 
@@ -196,3 +197,135 @@ def worldclock_get_time(term: str = ""):
 
     date, timex, dst =f"{dt_local.strftime('%Y-%m-%d %H:%M:%S')} {dst}".split(' ')
     return [{"timezone": timezone_id.replace("/", ", ").replace("_", " "), "tz": dt_local.strftime('%z'), "date": date, "time": timex, "dst": str(dst)}]
+
+def tictactoe_check_win(cards: list[dict]) -> str:
+    board = [c["data"] if c["data"] in ["X", "O"] else "" for c in sorted(cards, key=lambda x: int(x["id"]))]
+    
+    wins = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], # Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], # Columns
+        [0, 4, 8], [2, 4, 6]             # Diagonals
+    ]
+    
+    for combo in wins:
+        if board[combo[0]] == board[combo[1]] == board[combo[2]] != "":
+            if board[combo[0]] == "O":
+                return "player"
+            elif board[combo[0]] == "X":
+                return "computer"
+                
+    if "0" not in [c["data"] for c in cards]:
+        return "tie"
+        
+    return "none"
+
+def tictactoe_computer_decide(cards: list[dict]) -> dict:
+    sorted_cards = sorted(cards, key=lambda x: int(x["id"]))
+    board = [c["data"] if c["data"] in ["X", "O"] else "" for c in sorted_cards]
+    empty_spots = [i for i in range(9) if board[i] == ""]
+    if not empty_spots:
+        return {}
+
+    if random.random() < 0.1: # Minimax impossible chanigng to 70% impossible
+        idx = random.choice(empty_spots)
+        return {"id": str(idx), "data": "X"}
+
+    wins = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ]
+
+    def get_winner(b):
+        for combo in wins:
+            if b[combo[0]] == b[combo[1]] == b[combo[2]] != "":
+                return b[combo[0]]
+        if "" not in b: return "Tie"
+        return None
+
+    def minimax(b, depth, is_maximizing):
+        result = get_winner(b)
+        if result == "X": return 10 - depth
+        if result == "O": return depth - 10
+        if result == "Tie": return 0
+
+        if is_maximizing:
+            best = -float("inf")
+            for i in range(9):
+                if b[i] == "":
+                    b[i] = "X"
+                    score = minimax(b, depth + 1, False)
+                    b[i] = ""
+                    best = max(score, best)
+            return best
+        else:
+            best = float("inf")
+            for i in range(9):
+                if b[i] == "":
+                    b[i] = "O"
+                    score = minimax(b, depth + 1, True)
+                    b[i] = ""
+                    best = min(score, best)
+            return best
+
+    best_score = -float("inf")
+    best_move_idx = None
+    
+    for i in range(9):
+        if board[i] == "":
+            board[i] = "X"
+            score = minimax(board, 0, False)
+            board[i] = ""
+            if score > best_score:
+                best_score = score
+                best_move_idx = i
+    if best_move_idx is not None:
+        return {
+            "id": str(best_move_idx),
+            "data": "X"
+        }
+    
+    return {}
+
+def terracd_get_countdown():
+    client = ntplib.NTPClient()
+
+    if ENV == "DEV":
+        unix = client.request('172.20.192.1', port="3002", version=3, timeout=1).tx_time # DEV USE 
+    else: 
+        unix = client.request('ntp', port="123", version=3, timeout=1).tx_time # DOCKER USE 
+
+    ny_tz = timezone("America/New_York")
+
+    ny_now = datetime.fromtimestamp(unix, ny_tz)
+
+    d_sunday = (0 - ny_now.weekday()) % 7
+    if d_sunday == 0: d_sunday = 7
+
+    t_date = ny_now.date() + timedelta(days=d_sunday)
+
+    t_ny = ny_tz.localize(datetime(
+        t_date.year, t_date.month, t_date.day, 0, 0, 0
+    ))
+
+    t_unix = t_ny.timestamp()
+
+    diff = int(t_unix - unix)
+
+
+    hours = diff // 3600
+    minutes = (diff % 3600) // 60
+    seconds = diff % 60
+
+    if len(str(hours)) == 1:
+        hours = f"0{hours}"
+    
+    if len(str(minutes)) == 1:
+        minutes = f"0{minutes}"
+
+    if len(str(seconds)) == 1:
+        seconds = f"0{seconds}"
+        
+    countdown = f"{hours}:{minutes}:{seconds}"
+
+    return countdown

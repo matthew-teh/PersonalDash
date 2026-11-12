@@ -165,7 +165,9 @@ class Dashboard(rx.State):
                         if len(str(seconds)) == 1:
                             seconds = f"0{seconds}"
                         widget["data00"][0]["timing"] = f"{minutes}:{seconds}"
-                    
+
+            if widget["type"].lower() == "terracd_v1":
+                widget["data00"] = terracd_get_countdown
                     
     @rx.event
     def update_all_widget(self):
@@ -271,3 +273,50 @@ class Dashboard(rx.State):
                     if len(str(seconds)) == 1:
                         seconds = f"0{seconds}"
                     widget["data00"][0]["timing"] = f"{minutes}:{seconds}"
+    # TIC TAC TOE 
+    @rx.event
+    def register_click(self, widget_id, button_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                for item in widget["data00"]:
+                    if item["id"] == button_id and item["data"] != "X":
+                        item["data"] = "O"
+                        type(self).calculate(widget_id)
+    @rx.event
+    def calculate(self, widget_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                status = tictactoe_check_win(widget["data00"])
+                time.sleep(0.1)
+                if status == "none":
+                    move = tictactoe_computer_decide(widget["data00"])
+                    if not move == {}:
+                        for item in widget["data00"]:
+                            if item["id"] == move["id"]:
+                                item["data"] = move["data"]
+                # Check again is needed after computer moves.
+                status = tictactoe_check_win(widget["data00"])
+                if status == "player":
+                    score = str(int(widget["data03"].split(",")[0]) + 1)
+                    widget["data03"] = f"{score},{widget["data03"].split(",")[1]}"
+                    self.setup_tic_tac_toe(widget_id)
+
+                if status == "computer":
+                    self.setup_tic_tac_toe(widget_id)
+                    score = str(int(widget["data03"].split(",")[1]) + 1)
+                    widget["data03"] = f"{widget["data03"].split(",")[0]},{score}"
+                if status == "tie":
+                    self.setup_tic_tac_toe(widget_id)
+
+    @rx.event
+    def setup_tic_tac_toe(self, widget_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                grids = []
+                for r in range(3):
+                    for c in range(3):
+                        grids.append({
+                            "id" : str(r*3+c),
+                            "data" : "0",
+                        })
+                widget["data00"] = grids

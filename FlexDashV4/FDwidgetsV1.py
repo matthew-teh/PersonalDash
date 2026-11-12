@@ -344,3 +344,197 @@ def pomodoro_widget(widget) -> rx.Component:
         border_radius="8px",
         border = "1px solid rgba(255, 255, 255, 0.2)",
     )
+
+def tictactoe_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.cond(
+                Dashboard.colors["mode"] == "dark",
+                rx.image(src="/lucide_icons/tictactoe_dark.svg", height="42px", width="42px"),
+                rx.image(src="/lucide_icons/tictactoe_light.svg", height="42px", width="42px")
+            ),
+            rx.vstack(
+                rx.heading(widget["name"], size="3"),
+                rx.text("Terra special"),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget["id"])),
+            width="100%",
+            height="20%",
+        ),
+        rx.hstack(
+            rx.flex(
+                rx.card(
+                    rx.box(
+                        rx.vstack(
+                            rx.text("You"),
+                            rx.hstack(
+                                rx.icon("circle", size=48),
+                                rx.spacer(),
+                                rx.text(widget["data02"].split(",")[0], font_size="48px"),
+                                height="100%", width="100%", align_items="center",
+                            ),
+                            spacing="0",
+                            height="100%",
+                            width="100%",
+                        ),
+                        width="100%", height="50%", border_radius="4px", padding="2px",),
+                    rx.box(
+                        rx.vstack(
+                            rx.text("Computer"),
+                            rx.hstack(
+                                rx.icon("x", size=50), 
+                                rx.spacer(),
+                                rx.text(widget["data02"].split(",")[1], font_size="48px"),
+                                height="100%", width="100%", align_items="center"
+                            ),
+                            
+                            spacing="0",
+                            height="100%",
+                            width="100%",
+                        ),
+                        width="100%", height="50%", border_radius="4px", padding="2px"),
+                    width="100%",
+                    height="196px",
+                    padding="8px",
+                ),
+                justify = "center",
+                align_items = "center",
+                width="60%",
+                paddin= "0px",
+                padding_right="8px",
+            ),
+            rx.flex(
+                rx.grid(
+                    rx.foreach(
+                        widget["data00"],
+                        lambda item:rx.card(
+                            rx.center(
+                                rx.match(
+                                    item["data"],
+                                    ("0", rx.text("")),
+                                    ("X", rx.icon("x", size=40)),
+                                    ("O", rx.icon("circle", size=45)),
+                                ),
+                                height="100%",
+                                width="100%",
+                            ), width="60px", height="60px", border_radius="8px", padding="0px",
+                            _hover=rx.cond(
+                                widget["data02"] == 0, 
+                                {"backgroundColor" : "#454143"},
+                                {}
+                            ),
+                            on_click=Dashboard.register_click(widget["id"], item["id"])
+                            ),
+                    ),
+                    gap="8px",
+                    columns="3",
+                    width="fit-content",
+                    height="fit-content",
+                    padding="0px",
+                ),
+                justify="end",
+                align = "center",
+                padding="0px",
+            ),
+            width="100%",
+            height="80%",
+            align_items="end",
+            spacing="0",
+            padding="0px",
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )
+
+def quicknotes_widget(widget) -> rx.Component:
+    return rx.card(
+        rx.hstack(
+            rx.color_mode_cond(
+                light = rx.image(src="/lucideicons/quick_notes_light.svg", height="42px", width="42px"),
+                dark  = rx.image(src="/lucideicons/quick_notes_dark.svg", height="42px", width="42px")
+            ),
+            rx.vstack(
+                rx.heading(widget["name"], size="3"),
+                rx.text("A text area to note, auto saved.   "),
+                spacing="0",
+            ),
+            rx.spacer(),
+            rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_card(widget["id"])),
+            width="100%",
+            height="20%",
+        ),
+        rx.hstack(
+            rx.text_area(
+                placeholder="Start typing here...",
+                value = widget["data00"][0]["text"],
+                # on_change upload 2 cloud.
+                width="100%",
+                height="100%",
+            ),
+            width="100%",
+            height="80%",
+            spacing="0",
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )
+
+def terracd_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.cond(
+                Dashboard.colors["mode"] == "dark",
+                rx.image(src="/lucide_icons/clock_fading_dark.svg", height="42px", width="42px"),
+                rx.image(src="/lucide_icons/clock_fading_dark.svg", height="42px", width="42px")
+        ),
+        rx.vstack(
+            rx.heading(widget["name"], size="3"),
+            rx.text("This week of terra ends in: "),
+            spacing="0",
+        ),
+        rx.spacer(),
+        rx.button(rx.icon("trash_2", size=16), variant="ghost", on_click=Dashboard.delete_widget(widget["id"])),
+        width="100%",
+        height="20%",
+        ),
+        rx.vstack(
+            rx.center(
+                rx.text(widget["data00"][0]["time"], font_size="110px", weight="bold"),
+                height="100%",
+                width="100%",
+            ),
+            rx.center(
+                rx.hstack(
+                    rx.text("Hours"),
+                    rx.text("Minutes"),
+                    rx.text("Seconds"),
+                    width="80%",
+                    justify="between",
+                ),
+                height="100%",
+                width="100%"
+            ),
+            width="100%",
+            height="80%",
+            spacing="0",
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio=" 1/1",
+        style={"background_color": Dashboard.colors["widget_background"]},
+        border_radius="8px",
+        border = "1px solid rgba(255, 255, 255, 0.2)",
+    )

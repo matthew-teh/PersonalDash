@@ -142,6 +142,8 @@ def render_widget(item: dict):
             ("weather_v1", FDwidgetsV1.weather_widget(item)),
             ("worldclock_v1", FDwidgetsV1.worldclock_widget(item)),
             ("pomodoro_v1", FDwidgetsV1.pomodoro_widget(item)),
+            ("tictactoe_v1", FDwidgetsV1.tictactoe_widget(item)),
+            ("quicknotes_v1", FDwidgetsV1.quicknotes_widget(item)),
             rx.box(),
         )
     )
