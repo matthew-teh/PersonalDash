@@ -8,7 +8,7 @@ from . import FDwidgetsV2
 def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Component:
     return rx.button(
         rx.hstack(
-            rx.image(src=image),
+            rx.image(src=f"{image}_{Dashboard.colors["mode"]}.svg"),
             rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
             width="100%",
             height="100%",
@@ -27,7 +27,7 @@ def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Compon
 def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
     return rx.button(
         rx.hstack(
-            rx.image(src=image),
+            rx.image(src=f"{image}_{Dashboard.colors["mode"]}.svg"),
             rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
             width="100%",
             height="100%",
@@ -58,15 +58,15 @@ def sidebar() -> rx.Component:
             ),  
             rx.vstack(
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets home", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items("Dashboard", "/lucide_icons/house_dark.svg", "/", True),
-                sidebar_items("Add widgets", "/lucide_icons/shopping_bag_dark.svg", "/widgets", True),
+                sidebar_items("Dashboard", "/lucide_icons/house", "/", True),
+                sidebar_items("Add widgets", "/lucide_icons/shopping_bag", "/widgets", True),
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets control", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw_dark.svg", Dashboard.update_all_widget),
-                sidebar_items_functional("Delete all", "/lucide_icons/trash_dark.svg", Dashboard.delete_all_widget),
+                sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw", Dashboard.update_all_widget),
+                sidebar_items_functional("Delete all", "/lucide_icons/trash", Dashboard.delete_all_widget),
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Cloud status", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync_dark.svg", Dashboard.update_all_widget),
+                sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync", Dashboard.update_all_widget),
                 rx.hstack(
-                    rx.image(src="lucide_icons/cloud_check_dark.svg"),
+                    rx.image(src=f"/lucide_icons/cloud_check_{Dashboard.colors["mode"]}.svg"),
                     rx.text(Dashboard.sync_status),
                     opacity = 0.5,
                     _hover={"opacity": 1.0},
@@ -78,8 +78,8 @@ def sidebar() -> rx.Component:
                 ),
                 rx.spacer(),
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Preferences", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items("Account", "/lucide_icons/user_round_dark.svg", "/account", True),
-                sidebar_items("Settings", "/lucide_icons/settings_dark.svg", "/settings", True),
+                sidebar_items("Account", "/lucide_icons/user_round", "/account", True),
+                sidebar_items("Settings", "/lucide_icons/settings", "/settings", True),
                 width="100%",
                 height="100%",
             ),
@@ -90,6 +90,7 @@ def sidebar() -> rx.Component:
         height="100%",
         padding="8px",
         border_radius="8px",
+        color=Dashboard.colors["text"]
     )
 # ---- SIDEBAR ENDS
 
@@ -113,7 +114,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius="8px", width="100%", background_color="#EEEEEE", on_click=Dashboard.add_widget(name)),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius="8px", width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
                     width="100%",
                     opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
@@ -132,6 +133,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
         on_mouse_enter=Dashboard.set_widget_store_name(name),
         on_mouse_leave=Dashboard.set_widget_store_name(value=""),
         border_radius="8px",
+        color=Dashboard.colors["text"]
     )
 
 def render_widget(item: dict):

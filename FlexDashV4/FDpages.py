@@ -1,5 +1,5 @@
 import reflex as rx
-
+from reflex.style import set_color_mode
 from .FDstates import Dashboard
 from .FDcomponents import sidebar, widget, render_widget
 
@@ -64,6 +64,7 @@ def home() -> rx.Component:
         height="100vh",
         padding="8px",
         background_color = Dashboard.colors["background"],
+        color=Dashboard.colors["text"]
     )
 
 @rx.page("/widgets", title="FlexDash | Widgets", on_load=Dashboard.init_page)
@@ -102,4 +103,54 @@ def widgets() -> rx.Component:
         height="100vh",
         padding="8px",
         background_color = Dashboard.colors["background"],
+        color=Dashboard.colors["text"]
+    )
+
+@rx.page("/settings", title="FlexDash | Widgets", on_load=Dashboard.init_page)
+def settings() -> rx.Component:
+        return rx.box(
+        rx.hstack(
+            sidebar(),
+            rx.box(
+                rx.vstack(
+                    rx.text("FlexDash Settings", weight="bold", font_size="64px", opacity=0.95),
+                    rx.card(
+                        rx.text("Appearances", font_size="32px"),
+                        rx.hstack(
+                            rx.text("Light / Dark Mode", font_size="16px"),
+                            rx.spacer(),
+                            rx.segmented_control.root(
+                                 rx.segmented_control.item(
+                                      rx.icon('sun'),
+                                      value="light"
+                                 ),
+                                 rx.segmented_control.item(
+                                      rx.icon('moon'),
+                                      value="dark"
+                                 ),
+                                 default_value=Dashboard.colors["mode"],
+                                 on_change=[Dashboard.edit_theme, set_color_mode],    
+                            ),
+                            width="100%",
+                            align="center",
+                        ),
+                        width="20%",
+                        aspect_ratio="1/1",
+                    ),
+                    width="100%",
+                    spacing="1",
+                ),
+                padding="8px",
+                width="87%", 
+                height="100%", 
+                background_color = Dashboard.colors["page_background"], 
+                border_radius="8px"),
+            width="100%",
+            height="100%",
+        ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["background"],
+        color=Dashboard.colors["text"]
     )

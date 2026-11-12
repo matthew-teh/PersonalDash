@@ -2,7 +2,7 @@
         {
             "name" : "Crypto Widget V1", 
             "desc" : "Shows specific crypto coins info.", 
-            "image": "/widget_store/crypto_v1",
+            "image": "/widget_store/cryptov1",
             "available": true, 
             "designed_name": "BTCUSDT", 
             "designed_type": "crypto_v1",
@@ -14,7 +14,7 @@
         {
             "name" : "Weather Widget V1", 
             "desc" : "Shows weather info for a city.", 
-            "image": "/widget_store/weather_v1",
+            "image": "/widget_store/weatherv1",
             "available": true, 
             "designed_name": "London", 
             "designed_type": "weather_v1",
@@ -26,7 +26,7 @@
         {
             "name" : "World Clock Widget V1", 
             "desc" : "Shows UTC time info for a city.", 
-            "image": "/widget_store/worldclock_v1",
+            "image": "/widget_store/worldclockv1",
             "available": true, 
             "designed_name": "Singapore", 
             "designed_type": "worldclock_v1",
@@ -38,7 +38,7 @@
         {
             "name" : "Pomodoro Timer V1", 
             "desc" : "A countdown designed to focus work.", 
-            "image": "/widget_store/pomodoro_v1",
+            "image": "/widget_store/pomodorov1",
             "available": true, 
             "designed_name": "Pomodoro Timer", 
             "designed_type": "pomodoro_v1",
@@ -50,10 +50,10 @@
         {
             "name" : "Tic Tac Toe V1", 
             "desc" : "A mini game to play with computer", 
-            "image": "",
+            "image": "",    
             "available": false, 
             "designed_name": "Tic Tac Toe", 
-            "designed_type": "tictactoe_v1",
+            "designed_type": "tictactoev1",
             "designed_data00": [{}], 
             "designed_data01": "",
             "designed_data02": "0,0", 
@@ -62,7 +62,7 @@
         {
             "name" : "Quick Notes V1", 
             "desc" : "A empty box for you to type anything.", 
-            "image": "/widget_store/quicknotes_v1",
+            "image": "/widget_store/quicknotesv1",
             "available": true, 
             "designed_name": "Quick Notes", 
             "designed_type": "quicknotes_v1",
@@ -74,7 +74,7 @@
         {
             "name" : "Terra Countdown V1", 
             "desc" : "Shows how much time left to ship.", 
-            "image": "/widget_store/terracd_v1",
+            "image": "/widget_store/terracdv1",
             "available": true, 
             "designed_name": "Terra Countdown", 
             "designed_type": "terracd_v1",

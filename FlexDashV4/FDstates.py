@@ -47,7 +47,29 @@ class Dashboard(rx.State):
         "page_background": "#151515",
         "background": "#0f0f0f",
     }
-    
+
+    @rx.event
+    def edit_theme(self, value):
+        print(value)
+        if value == "dark":
+            self.colors = {
+                "mode": "dark",
+                "text": "#ffffff", 
+                "text_alt": "#000000",
+                "widget_background": "#1b1b1b",
+                "page_background": "#151515",
+                "background": "#0f0f0f",
+            }
+        elif value == "light":
+            self.colors = {
+                "mode": "light",
+                "text": "#000000", 
+                "text_alt": "#ffffff",
+                "widget_background": "#e4e4e4",
+                "page_background": "#eaeaea",
+                "background": "#f0f0f0",
+            }
+        print(self.colors)
     #---- CLOUD STATUS ( REDIS SERVER )
     sync_status = "Last sync 23:52:20"
 

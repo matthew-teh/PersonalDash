@@ -3,7 +3,7 @@ import reflex as rx
 from .FDstates import Dashboard
 
 def crypto_widget(widget) -> rx.Component:
-    return rx.box(
+    return rx.card(
         rx.hstack(                        
             rx.image(
                 src=f"/crypto_icons/{widget["name"].lower().replace("usdt", "")}.png",
@@ -93,7 +93,7 @@ def crypto_widget(widget) -> rx.Component:
     )
 
 def weather_widget(widget) -> rx.Component:
-    return rx.box(
+    return rx.card(
         rx.hstack(
             rx.image(
                 src=f"/{widget["data00"][0]["useimg"]}",
@@ -191,7 +191,7 @@ def weather_widget(widget) -> rx.Component:
     )
 
 def worldclock_widget(widget) -> rx.Component:
-    return rx.box(
+    return rx.card(
         rx.hstack(            
             rx.image(
                 src= "/matthew_icons/earth.png",
@@ -238,10 +238,10 @@ def worldclock_widget(widget) -> rx.Component:
                    height="50%",
                    width="100%"),
             rx.vstack(
-                rx.card(f"Universal Time Coordinates: {widget["data00"][0]["tz"]}", width="100%", height="50%", justify="center"),
+                rx.card(rx.center(f"Universal Time Coordinates: {widget["data00"][0]["tz"]}", width="100%", height="100%"), width="100%", height="50%"),
                 rx.hstack(
-                    rx.card(f"{widget["data00"][0]["date"]} {widget["data00"][0]["time"]}", width="50%", display="flex", height="100%", align_items="center", padding="0", padding_left="12px"),
-                    rx.card(f"DST: {widget["data00"][0]["dst"]}", width="50%", height="100%", display="flex", align_items="center", padding="0", padding_left="12px"),
+                    rx.card(rx.center(f"{widget["data00"][0]["date"]} {widget["data00"][0]["time"]}", width="100%", height="100%"), width="50%", display="flex", height="100%", padding="0", padding_left="12px"),
+                    rx.card(rx.center(f"DST: {widget["data00"][0]["dst"]}", width="100%", height="100%"), width="50%", height="100%", display="flex", padding="0", padding_left="12px"),
                     height='50%',
                     width='100%',
                     spacing="1", 
@@ -265,7 +265,7 @@ def worldclock_widget(widget) -> rx.Component:
     )
 
 def pomodoro_widget(widget) -> rx.Component:
-    return rx.box(
+    return rx.card(
         rx.hstack(
             rx.icon("apple", height="42px", width="42px", color='red'),
             rx.vstack(
@@ -480,6 +480,7 @@ def quicknotes_widget(widget) -> rx.Component:
                 on_change=lambda val: Dashboard.save_notes(widget["id"], val),
                 width="100%",
                 height="100%",
+                color=Dashboard.colors["text"]
             ),
             width="100%",
             height="80%",
@@ -495,12 +496,12 @@ def quicknotes_widget(widget) -> rx.Component:
     )
 
 def terracd_widget(widget) -> rx.Component:
-    return rx.box(
+    return rx.card(
         rx.hstack(
             rx.cond(
                 Dashboard.colors["mode"] == "dark",
                 rx.image(src="/lucide_icons/clock_fading_dark.svg", height="42px", width="42px"),
-                rx.image(src="/lucide_icons/clock_fading_dark.svg", height="42px", width="42px")
+                rx.image(src="/lucide_icons/clock_fading_light.svg", height="42px", width="42px")
         ),
         rx.vstack(
             rx.heading(widget["name"], size="3"),
