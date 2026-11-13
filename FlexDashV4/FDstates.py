@@ -48,7 +48,7 @@ class Dashboard(rx.State):
     # ---- THEME START
     appearance = "dark"
     colors = {
-        "name": "dark-gray",
+        "name": "gray",
         "text": "var(--gray-12)",
         "buttons": "var(--gray-7)",
         "widget": "var(--gray-3)",
@@ -64,7 +64,9 @@ class Dashboard(rx.State):
 
     @rx.event
     def edit_theme(self, value):
+        print(value)
         for t in self.theme:
+            
             if t["name"] == value:
                 self.colors = t
 
@@ -84,6 +86,10 @@ class Dashboard(rx.State):
 
     # ---- SIDEBAR START
     page: str = "home"
+    parking: bool = False
+    @rx.event
+    def sidebar_parking(self, active: bool):
+        self.parking = active
     @rx.event
     def set_page(self, value: str, redirect: bool):
         if redirect:
@@ -219,7 +225,7 @@ class Dashboard(rx.State):
     @rx.event
     def delete_all_widget(self):
         self.widgets = []
-
+    
     # ---- CRYPTO WIDGET V1 and V2
     widget_name: str = ""
     @rx.event
@@ -321,6 +327,42 @@ class Dashboard(rx.State):
             if widget["id"] == widget_id:
                 widget["data00"][0]["text"] = new_text
 
+    # FDWIDGET V2 SPECIFICALLY DESIGNED, MUST APPLY AFTER ANY EDIT / ON BLUR 
+    temp_name: str = ""
+    temp_data00: list[dict[str, str]] = []
+    temp_data01: str = ""
+    temp_data02: str = ""
+    temp_data03: int = 0
+
+    @rx.event
+    def edit_any(self, value, types):
+        if types == "name": self.temp_name = value
+        if types == "00": self.temp_data00 = value
+        if types == "01": self.temp_data01 = value
+        if types == "02": self.temp_data02 = value
+        if types == "03": self.temp_data03 = value
+        
+    @rx.event
+    def apply_any(self, widget_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                if self.temp_name: 
+                    widget["name"] = self.temp_name
+                if self.temp_data00: 
+                    widget["data00"] = self.temp_data00
+                if self.temp_data01: 
+                    widget["data01"] = self.temp_data01
+                if self.temp_data02: 
+                    widget["data02"] = self.temp_data02
+                if self.temp_data03: 
+                    widget["data03"] = self.temp_data03
+                yield type(self).clear_any
+                yield type(self).update_widget(widget_id)
+
+    @rx.event
+    def clear_any(self):
+        self.temp_name, self.temp_data00, self.temp_data01, self.temp_data02, self.temp_data03 = "", [], "", "", 0
+
 starttime = time.time()
 class System(rx.State):
     cpu: float = 0
@@ -339,3 +381,5 @@ class System(rx.State):
         minutes, seconds = divmod(remainder, 60)
         seconds = round(seconds,1)
         self.formatted_uptime = f"{days}d, {hours}h, {minutes}m, {seconds}s"
+
+    

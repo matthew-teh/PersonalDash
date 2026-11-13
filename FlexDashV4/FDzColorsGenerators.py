@@ -18,9 +18,9 @@ radix_colors = ["gray", "mauve", "sage", "olive", "sand", "tomato", "red", "ruby
 
 for color in radix_colors:
     theme_presets.append({
-        "name": f"dark-{color.lower()}",
-        "text": f"var(--{color}-12)",
-        "buttons": f"var(--{color}-7)",
+        "name": f"{color.lower()}",
+        "text": f"var(--gray-12)",
+        "buttons": f"var(--{color}-8)",
         "widget": f"var(--{color}-3)",
         "page": f"var(--{color}-2)",
         "website": f"var(--{color}-1)"

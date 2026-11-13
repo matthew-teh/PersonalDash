@@ -106,7 +106,7 @@ def widgets() -> rx.Component:
         color=Dashboard.colors["text"]
     )
 
-@rx.page("/settings", title="FlexDash | Widgets", on_load=[Dashboard.init_page, System.update_server_status])
+@rx.page("/settings", title="FlexDash | Settings", on_load=[Dashboard.init_page, System.update_server_status])
 def settings() -> rx.Component:
         return rx.box(
         rx.hstack(
@@ -137,23 +137,25 @@ def settings() -> rx.Component:
                                                 rx.foreach(
                                                     Dashboard.theme,
                                                     lambda item: rx.box( 
-                                                        width="20px", height="20px", 
-                                                        border_radius="4px", 
-                                                        background_color=item["buttons"],
+                                                        width="20px",
+                                                        height="20px", 
+                                                        border_radius=rx.cond(
+                                                            Dashboard.colors["name"] == item["name"],
+                                                            "10px", "4px"
+                                                        ),
+                                                        background_color=f"var(--{item["name"]}-9)",
                                                         on_click=Dashboard.edit_theme(item["name"]),
                                                         transition="transform 0.2s ease-in-out",
                                                         _hover={
                                                             "transform" : "scale(1.5)",
                                                         },
-
                                                     ),
                                                 ),
                                                 columns="10",
                                                 gap="8px",
                                             ),
                                         ),
-                                        width="40%",
-                                        
+                                        width="40%",    
                                     ),
                                     rx.vstack(
                                         rx.text("BORDER SMOOTHNESS", font_size="16px", weight="bold"),
@@ -186,14 +188,35 @@ def settings() -> rx.Component:
                                 padding="32px",
                                 width="100%",
                                 border_radius=Dashboard.smoothness,
-                                border = "1px solid rgba(255, 255, 255, 0.2)",
+                                
+                                background_color = Dashboard.colors["widget"],
                             ),
                             rx.box(
                                 rx.vstack(
-                                    rx.text("Server Status", font_size="32px"),
+                                    rx.hstack(
+                                        rx.text("Server Status", font_size="32px"),
+                                        rx.spacer(),
+                                        rx.text("Hover for refresh", font_size="14px", opacity=0.5),
+                                        width="100%",
+                                        align="end"
+                                    ),
                                     rx.separator(),
-                                    rx.hstack(rx.text(f"CPU Usage: {System.cpu}%"), rx.spacer(), rx.progress(value=System.cpu.to(int), width='70%'), width="100%", align="center"), # type: ignore
-                                    rx.hstack(rx.text(f"RAM Usage: {System.ram}%"), rx.spacer(), rx.progress(value=System.ram.to(int), width='70%'), width="100%", align="center"), # type: ignore
+                                    rx.hstack(
+                                        rx.vstack(
+                                            rx.text(f"CPU Usage: {System.cpu}%"),
+                                            rx.text(f"RAM Usage: {System.ram}%"),
+                                            width="20%",
+                                        ),
+                                        rx.vstack(
+                                            rx.progress(value=System.cpu.to(int), width='70%', height="20px",fill_color=Dashboard.colors["buttons"], background_color=Dashboard.colors["website"]), # type: ignore
+                                            rx.progress(value=System.ram.to(int), width='70%', height="20px",fill_color=Dashboard.colors["buttons"], background_color=Dashboard.colors["website"]), # type: ignore
+                                            height="100%",
+                                            width="80%",
+                                        ),
+                                        align="center",
+                                        width="100%",
+                                        height="100%",
+                                    ),
                                     rx.text(f"Uptime: {System.formatted_uptime}"),
                                     margin_bottom="32px",
                                 ),
@@ -201,13 +224,22 @@ def settings() -> rx.Component:
                                 padding="32px",
                                 width="100%",
                                 border_radius=Dashboard.smoothness,
-                                border = "1px solid rgba(255, 255, 255, 0.2)",
+                                
+                                on_mouse_enter=System.update_server_status,
+                                background_color = Dashboard.colors["widget"],
                             ),
                         width="50%"
                         ),
                         rx.box(
                             rx.vstack(
-                                rx.text("Live Preview", font_size="32px"),
+                                rx.hstack(
+                                    rx.text("Live Preview", font_size="32px"),
+                                    rx.spacer(),
+                                    rx.text("Ignore the borders", font_size="14px", opacity=0.5),
+                                    align="end",
+                                    width="100%",
+                                    height="100%",
+                                ),
                                 rx.separator(),
                                 margin_bottom="32px",
                             ),
@@ -246,12 +278,15 @@ def settings() -> rx.Component:
                                     aspect_ratio=" 1/1",
                                     style={"background_color": Dashboard.colors["widget"]},
                                     border_radius=Dashboard.smoothness,
+                                    border_width="1px",
+                                    border_color=Dashboard.colors["text"]
                                 ),
                             ),
                             padding="32px",
                             width="50%",
                             border_radius=Dashboard.smoothness,
-                            border = "1px solid rgba(255, 255, 255, 0.2)",
+                            
+                            background_color = Dashboard.colors["widget"],
                         ),
                         spacing="2",
                         width="100%",

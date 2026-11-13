@@ -76,7 +76,7 @@
             "desc" : "Whoa? New Crypto Widget", 
             "image": "/widget_store/cryptov2",
             "available": true, 
-            "designed_name": "BTCUSDT", 
+            "designed_name": "BITCOIN BTC", 
             "designed_type": "crypto_v2",
             "designed_data00": [{}], 
             "designed_data01": "BTCUSDT",

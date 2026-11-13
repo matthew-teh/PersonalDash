@@ -7,15 +7,59 @@ def crypto_widget(widget) -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.image(
-                    src="/crypto_icons/btc.png",
-                    alt="crypto_widget_image",
+                    src=f"/crypto_icons/{widget["data01"].replace("USDT", "").lower()}.png",
+                    alt="c",
                     width="28px"
                 ),
-                rx.heading("BITCOIN", font_size="20px"),
-                rx.text("(BTC)", font_size="12px", opacity=0.6),
+                rx.heading(f"{widget["name"].split(" ")[0]}", font_size="20px"),
+                rx.text(f"{widget["name"].split(" ")[1]}", font_size="12px", opacity=0.6),
+                rx.spacer(),
+                rx.hover_card.root(
+                    rx.hover_card.trigger(
+                        rx.icon("pencil-line", size=16, color=Dashboard.colors["text"],opacity=0.5,
+                        background_color="transparent",
+                        padding="0",
+                        cursor="pointer",
+                        _hover={"opacity": 1}),
+                    ),
+                    rx.hover_card.content(
+                        rx.vstack(
+                            rx.hstack(
+                                rx.text("EDIT WIDGET", weight="bold", font_size="16px"),
+                                rx.button(rx.text("SAVE", color=Dashboard.colors["text"]), background_color=Dashboard.colors["buttons"], opacity=0.6, _hover={"opacity": 1.0}, on_click=Dashboard.apply_any(widget["id"])),
+                                justify="between",
+                                align="center",
+                                width="100%"
+                            ),
+                            rx.vstack(
+                                rx.text("Widget Name: "),
+                                rx.input(
+                                    value=Dashboard.temp_name,
+                                    placeholder=widget["name"],
+                                    on_change= lambda val : Dashboard.edit_any(val, "name")
+                                ),
+                                rx.text("Cryptocurrency: "),
+                                rx.input(
+                                    value=Dashboard.temp_data01,
+                                    placeholder=widget["data01"],
+                                    on_change= lambda val : Dashboard.edit_any(val, "01")
+                                ),
+                            ),
+                            
+                            width="100%",
+                        ),
+                        
+                        on_mouse_leave=Dashboard.clear_any
+                    ),
+                    rx.icon("trash", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=Dashboard.delete_widget(widget["id"])),
+                    direction="right",
+                ),
+
+                
                 spacing="2",
                 align="center",
-                padding_bottom="2px"
+                padding_bottom="2px",
+                width="100%",
             ),
             rx.text(f"Current price, interval {widget["data02"]}", font_size="12px", opacity=0.6),
             rx.hstack(
@@ -39,10 +83,10 @@ def crypto_widget(widget) -> rx.Component:
                 rx.el.svg.defs(
                     rx.el.svg.linear_gradient(
                         rx.el.svg.stop(
-                            offset="5%", stop_color="#F64740", stop_opacity=0.8,
+                            offset="5%", stop_color=rx.cond(widget["data00"][-1]["price"] >= widget["data00"][0]["price"],"#40F698","#F64740",), stop_opacity=0.8,
                         ),
                         rx.el.svg.stop(
-                            offset="95%", stop_color="#F64740", stop_opacity=0.2,
+                            offset="95%", stop_color=rx.cond(widget["data00"][-1]["price"] >= widget["data00"][0]["price"],"#40F698","#F64740",), stop_opacity=0.2,
                         ),
                     id="area_gradient",
                     x1=0,
@@ -57,7 +101,7 @@ def crypto_widget(widget) -> rx.Component:
                     fill="url(#area_gradient)",
                     type_="natural",
                 ),
-                rx.recharts.y_axis(domain=["auto","auto"], hide=True   ),
+                rx.recharts.y_axis(domain=["auto","auto"], hide=True),
                 rx.recharts.graphing_tooltip(),
                 data=widget["data00"],
                 wrapper_style={"backgroundColor": rx.cond(widget["data00"][-1]["price"] >= widget["data00"][0]["price"],"#40F698","#F64740",)},
@@ -72,5 +116,4 @@ def crypto_widget(widget) -> rx.Component:
         aspect_ratio=" 1/1",
         style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-    
     )   

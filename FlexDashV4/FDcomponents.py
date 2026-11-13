@@ -77,7 +77,30 @@ def sidebar() -> rx.Component:
                     border_radius=Dashboard.smoothness,
                     height="32px",
                 ),
-                rx.spacer(),
+                rx.flex(
+                    rx.vstack(
+                        rx.image(src=rx.cond(Dashboard.appearance=="dark","lucide_icons/square_dashed_mouse_pointer_dark.svg", "lucide_icons/square_dashed_mouse_pointer_light.svg"), opacity=rx.cond(Dashboard.parking, 1.0, 0.5)),
+                        rx.cond(
+                            Dashboard.parking,
+                            rx.text("CURSOR PARKED HERE", opacity=1.0, white_space="pre-wrap"),
+                            rx.text("CURSOR PARKING AREA", opacity=0.5, white_space="pre-wrap"),
+                        ),
+                        align="center",
+                        justify="center",
+                        height="100%",
+                        width="100%",
+                        
+                    ),
+                    height="100%",
+                    width="100%",
+                    border_radius= Dashboard.smoothness,
+                    background_color = Dashboard.colors["widget"],
+                    cursor="none",
+                    on_mouse_enter=Dashboard.sidebar_parking(True),
+                    on_mouse_leave=Dashboard.sidebar_parking(False),
+                ),
+
+
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Preferences", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
                 sidebar_items("Account", "/lucide_icons/user_round", "/account", True),
                 sidebar_items("Settings", "/lucide_icons/settings", "/settings", True),
@@ -115,7 +138,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["buttons"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["buttons"], on_click=Dashboard.add_widget(name)),
                     width="100%",
                     opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
