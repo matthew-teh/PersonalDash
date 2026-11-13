@@ -17,7 +17,7 @@ def crypto_widget(widget) -> rx.Component:
                 align="center",
                 padding_bottom="2px"
             ),
-            rx.text("Current price", font_size="12px", opacity=0.6),
+            rx.text(f"Current price, interval {widget["data02"]}", font_size="12px", opacity=0.6),
             rx.hstack(
                 rx.heading(
                     f"${widget["data00"][-1]["price"]}", 
@@ -70,8 +70,7 @@ def crypto_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     
     )   

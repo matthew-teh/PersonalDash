@@ -8,7 +8,7 @@ from . import FDwidgetsV2
 def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Component:
     return rx.button(
         rx.hstack(
-            rx.image(src=f"{image}_{Dashboard.colors["mode"]}.svg"),
+            rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
             rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
             width="100%",
             height="100%",
@@ -22,12 +22,13 @@ def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Compon
         border_radius=Dashboard.smoothness,
         height="32px",
         on_click= Dashboard.set_page(link, redirect),
+        border = rx.cond(Dashboard.page == link.lower(), "1px solid rgba(255, 255, 255, 0.2)", ""),
     )
 
 def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
     return rx.button(
         rx.hstack(
-            rx.image(src=f"{image}_{Dashboard.colors["mode"]}.svg"),
+            rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
             rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
             width="100%",
             height="100%",
@@ -66,7 +67,7 @@ def sidebar() -> rx.Component:
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Cloud status", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
                 sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync", Dashboard.update_all_widget),
                 rx.hstack(
-                    rx.image(src=f"/lucide_icons/cloud_check_{Dashboard.colors["mode"]}.svg"),
+                    rx.image(src=f"/lucide_icons/cloud_check_{Dashboard.appearance}.svg"),
                     rx.text(Dashboard.sync_status),
                     opacity = 0.5,
                     _hover={"opacity": 1.0},
@@ -103,7 +104,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.cond(
                 image,
                 rx.image(
-                    src=f"{image}_{Dashboard.colors["mode"]}.png",
+                    src=f"{image}_{Dashboard.appearance}.png",
                     width="260px",
                     height="260px",
                     border_radius=Dashboard.smoothness,
@@ -114,7 +115,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text_alt"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["buttons"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["text"], on_click=Dashboard.add_widget(name)),
                     width="100%",
                     opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
@@ -146,6 +147,7 @@ def render_widget(item: dict):
             ("pomodoro_v1", FDwidgetsV1.pomodoro_widget(item)),
             ("quicknotes_v1", FDwidgetsV1.quicknotes_widget(item)),
             ("terracd_v1", FDwidgetsV1.terracd_widget(item)),
+            ("crypto_v2", FDwidgetsV2.crypto_widget(item)),
             rx.box(),   
         )
     )

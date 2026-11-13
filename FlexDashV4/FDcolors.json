@@ -1,0 +1,242 @@
+[
+    {
+        "name": "dark-gray",
+        "text": "var(--gray-12)",
+        "buttons": "var(--gray-7)",
+        "widget": "var(--gray-3)",
+        "page": "var(--gray-2)",
+        "website": "var(--gray-1)"
+    },
+    {
+        "name": "dark-mauve",
+        "text": "var(--mauve-12)",
+        "buttons": "var(--mauve-7)",
+        "widget": "var(--mauve-3)",
+        "page": "var(--mauve-2)",
+        "website": "var(--mauve-1)"
+    },
+    {
+        "name": "dark-sage",
+        "text": "var(--sage-12)",
+        "buttons": "var(--sage-7)",
+        "widget": "var(--sage-3)",
+        "page": "var(--sage-2)",
+        "website": "var(--sage-1)"
+    },
+    {
+        "name": "dark-olive",
+        "text": "var(--olive-12)",
+        "buttons": "var(--olive-7)",
+        "widget": "var(--olive-3)",
+        "page": "var(--olive-2)",
+        "website": "var(--olive-1)"
+    },
+    {
+        "name": "dark-sand",
+        "text": "var(--sand-12)",
+        "buttons": "var(--sand-7)",
+        "widget": "var(--sand-3)",
+        "page": "var(--sand-2)",
+        "website": "var(--sand-1)"
+    },
+    {
+        "name": "dark-tomato",
+        "text": "var(--tomato-12)",
+        "buttons": "var(--tomato-7)",
+        "widget": "var(--tomato-3)",
+        "page": "var(--tomato-2)",
+        "website": "var(--tomato-1)"
+    },
+    {
+        "name": "dark-red",
+        "text": "var(--red-12)",
+        "buttons": "var(--red-7)",
+        "widget": "var(--red-3)",
+        "page": "var(--red-2)",
+        "website": "var(--red-1)"
+    },
+    {
+        "name": "dark-ruby",
+        "text": "var(--ruby-12)",
+        "buttons": "var(--ruby-7)",
+        "widget": "var(--ruby-3)",
+        "page": "var(--ruby-2)",
+        "website": "var(--ruby-1)"
+    },
+    {
+        "name": "dark-crimson",
+        "text": "var(--crimson-12)",
+        "buttons": "var(--crimson-7)",
+        "widget": "var(--crimson-3)",
+        "page": "var(--crimson-2)",
+        "website": "var(--crimson-1)"
+    },
+    {
+        "name": "dark-pink",
+        "text": "var(--pink-12)",
+        "buttons": "var(--pink-7)",
+        "widget": "var(--pink-3)",
+        "page": "var(--pink-2)",
+        "website": "var(--pink-1)"
+    },
+    {
+        "name": "dark-plum",
+        "text": "var(--plum-12)",
+        "buttons": "var(--plum-7)",
+        "widget": "var(--plum-3)",
+        "page": "var(--plum-2)",
+        "website": "var(--plum-1)"
+    },
+    {
+        "name": "dark-purple",
+        "text": "var(--purple-12)",
+        "buttons": "var(--purple-7)",
+        "widget": "var(--purple-3)",
+        "page": "var(--purple-2)",
+        "website": "var(--purple-1)"
+    },
+    {
+        "name": "dark-violet",
+        "text": "var(--violet-12)",
+        "buttons": "var(--violet-7)",
+        "widget": "var(--violet-3)",
+        "page": "var(--violet-2)",
+        "website": "var(--violet-1)"
+    },
+    {
+        "name": "dark-iris",
+        "text": "var(--iris-12)",
+        "buttons": "var(--iris-7)",
+        "widget": "var(--iris-3)",
+        "page": "var(--iris-2)",
+        "website": "var(--iris-1)"
+    },
+    {
+        "name": "dark-indigo",
+        "text": "var(--indigo-12)",
+        "buttons": "var(--indigo-7)",
+        "widget": "var(--indigo-3)",
+        "page": "var(--indigo-2)",
+        "website": "var(--indigo-1)"
+    },
+    {
+        "name": "dark-blue",
+        "text": "var(--blue-12)",
+        "buttons": "var(--blue-7)",
+        "widget": "var(--blue-3)",
+        "page": "var(--blue-2)",
+        "website": "var(--blue-1)"
+    },
+    {
+        "name": "dark-cyan",
+        "text": "var(--cyan-12)",
+        "buttons": "var(--cyan-7)",
+        "widget": "var(--cyan-3)",
+        "page": "var(--cyan-2)",
+        "website": "var(--cyan-1)"
+    },
+    {
+        "name": "dark-teal",
+        "text": "var(--teal-12)",
+        "buttons": "var(--teal-7)",
+        "widget": "var(--teal-3)",
+        "page": "var(--teal-2)",
+        "website": "var(--teal-1)"
+    },
+    {
+        "name": "dark-jade",
+        "text": "var(--jade-12)",
+        "buttons": "var(--jade-7)",
+        "widget": "var(--jade-3)",
+        "page": "var(--jade-2)",
+        "website": "var(--jade-1)"
+    },
+    {
+        "name": "dark-green",
+        "text": "var(--green-12)",
+        "buttons": "var(--green-7)",
+        "widget": "var(--green-3)",
+        "page": "var(--green-2)",
+        "website": "var(--green-1)"
+    },
+    {
+        "name": "dark-grass",
+        "text": "var(--grass-12)",
+        "buttons": "var(--grass-7)",
+        "widget": "var(--grass-3)",
+        "page": "var(--grass-2)",
+        "website": "var(--grass-1)"
+    },
+    {
+        "name": "dark-bronze",
+        "text": "var(--bronze-12)",
+        "buttons": "var(--bronze-7)",
+        "widget": "var(--bronze-3)",
+        "page": "var(--bronze-2)",
+        "website": "var(--bronze-1)"
+    },
+    {
+        "name": "dark-gold",
+        "text": "var(--gold-12)",
+        "buttons": "var(--gold-7)",
+        "widget": "var(--gold-3)",
+        "page": "var(--gold-2)",
+        "website": "var(--gold-1)"
+    },
+    {
+        "name": "dark-brown",
+        "text": "var(--brown-12)",
+        "buttons": "var(--brown-7)",
+        "widget": "var(--brown-3)",
+        "page": "var(--brown-2)",
+        "website": "var(--brown-1)"
+    },
+    {
+        "name": "dark-orange",
+        "text": "var(--orange-12)",
+        "buttons": "var(--orange-7)",
+        "widget": "var(--orange-3)",
+        "page": "var(--orange-2)",
+        "website": "var(--orange-1)"
+    },
+    {
+        "name": "dark-amber",
+        "text": "var(--amber-12)",
+        "buttons": "var(--amber-7)",
+        "widget": "var(--amber-3)",
+        "page": "var(--amber-2)",
+        "website": "var(--amber-1)"
+    },
+    {
+        "name": "dark-yellow",
+        "text": "var(--yellow-12)",
+        "buttons": "var(--yellow-7)",
+        "widget": "var(--yellow-3)",
+        "page": "var(--yellow-2)",
+        "website": "var(--yellow-1)"
+    },
+    {
+        "name": "dark-lime",
+        "text": "var(--lime-12)",
+        "buttons": "var(--lime-7)",
+        "widget": "var(--lime-3)",
+        "page": "var(--lime-2)",
+        "website": "var(--lime-1)"
+    },
+    {
+        "name": "dark-mint",
+        "text": "var(--mint-12)",
+        "buttons": "var(--mint-7)",
+        "widget": "var(--mint-3)",
+        "page": "var(--mint-2)",
+        "website": "var(--mint-1)"
+    },
+    {
+        "name": "dark-sky",
+        "text": "var(--sky-12)",
+        "buttons": "var(--sky-7)",
+        "widget": "var(--sky-3)",
+        "page": "var(--sky-2)",
+        "website": "var(--sky-1)"
+    }
+]   

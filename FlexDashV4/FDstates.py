@@ -28,11 +28,17 @@ class widgetStore(TypedDict):
     designed_data02: str
     designed_data03: float
 
+class themeSetting(TypedDict):
+    name: str
+    text: str
+    buttons: str
+    widget: str
+    page: str
+    website: str
 
-
-def load_widget_store():
+def load_json(json_path):
     try:
-        with open("FlexDashV4/FDwidgets.json", "r") as f:
+        with open(json_path, "r") as f:
             return json.load(f)
     except Exception as e:
         print(e)
@@ -40,54 +46,49 @@ def load_widget_store():
         
 class Dashboard(rx.State):
     # ---- THEME START
+    appearance = "dark"
     colors = {
-        "mode": "dark",
-        "text": "#ffffff", 
-        "text_alt": "#000000",
-        "widget_background": "#1b1b1b",
-        "page_background": "#151515",
-        "background": "#0f0f0f",
+        "name": "dark-gray",
+        "text": "var(--gray-12)",
+        "buttons": "var(--gray-7)",
+        "widget": "var(--gray-3)",
+        "page": "var(--gray-2)",
+        "website": "var(--gray-1)"
     }
+
+    theme: list[themeSetting] = load_json("FlexDashV4/FDcolors.json")
+
+    @rx.event
+    def edit_appearance(self, value):
+        self.appearance = value
 
     @rx.event
     def edit_theme(self, value):
-        if value == "dark":
-            self.colors = {
-                "mode": "dark",
-                "text": "#ffffff", 
-                "text_alt": "#000000",
-                "widget_background": "#1b1b1b",
-                "page_background": "#151515",
-                "background": "#0f0f0f",
-            }
-        elif value == "light":
-            self.colors = {
-                "mode": "light",
-                "text": "#000000", 
-                "text_alt": "#ffffff",
-                "widget_background": "#e4e4e4",
-                "page_background": "#eaeaea",
-                "background": "#f0f0f0",
-            }
-        print(self.colors)
+        for t in self.theme:
+            if t["name"] == value:
+                self.colors = t
 
     smoothness = "8px"
     @rx.event
     def edit_smoothness(self, value):
         self.smoothness = value
+
+    widget_per_row: str = "4"
+    @rx.event
+    def edit_wpr(self, value):
+        self.widget_per_row = value
+    
     #---- CLOUD STATUS ( REDIS SERVER )
     sync_status = "Last sync 23:52:21"
 
 
     # ---- SIDEBAR START
     page: str = "home"
-
     @rx.event
     def set_page(self, value: str, redirect: bool):
         if redirect:
             self.page = value.lower()
             yield rx.redirect(self.page)
-
     @rx.event
     def init_page(self):
         self.page = self.router.url.path.lower()
@@ -96,7 +97,7 @@ class Dashboard(rx.State):
     # ---- WIDGETS MANAGEMENT START 
     widgets: list[widgetData]= []
     widget_store_name: str = ""
-    widgets_store: list[widgetStore]= load_widget_store()
+    widgets_store: list[widgetStore]= load_json("FlexDashV4/FDwidgets.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):

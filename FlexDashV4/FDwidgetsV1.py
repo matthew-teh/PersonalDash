@@ -3,7 +3,7 @@ import reflex as rx
 from .FDstates import Dashboard
 
 def crypto_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(                        
             rx.image(
                 src=f"/crypto_icons/{widget["name"].lower().replace("usdt", "")}.png",
@@ -87,13 +87,12 @@ def crypto_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
 
 def weather_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(
             rx.image(
                 src=f"/{widget["data00"][0]["useimg"]}",
@@ -185,13 +184,12 @@ def weather_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
 
 def worldclock_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(            
             rx.image(
                 src= "/matthew_icons/earth.png",
@@ -259,13 +257,12 @@ def worldclock_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
 
 def pomodoro_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(
             rx.icon("apple", height="42px", width="42px", color='red'),
             rx.vstack(
@@ -340,17 +337,16 @@ def pomodoro_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
 
 def quicknotes_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(
             
             rx.cond(
-                Dashboard.colors["mode"] == "dark",
+                Dashboard.appearance == "dark",
                 rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="42px"),
                 rx.image(src="/lucide_icons/book_light.svg", height="42px", width="42px")
             ),
@@ -381,16 +377,15 @@ def quicknotes_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
 
 def terracd_widget(widget) -> rx.Component:
-    return rx.card(
+    return rx.box(
         rx.hstack(
             rx.cond(
-                Dashboard.colors["mode"] == "dark",
+                Dashboard.appearance == "dark",
                 rx.image(src="/lucide_icons/clock_fading_dark.svg", height="42px", width="42px"),
                 rx.image(src="/lucide_icons/clock_fading_light.svg", height="42px", width="42px")
         ),
@@ -429,7 +424,6 @@ def terracd_widget(widget) -> rx.Component:
         overflow="hidden",
         width="100%",
         aspect_ratio=" 1/1",
-        style={"background_color": Dashboard.colors["widget_background"]},
+        style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
-        border = "1px solid rgba(255, 255, 255, 0.2)",
     )
