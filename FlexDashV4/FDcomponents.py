@@ -59,7 +59,7 @@ def sidebar() -> rx.Component:
             ),  
             rx.vstack(
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets home", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items("Dashboard", "/lucide_icons/house", "/", True),
+                sidebar_items("Dashboard", "/lucide_icons/house", "/home", True),
                 sidebar_items("Add widgets", "/lucide_icons/shopping_bag", "/widgets", True),
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets control", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
                 sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw", Dashboard.update_all_widget),
@@ -116,6 +116,8 @@ def sidebar() -> rx.Component:
         border_radius=Dashboard.smoothness,
         color=Dashboard.colors["text"]
     )
+
+
 # ---- SIDEBAR ENDS
 
 # ---- WIDGETS STARTS

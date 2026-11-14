@@ -2,8 +2,9 @@ import reflex as rx
 from reflex.style import set_color_mode, color_mode
 from .FDstates import Dashboard, System
 from .FDcomponents import sidebar, widget, render_widget
+from .FDauth import Auth
 
-@rx.page("/", title="FlexDash | Dashboard", on_load=[Dashboard.init_page])
+@rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page])
 def home() -> rx.Component:
     empty = Dashboard.widgets.length() == 0 #type:ignore
     return rx.box(
@@ -297,6 +298,224 @@ def settings() -> rx.Component:
                 height="100%", 
                 background_color = Dashboard.colors["page"], 
                 border_radius=Dashboard.smoothness),
+            width="100%",
+            height="100%",
+        ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["page"],
+        color=Dashboard.colors["text"]
+    )
+
+@rx.page("/signin", title="FlexDash | Sign in", on_load=[Dashboard.init_page(False), Auth.set_mode('in')])
+def signin() -> rx.Component:
+    return rx.box(
+            rx.center(
+                rx.box(
+                    rx.vstack(
+                        rx.vstack(
+                            rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                            rx.heading("Sign in to your account", size="7"),
+                            width="100%",
+                            align="center",
+                        ),    
+                        rx.form(
+                            rx.vstack(
+                                rx.vstack(
+                                    rx.text("Username", size="3"),
+                                    rx.input(placeholder="FlavorFocus", width="100%", size="3", value=Auth.username_field, on_change=Auth.set_username),
+                                    width="100%",
+                                ),
+                                rx.vstack(
+                                    rx.hstack(
+                                        rx.text("Password", size="3"),
+                                        rx.link("Forgot Password?", href="/forgot_password", size="3"),
+                                        width="100%",
+                                        justify="between"
+                                    ),
+                                    rx.input(placeholder="MochiMunchies", width="100%", size="3", type="password", value=Auth.password_field, on_change=Auth.set_password),
+                                    width='100%',   
+                                ),
+                                rx.button("Sign in", width="100%", size="3", type="submit", disabled=Auth.disabled),
+                                spacing="5",
+                                width="100%",
+                                align="center"
+                            ),
+                            on_submit = Auth.sign_in,
+                        ),
+                        rx.hstack(
+                            rx.text("New here?"),
+                            rx.link("Create account", href="/signup"),
+                        ),
+                        spacing="5",
+                        align="center",
+                        padding="32px",
+                    ),
+                    width="500px",
+                    aspect_ratio="1/1",
+                    background_color = Dashboard.colors["widget"],
+                    border_radius= Dashboard.smoothness
+                ),
+            width="100%",
+            height="100%",
+            ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["page"],
+        color=Dashboard.colors["text"]
+    )
+
+@rx.page("/signup", title="FlexDash | Sign Up", on_load=[Dashboard.init_page(False), Auth.set_mode('up')])
+def signup() -> rx.Component:
+    return rx.box(
+        rx.center(
+            rx.box(
+                rx.vstack(
+                    rx.vstack(
+                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.heading("Create account", size="7"),
+                        width="100%",
+                        align="center",
+                    ),    
+                    rx.form(
+                        rx.vstack(
+                            rx.vstack(
+                                rx.text("Username", size="3"),
+                                rx.input(placeholder="ZeroSugar", width="100%", size="3", value=Auth.username_field, on_change=Auth.set_username),
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Password", size="3"),
+                                rx.input(placeholder="PeachyPudding", width="100%", size="3", type="password", value=Auth.password_field, on_change=Auth.set_password),
+                                width='100%',   
+                            ),
+                            rx.vstack(
+                                rx.text("Confirm password", size="3"),
+                                rx.input(placeholder="PeachyPudding", width="100%", size="3", type="password", value=Auth.password_2_field, on_change=Auth.set_2_password),
+                                width='100%',   
+                            ),
+                            rx.button("Create account", width="100%", size="3", type="submit", disabled=Auth.disabled),
+                            spacing="5",
+                            width="100%",
+                            align="center"
+                        ),
+                        on_submit=Auth.sign_up
+                    ),
+                    rx.hstack(
+                        rx.text("Already have account?"),
+                        rx.link("Sign In", href="/signin"),
+                    ),
+                    spacing="5",
+                    align="center",
+                    padding="32px",
+                ),
+                width="500px",
+                aspect_ratio="1/1",
+                background_color = Dashboard.colors["widget"],
+                border_radius= Dashboard.smoothness
+            ),
+            width="100%",
+            height="100%",
+        ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["page"],
+        color=Dashboard.colors["text"]
+    )
+
+@rx.page("/security", title="FlexDash | Action needed", on_load=Auth.security_rp)
+def security() -> rx.Component:
+    return rx.box(
+        rx.center(
+            rx.box(
+                rx.vstack(
+                    rx.vstack(
+                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.heading("Action needed", size="7"),
+                        spacing="5",
+                        width="100%",
+                        align="center",
+                    ),
+                    rx.vstack(
+                        rx.text("Here is a important key, store it somewhere."),
+                        rx.code_block(Auth.recovery_token, width="100%"),
+                        rx.text("In case you forget your password, use this."),
+                        rx.button("I've stored somewhere.", width="100%", size="3", on_click=Auth.sign_in),
+                        justify="center",
+                        width="100%",
+                     ),
+                    spacing="5",
+                    width="100%",
+                    align="center",
+                    padding="32px",
+                ),
+                width="400px",
+                aspect_ratio="1/1",
+                background_color = Dashboard.colors["widget"],
+                border_radius= Dashboard.smoothness,
+            ),
+            width="100%",
+            height="100%",
+        ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["page"],
+        color=Dashboard.colors["text"]
+    )    
+
+@rx.page("/forgot_password", title="FlexDash | Recovery", on_load=[Dashboard.init_page(False), Auth.set_mode('up')])
+def recovery() -> rx.Component:
+    return rx.box(
+        rx.center(
+            rx.box(
+                rx.vstack(
+                    rx.vstack(
+                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.heading("Forgot Password", size="7"),
+                        width="100%",
+                        align="center",
+                    ),    
+                    rx.form(
+                        rx.vstack(
+                            rx.vstack(
+                                rx.text("Username", size="3"),
+                                rx.input(placeholder="ZeroSugar", width="100%", size="3", value=Auth.username_field, on_change=Auth.set_username),
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Recovery Code", size="3"),
+                                rx.input(placeholder="PeachyPudding", width="100%", size="3", type="password", value=Auth.password_field, on_change=Auth.set_password),
+                                width='100%',   
+                            ),
+                            rx.vstack(
+                                rx.text("New password", size="3"),
+                                rx.input(placeholder="PeachyPudding", width="100%", size="3", type="password", value=Auth.password_2_field, on_change=Auth.set_2_password),
+                                width='100%',   
+                            ),
+                            rx.button("Forgot password", width="100%", size="3", type="submit", disabled=Auth.disabled),
+                            spacing="5",
+                            width="100%",
+                            align="center"
+                        ),
+                        on_submit=Auth.recovery
+                    ),
+                    rx.hstack(
+                        rx.text("Not here?"),
+                        rx.link("Sign In", href="/signin"),
+                    ),
+                    spacing="5",
+                    align="center",
+                    padding="32px",
+                ),
+                width="500px",
+                aspect_ratio="1/1",
+                background_color = Dashboard.colors["widget"],
+                border_radius= Dashboard.smoothness
+            ),
             width="100%",
             height="100%",
         ),

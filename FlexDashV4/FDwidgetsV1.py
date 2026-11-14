@@ -401,7 +401,7 @@ def terracd_widget(widget) -> rx.Component:
         ),
         rx.vstack(
             rx.center(
-                rx.text(widget["data00"][0]["time"], font_size="110px", weight="bold"),
+                rx.text(widget["data00"][0]["time"], font_size="100px", weight="bold"),
                 height="100%",
                 width="100%",
             ),

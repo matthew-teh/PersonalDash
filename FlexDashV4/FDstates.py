@@ -3,8 +3,9 @@ import uuid
 import json
 import copy
 import psutil
-from typing import TypedDict
+from typing import TypedDict, Literal
 
+from .FDauth import Auth
 from .FDapi import *
 
 class widgetData(TypedDict):
@@ -46,7 +47,7 @@ def load_json(json_path):
         
 class Dashboard(rx.State):
     # ---- THEME START
-    appearance = "dark"
+    appearance: Literal['dark', 'inherit', 'light'] = "dark"
     colors = {
         "name": "gray",
         "text": "var(--gray-12)",
@@ -64,9 +65,7 @@ class Dashboard(rx.State):
 
     @rx.event
     def edit_theme(self, value):
-        print(value)
         for t in self.theme:
-            
             if t["name"] == value:
                 self.colors = t
 
@@ -95,15 +94,20 @@ class Dashboard(rx.State):
         if redirect:
             self.page = value.lower()
             yield rx.redirect(self.page)
+
     @rx.event
-    def init_page(self):
+    async def init_page(self, redirect=True):
+        if redirect:
+            auth = await self.get_state(Auth)
+            if auth.logged_username == "": 
+                yield rx.redirect("/signin")
         self.page = self.router.url.path.lower()
     # ---- SIDEBAR ENDS
 
     # ---- WIDGETS MANAGEMENT START 
-    widgets: list[widgetData]= []
+    widgets: list[widgetData] = []
     widget_store_name: str = ""
-    widgets_store: list[widgetStore]= load_json("FlexDashV4/FDwidgets.json")
+    widgets_store: list[widgetStore] = load_json("FlexDashV4/FDwidgets.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):
