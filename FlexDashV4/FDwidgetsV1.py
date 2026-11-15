@@ -367,7 +367,8 @@ def quicknotes_widget(widget) -> rx.Component:
                 on_change=lambda val: Dashboard.save_notes(widget["id"], val),
                 width="100%",
                 height="100%",
-                color=Dashboard.colors["text"]
+                color=Dashboard.colors["text"],
+                on_blur=Dashboard.sync_up_cloud
             ),
             width="100%",
             height="80%",

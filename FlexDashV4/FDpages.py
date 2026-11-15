@@ -4,7 +4,7 @@ from .FDstates import Dashboard, System
 from .FDcomponents import sidebar, widget, render_widget
 from .FDauth import Auth
 
-@rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page])
+@rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud])
 def home() -> rx.Component:
     empty = Dashboard.widgets.length() == 0 #type:ignore
     return rx.box(
@@ -50,6 +50,11 @@ def home() -> rx.Component:
                             Dashboard.update_widget("", widget_type="terracd_v1") # type: ignore
                         ],
                         display="None",
+                    ),
+                    rx.moment(
+                        interval= Dashboard.interval.to(int), # type: ignore
+                        on_change=Dashboard.sync_up_cloud,
+                        display="None"
                     ),
                     width="87%", 
                     height="100%", 
@@ -195,6 +200,35 @@ def settings() -> rx.Component:
                             rx.box(
                                 rx.vstack(
                                     rx.hstack(
+                                    rx.text("Cloud Preferences", font_size="32px"),
+                                    rx.spacer(),
+                                    rx.text("Only triggers at Dashboard page.", font_size="14px", opacity=0.5),
+                                    width="100%",
+                                    align="end",
+                                    ),
+                                    rx.separator(),
+                                    rx.vstack(
+                                        rx.text("SYNC INTERVAL", font_size="16px", weight="bold"),
+                                        rx.segmented_control.root(
+                                            rx.segmented_control.item("30s", value="30000"),
+                                            rx.segmented_control.item("60s", value="60000"),
+                                            rx.segmented_control.item("90s", value="90000"),
+                                            rx.segmented_control.item("120s", value="120000"),
+                                            value= Dashboard.interval,
+                                            on_change=Dashboard.edit_interval,
+                                        ),
+                                        spacing="1"
+                                    ),
+                                ),
+                                height="100%",
+                                padding="32px",
+                                width="100%",
+                                border_radius=Dashboard.smoothness,
+                                background_color = Dashboard.colors["widget"],
+                            ),
+                            rx.box(
+                                rx.vstack(
+                                    rx.hstack(
                                         rx.text("Server Status", font_size="32px"),
                                         rx.spacer(),
                                         rx.text("Hover for refresh", font_size="14px", opacity=0.5),
@@ -219,7 +253,6 @@ def settings() -> rx.Component:
                                         height="100%",
                                     ),
                                     rx.text(f"Uptime: {System.formatted_uptime}"),
-                                    margin_bottom="32px",
                                 ),
                                 height="100%",
                                 padding="32px",
@@ -229,65 +262,71 @@ def settings() -> rx.Component:
                                 on_mouse_enter=System.update_server_status,
                                 background_color = Dashboard.colors["widget"],
                             ),
+                            
                         width="50%"
                         ),
-                        rx.box(
-                            rx.vstack(
-                                rx.hstack(
-                                    rx.text("Live Preview", font_size="32px"),
-                                    rx.spacer(),
-                                    rx.text("Ignore the borders", font_size="14px", opacity=0.5),
-                                    align="end",
-                                    width="100%",
-                                    height="100%",
-                                ),
-                                rx.separator(),
-                                margin_bottom="32px",
-                            ),
-                            rx.center(
-                                rx.box(
+                        rx.vstack(
+                            rx.box(
+                                rx.vstack(
                                     rx.hstack(
-                                        rx.cond(
-                                            Dashboard.appearance == "dark",
-                                            rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="42px"),
-                                            rx.image(src="/lucide_icons/book_light.svg", height="42px", width="42px")
+                                        rx.text("Live Preview", font_size="32px"),
+                                        rx.spacer(),
+                                        rx.text("Ignore the borders", font_size="14px", opacity=0.5),
+                                        align="end",
+                                        width="100%",
+                                        height="100%",
+                                    ),
+                                    rx.separator(),
+                                    margin_bottom="32px",
+                                ),
+                                rx.center(
+                                    rx.box(
+                                        rx.hstack(
+                                            rx.cond(
+                                                Dashboard.appearance == "dark",
+                                                rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="42px"),
+                                                rx.image(src="/lucide_icons/book_light.svg", height="42px", width="42px")
+                                            ),
+                                            rx.vstack(
+                                                rx.heading("Quick Notes", size="3"),
+                                                rx.text("A text area to note, auto saved."),
+                                                spacing="0",
+                                            ),
+                                            rx.spacer(),
+                                            rx.button(rx.icon("trash_2", size=16), variant="ghost"),
+                                            width="100%",
+                                            height="20%",
                                         ),
-                                        rx.vstack(
-                                            rx.heading("Quick Notes", size="3"),
-                                            rx.text("A text area to note, auto saved."),
+                                        rx.hstack(
+                                            rx.text_area(
+                                                placeholder="Start typing here...",
+                                                width="100%",
+                                                height="100%",
+                                                color=Dashboard.colors["text"]
+                                            ),
+                                            width="100%",
+                                            height="80%",
                                             spacing="0",
                                         ),
-                                        rx.spacer(),
-                                        rx.button(rx.icon("trash_2", size=16), variant="ghost"),
-                                        width="100%",
-                                        height="20%",
+                                        padding="8px",
+                                        overflow="hidden",
+                                        width="50%",
+                                        aspect_ratio=" 1/1",
+                                        style={"background_color": Dashboard.colors["widget"]},
+                                        border_radius=Dashboard.smoothness,
+                                        border_width="1px",
+                                        border_color=Dashboard.colors["text"]
                                     ),
-                                    rx.hstack(
-                                        rx.text_area(
-                                            placeholder="Start typing here...",
-                                            width="100%",
-                                            height="100%",
-                                            color=Dashboard.colors["text"]
-                                        ),
-                                        width="100%",
-                                        height="80%",
-                                        spacing="0",
-                                    ),
-                                    padding="8px",
-                                    overflow="hidden",
-                                    width="50%",
-                                    aspect_ratio=" 1/1",
-                                    style={"background_color": Dashboard.colors["widget"]},
-                                    border_radius=Dashboard.smoothness,
-                                    border_width="1px",
-                                    border_color=Dashboard.colors["text"]
                                 ),
-                            ),
-                            padding="32px",
-                            width="50%",
-                            border_radius=Dashboard.smoothness,
+                                padding="32px",
+                                width="100%",
+                                border_radius=Dashboard.smoothness,
+                                
+                                background_color = Dashboard.colors["widget"],
                             
-                            background_color = Dashboard.colors["widget"],
+                            ),
+                            width="50%",
+                            height="100%",
                         ),
                         spacing="2",
                         width="100%",
@@ -308,7 +347,7 @@ def settings() -> rx.Component:
         color=Dashboard.colors["text"]
     )
 
-@rx.page("/signin", title="FlexDash | Sign in", on_load=[Dashboard.init_page(False), Auth.set_mode('in')])
+@rx.page("/signin", title="FlexDash | Sign in", on_load=[Dashboard.init_page(False), Auth.auto_signin, Auth.set_mode('in')])
 def signin() -> rx.Component:
     return rx.box(
             rx.center(
@@ -334,7 +373,7 @@ def signin() -> rx.Component:
                                         width="100%",
                                         justify="between"
                                     ),
-                                    rx.input(placeholder="MochiMunchies", width="100%", size="3", type="password", value=Auth.password_field, on_change=Auth.set_password),
+                                    rx.input(placeholder="MochiMunchies", width="100%", size="3", type="password", value=Auth.password_2_field, on_change=Auth.set_2_password),
                                     width='100%',   
                                 ),
                                 rx.button("Sign in", width="100%", size="3", type="submit", disabled=Auth.disabled),
@@ -519,6 +558,99 @@ def recovery() -> rx.Component:
             width="100%",
             height="100%",
         ),
+        width="100vw",
+        height="100vh",
+        padding="8px",
+        background_color = Dashboard.colors["page"],
+        color=Dashboard.colors["text"]
+    )
+
+@rx.page(route="/", title="FlexDash | Redirect", on_load=Dashboard.redirect_to_home)
+def redirect() -> rx.Component:
+    return rx.fragment()
+
+@rx.page("/account", title="FlexDash | Account", on_load=Dashboard.init_page)
+def account() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            sidebar(),
+            rx.box(
+                rx.vstack(
+                    rx.text("Account Settings", weight="bold", font_size="64px", opacity=0.95, margin_bottom="16px",),               
+                ),
+                rx.box(
+                    rx.vstack(
+                        rx.text("Account Actions", font_size="32px"),
+                        rx.separator(),
+                        rx.hstack(
+                            rx.dialog.root(
+                                rx.dialog.trigger(rx.button("Sign out", color_scheme="tomato", variant="outline")),
+                                    rx.dialog.content(
+                                        rx.vstack(
+                                            rx.heading("Are you sure?", size="4"),
+                                            rx.hstack(
+                                                rx.button("Yes", color_scheme="tomato", variant="outline", size="3", on_click=Auth.signout),
+                                                rx.dialog.close(rx.button("No", color_scheme="green", size="3")),
+                                                width="100%",
+                                                justify="center"
+                                            ),  
+                                            width="100%",
+                                            align="center",
+                                            spacing="5"
+                                        ),
+                                        width="300px",
+                                    ),
+                            ),
+                            rx.dialog.root(
+                                rx.dialog.trigger(rx.button("Delete Account", color_scheme="tomato", variant="outline")),
+                                    rx.dialog.content(
+                                        rx.vstack(
+                                            rx.hstack(
+                                                rx.heading("Enter your password to continue.", size="4"),
+                                                rx.dialog.close(rx.button(rx.icon("x"), variant="ghost")),
+                                                width="100%",
+                                                justify="between",
+                                            ),
+                                            rx.form(
+                                                rx.vstack(
+                                                    rx.input(
+                                                        placeholder="blissful_pepperoni",
+                                                        type="password",
+                                                        value=Auth.password_2_field, 
+                                                        on_change=Auth.set_2_password,
+                                                        width="100%",
+                                                        size="3",
+                                                        required=True
+                                                    ),
+                                                    rx.button("Submit", color_scheme="tomato", variant="outline", width="100%"),
+                                                    width="100%",
+                                                ),  
+                                                on_submit=Auth.delete_account,
+                                                width="100%",
+                                            ),
+                                            width="100%",
+                                        ),
+                                        width="100%",
+                                    ),
+                            ),
+                            spacing="5",
+                            width="100%"
+                        ),
+                        width="100%",
+                    ),
+                    height="100%",
+                    padding="32px",
+                    width="100%",
+                    border_radius=Dashboard.smoothness,
+                    background_color = Dashboard.colors["widget"],
+                ),
+                width="50%",
+            ),
+            
+            width="100%",
+            height="100%",
+        ),
+
         width="100vw",
         height="100vh",
         padding="8px",

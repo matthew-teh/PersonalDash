@@ -1,8 +1,8 @@
 ## How to run locally (Linux only)
 
-**FlexDash V3 LATEST, docker compose** 
+**FlexDash V4 and FlexDash V3, docker compose** 
 1. Install docker. If you haven't, visit [Docker Desktop Installation](https://docs.docker.com/desktop/)
-2. Download docker-compose.yml at release page
+2. Download docker-compose.yml at release page 
 3. Create a folder and move docker-compose.yml into it
 4. Run `docker compose up` and visit [Website](localhost:3000)  
 Note: Running this will not have HTTPS.

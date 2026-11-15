@@ -3,7 +3,7 @@
 A website built with **Python Reflex**, includes daily needed widget. ( Formerly Personal Dashboard ) 
 
 ## Features 
-- **Crypto** - Shows real market data in form of graph using Binance API
+- **Crypto** - Shows real market data in form of graph using Binance API, now with Two Versions 
 - **Weather** - Shows real weather data with four little card using Open-Meteo API.
 - **World Clock** - Display live time of a city, auto refresh.
 - **Pomodoro TImer** - Pomodoro based timer that let you focus
@@ -11,8 +11,8 @@ A website built with **Python Reflex**, includes daily needed widget. ( Formerly
 - **Terra countdown** - Shows how much hours you have left to code and ship.
 
 ## Versions
-- FlexDash V4, Under Development
-- Personal Dashboard V3  , Latest Relased : [Website Link](https://flexdasboard.xyz/home)
+- FlexDash V4, Latest Relased : [Website Link](https://flexdasboard.xyz/home)
+- FlexDash V3  , Released
 - Personal Dashboard V2  , Released
 - Personal Dashboard V1  , Released
 - Personal Dashboard Beta, Released
@@ -40,3 +40,4 @@ This project was helped by Gemini to fix little bugs. `AGENTS.md` and `CLAUDE.md
 ## Stack
 - **Python** — Application logic and backend
 - **Reflex** — Python-based web application framework
+- **Dragonfly DB** — Used as database of website.

@@ -3,6 +3,7 @@ import uuid
 import json
 import copy
 import psutil
+import asyncio
 from typing import TypedDict, Literal
 
 from .FDauth import Auth
@@ -80,8 +81,32 @@ class Dashboard(rx.State):
         self.widget_per_row = value
     
     #---- CLOUD STATUS ( REDIS SERVER )
-    sync_status = "Last sync 23:52:21"
+    sync_status = "Last sync 00:00:00 EST"
+    interval = "60000"
+    @rx.event
+    def edit_interval(self, value):
+        self.interval = value
+    widgets: list[widgetData] = []
+    @rx.event
+    async def sync_up_cloud(self):
+        auth = await self.get_state(Auth)
+        try:
+            auth.upload_widgets(self.widgets)
+            self.sync_status = f"Last sync {worldclock_get_time("America/New_York")[0]["time"]}"
+        except Exception as e:
+            print(e)
 
+    @rx.event
+    async def sync_down_cloud(self):
+        auth = await self.get_state(Auth)
+        try:
+            value: list[widgetData] = auth.download_widgets()
+            self.widgets = value
+
+            yield type(self).sync_up_cloud
+        except Exception as e:
+            self.widgets = []
+            print(e)
 
     # ---- SIDEBAR START
     page: str = "home"
@@ -96,16 +121,20 @@ class Dashboard(rx.State):
             yield rx.redirect(self.page)
 
     @rx.event
+    def redirect_to_home(self):
+        yield rx.redirect("/home")
+
+    @rx.event
     async def init_page(self, redirect=True):
         if redirect:
             auth = await self.get_state(Auth)
-            if auth.logged_username == "": 
+            if not auth.exist_acc: 
                 yield rx.redirect("/signin")
         self.page = self.router.url.path.lower()
     # ---- SIDEBAR ENDS
 
     # ---- WIDGETS MANAGEMENT START 
-    widgets: list[widgetData] = []
+    
     widget_store_name: str = ""
     widgets_store: list[widgetStore] = load_json("FlexDashV4/FDwidgets.json")
     
@@ -135,14 +164,11 @@ class Dashboard(rx.State):
 
                 else:
                     yield rx.toast.warning(f"This widget is currently disabled.")
-
-                print(self.widgets)
-
+                yield type(self).sync_up_cloud
 
     # ---- All widget management.
     @rx.event
     def update_widget(self, widget_id, widget_type=""):
-            
         for widget in self.widgets:
 
             if widget_type:
@@ -225,6 +251,7 @@ class Dashboard(rx.State):
         for widget in self.widgets:
             if widget["id"] == widget_id:
                 self.widgets.remove(widget)
+        yield type(self).sync_up_cloud
 
     @rx.event
     def delete_all_widget(self):
@@ -252,7 +279,6 @@ class Dashboard(rx.State):
                 if widget["type"] == "crypto_v1":
                     if not isinstance(val, dict):
                         widget["data01"] = val
-                        print("Updated")
                     elif self.widget_name:
                         widget["name"] = self.widget_name
                         
@@ -330,6 +356,7 @@ class Dashboard(rx.State):
         for widget in self.widgets:
             if widget["id"] == widget_id:
                 widget["data00"][0]["text"] = new_text
+                
 
     # FDWIDGET V2 SPECIFICALLY DESIGNED, MUST APPLY AFTER ANY EDIT / ON BLUR 
     temp_name: str = ""
@@ -375,11 +402,11 @@ class System(rx.State):
     formatted_uptime: str = ""
 
     @rx.event
-    def update_server_status(self):
+    async def update_server_status(self):
         self.uptime = time.time() - starttime
-        self.cpu = psutil.cpu_percent(interval=1)
-        self.ram = psutil.virtual_memory().percent
-
+        self.cpu = await asyncio.to_thread(psutil.cpu_percent)
+        mem = await asyncio.to_thread(psutil.virtual_memory)
+        self.ram = mem.percent
         days, remainder = divmod(self.uptime, 86400)
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)

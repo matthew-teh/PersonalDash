@@ -51,7 +51,8 @@ def crypto_widget(widget) -> rx.Component:
                         
                         on_mouse_leave=Dashboard.clear_any
                     ),
-                    rx.icon("trash", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=Dashboard.delete_widget(widget["id"])),
+                    rx.icon("rotate-cw", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.update_widget(widget["id"])),
+                    rx.icon("trash", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.delete_widget(widget["id"])),
                     direction="right",
                 ),
 

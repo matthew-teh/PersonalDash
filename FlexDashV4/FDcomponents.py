@@ -65,7 +65,7 @@ def sidebar() -> rx.Component:
                 sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw", Dashboard.update_all_widget),
                 sidebar_items_functional("Delete all", "/lucide_icons/trash", Dashboard.delete_all_widget),
                 rx.hstack(rx.separator(max_width="25%"), rx.text("Cloud status", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
-                sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync", Dashboard.update_all_widget),
+                sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync", Dashboard.sync_up_cloud),
                 rx.hstack(
                     rx.image(src=f"/lucide_icons/cloud_check_{Dashboard.appearance}.svg"),
                     rx.text(Dashboard.sync_status),
