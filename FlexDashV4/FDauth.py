@@ -128,6 +128,7 @@ class Auth(rx.State):
                 yield type(self).clear
                 self.logged_username = username
                 self.logged_cookie = token_hash
+                self.exist_acc = True
                 yield rx.toast.success(f"Welcome, {username}")
                 yield rx.redirect("/home")
             except Exception as e:
@@ -236,6 +237,7 @@ class Auth(rx.State):
             self.logged_username, self.logged_cookie = "", ""
             self.clear()
             yield rx.toast.success("Logged out.", position="top-center")
+            yield rx.redirect("/signin")
         else:
             yield rx.toast.error("404 Logout, contact admin", position="top-center")
 

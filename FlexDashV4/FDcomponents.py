@@ -1,6 +1,7 @@
 import reflex as rx
 
 from .FDstates import Dashboard
+from .FDauth import Auth
 from . import FDwidgetsV1
 from . import FDwidgetsV2
 
@@ -51,7 +52,7 @@ def sidebar() -> rx.Component:
                 rx.image(src="/logo.svg", border_radius="4px", width="19%", height="auto"),
                 rx.vstack(
                     rx.text("FlexDash V4", weight="bold", font_size="24px"),
-                    rx.text("Developer", font_size="16px", opacity=0.5),
+                    rx.text(Auth.logged_username, font_size="16px", opacity=0.5),
                     spacing="0",    
                     width="100%",
                 ),

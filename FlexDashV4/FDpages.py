@@ -134,8 +134,9 @@ def settings() -> rx.Component:
                                         rx.segmented_control.root(
                                             rx.segmented_control.item("Light", value="light"),
                                             rx.segmented_control.item("Dark", value="dark"),
-                                            on_change=[set_color_mode, Dashboard.edit_appearance], #type:ignore #PYLINT ERROR
                                             value= color_mode,
+                                            on_change=[set_color_mode, Dashboard.edit_appearance], #type:ignore #PYLINT ERROR
+                                            
                                             width="100%",
                                         ),
                                         rx.hstack(

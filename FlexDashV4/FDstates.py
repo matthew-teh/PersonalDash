@@ -165,6 +165,7 @@ class Dashboard(rx.State):
                 else:
                     yield rx.toast.warning(f"This widget is currently disabled.")
                 yield type(self).sync_up_cloud
+                
 
     # ---- All widget management.
     @rx.event
