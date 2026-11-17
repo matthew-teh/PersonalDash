@@ -4,7 +4,7 @@ from .FDstates import Dashboard, System
 from .FDcomponents import sidebar, widget, render_widget, show_devices
 from .FDauth import Auth
 
-@rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud])
+@rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud, Dashboard.update_all_widget(True)])
 def home() -> rx.Component:
     empty = Dashboard.widgets.length() == 0 #type:ignore
     return rx.box(

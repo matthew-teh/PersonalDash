@@ -165,7 +165,7 @@ class Dashboard(rx.State):
                 else:
                     yield rx.toast.warning(f"This widget is currently disabled.")
                 yield type(self).sync_up_cloud
-                
+        yield
 
     # ---- All widget management.
     @rx.event
@@ -173,8 +173,11 @@ class Dashboard(rx.State):
         for widget in self.widgets:
 
             if widget_type:
-                if widget["type"].lower() != widget_type.lower():
-                    continue
+                try:
+                    if widget["type"].lower() != widget_type.lower():
+                        continue
+                except:
+                    pass
             if not widget_type and widget["id"] != widget_id:
                     continue
 
@@ -238,13 +241,17 @@ class Dashboard(rx.State):
 
             if widget["type"].lower() == "terracd_v1":
                 widget["data00"][0]["time"] = terracd_get_countdown()
-                
+        yield
                     
     @rx.event
-    def update_all_widget(self):
+    def update_all_widget(self, specific=False):
         for widget in self.widgets:
-            yield type(self).update_widget(widget["id"])
-        
+            if specific:
+                if widget["type"] == "crypto_v1" or widget["type"] == "crypto_v2":
+                    yield type(self).update_widget(widget["id"])
+                    print("Update")
+            else:
+                yield type(self).update_widget(widget["id"])
 
     @rx.event
     def delete_widget(self, widget_id):
@@ -298,9 +305,7 @@ class Dashboard(rx.State):
         for widget in self.widgets:
             if widget["id"] == widget_id:
                 value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
-                widget["data03"] = value
-        yield
-
+                widget["data03"] = float(value)
     # POMODORO SPECIFIC
     pomodoro, short, long = "", "", ""
 
@@ -395,6 +400,38 @@ class Dashboard(rx.State):
     def clear_any(self):
         self.temp_name, self.temp_data00, self.temp_data01, self.temp_data02, self.temp_data03 = "", [], "", "", 0
 
+    # V2 Quick Tasks Specific 
+    @rx.event
+    def add_tasks(self, widget_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                if self.temp_data01 == "":
+                    return rx.toast.warning("Tasks cannot be blank")
+                widget["data00"].insert(0,{
+                    "tasks": self.temp_data01,
+                    "status": "incomplete",
+                    "wid" : widget_id,
+                    "uid" : str(uuid.uuid4())
+                })
+                self.temp_data01 = ""   
+        yield type(self).sync_up_cloud
+    @rx.event
+    def delete_tasks(self, uid, widget_id):
+        for widget in self.widgets:
+            if widget["id"] == widget_id:
+                widget["data00"] = [task for task in widget["data00"] if task["uid"] != uid] # New technic learned from stackoverflow: one for loop
+        yield type(self).sync_up_cloud
+    @rx.event
+    def mark_tasks(self, uid, wid):
+        for widget in self.widgets:
+            if widget["id"] == wid:
+                for task in widget["data00"]:
+                    if task["uid"] == uid:
+                        if task["status"] == "completed":
+                            task["status"] = "incomplete"
+                        elif task["status"] == "incomplete":
+                            task["status"] = "completed"
+        yield type(self).sync_up_cloud
 starttime = time.time()
 class System(rx.State):
     cpu: float = 0

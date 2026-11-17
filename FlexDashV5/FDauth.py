@@ -107,7 +107,7 @@ class Auth(rx.State):
         if result:
             yield rx.toast.success(f"Welcome, {self.logged_username}")
             yield rx.redirect("/home")
-        return result
+
     
     @rx.event
     def sign_in(self):

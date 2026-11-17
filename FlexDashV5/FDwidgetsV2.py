@@ -8,7 +8,7 @@ def crypto_widget(widget) -> rx.Component:
             rx.hstack(
                 rx.image(
                     src=f"/crypto_icons/{widget["data01"].replace("USDT", "").lower()}.png",
-                    alt="c",
+                    alt="",
                     width="28px"
                 ),
                 rx.heading(f"{widget["name"].split(" ")[0]}", font_size="20px"),
@@ -44,6 +44,7 @@ def crypto_widget(widget) -> rx.Component:
                                     placeholder=widget["data01"],
                                     on_change= lambda val : Dashboard.edit_any(val, "01")
                                 ),
+                                
                             ),
                             
                             width="100%",
@@ -106,10 +107,10 @@ def crypto_widget(widget) -> rx.Component:
                 rx.recharts.graphing_tooltip(),
                 data=widget["data00"],
                 wrapper_style={"backgroundColor": rx.cond(widget["data00"][-1]["price"] >= widget["data00"][0]["price"],"#40F698","#F64740",)},
-                margin={ "top": 0, "right": 0, "bottom": 0, "left": 0 },
+                margin={ "top": 10, "right": 0, "bottom": 0, "left": 0 },
             ),
             width="100%",
-            spacing="0",
+            spacing="0",    
             height="80%"
         ),
         overflow="hidden",
@@ -117,4 +118,69 @@ def crypto_widget(widget) -> rx.Component:
         aspect_ratio=" 1/1",
         style={"background_color": Dashboard.colors["widget"]},
         border_radius=Dashboard.smoothness,
+        
     )   
+
+def render_tasks(item):
+    return rx.box(
+        rx.hstack(
+            rx.text(item["tasks"], text_decoration=rx.cond(item["status"] == "completed", "line-through", "")),
+            rx.spacer(),
+            rx.icon(rx.cond(item["status"]=='completed', 'x', 'check'), size=16, opacity=0.5, _hover={"opacity": 1}, on_click=lambda: Dashboard.mark_tasks(item["uid"], item["wid"])),
+            rx.icon('trash', size=16, opacity=0.5, _hover={"opacity": 1}, on_click=lambda :Dashboard.delete_tasks(item["uid"], item["wid"])),
+            align="center",
+            width="100%",
+            opacity=0.5,
+            _hover={"opacity": 1},
+            transition="all ease-in-out 0.2s"
+        ),
+        padding = "8px",
+        border_radius=Dashboard.smoothness,
+        margin="2px",
+        width="calc(100%-2px)",
+        background_color = Dashboard.colors["buttons"],
+    )
+
+def checklist_widget(widget) -> rx.Component:
+    return rx.box(
+        rx.vstack(
+            rx.hstack(
+                rx.image(src=f"/lucide_icons/list_checks_{Dashboard.appearance}.svg", width="30px"),
+                rx.text("CHECKLIST", weight="bold", font_size="20px"),
+                align="center",
+            ),
+
+            rx.hstack(
+                rx.input(
+                    placeholder='Add tasks', 
+                    width="90%", 
+                    value=Dashboard.temp_data01, 
+                    on_change=lambda val: Dashboard.edit_any(val, "01"), 
+                    on_key_down= lambda key: rx.cond(
+                        key == "Enter",
+                        Dashboard.add_tasks(widget["id"]),
+                        None,
+                    ),
+                    on_blur=Dashboard.clear_any
+                ),
+                rx.icon('plus', opacity=0.5, _hover={"opacity": 1}, on_click=Dashboard.add_tasks(widget["id"])),
+                align="center",
+                width="100%",
+            ),
+            rx.scroll_area(
+                rx.foreach(
+                    widget["data00"], 
+                    lambda item: render_tasks(item)
+                ),
+                min_height="0",
+                flex="1",
+            ),
+            height="100%",
+        ),
+        padding="8px",
+        overflow="hidden",
+        width="100%",
+        aspect_ratio="1/1",
+        background_color= Dashboard.colors["widget"],
+        border_radius=Dashboard.smoothness
+    )

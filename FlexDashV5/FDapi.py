@@ -1,4 +1,4 @@
-import requests, time, openmeteo_requests, sqlite3, csv, ntplib, random
+import requests, time, openmeteo_requests, sqlite3, csv, ntplib, requests_cache
 from zoneinfo import ZoneInfo
 from contextlib import closing
 from pathlib import Path
@@ -7,7 +7,10 @@ from pytz import timezone
 
 ENV = "DEV" # DOCKER
 
-session = requests.Session()
+session = requests_cache.CachedSession(
+    'binance_cache',  # Name of the local cache file/storage
+    expire_after=120,  # Cache time-to-live in seconds
+)
 
 def crypto_get_price(symbol="BTCUSDT", window="1m"):
     URL = "https://api.binance.com/api/v3/klines"

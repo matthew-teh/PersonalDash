@@ -174,6 +174,7 @@ def render_widget(item: dict):
             ("quicknotes_v1", FDwidgetsV1.quicknotes_widget(item)),
             ("terracd_v1", FDwidgetsV1.terracd_widget(item)),
             ("crypto_v2", FDwidgetsV2.crypto_widget(item)),
+            ("checklist_v2", FDwidgetsV2.checklist_widget(item)),
             rx.box(),   
         )
     )
