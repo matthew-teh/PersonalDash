@@ -1,7 +1,7 @@
 import reflex as rx
 from reflex.style import set_color_mode, color_mode
 from .FDstates import Dashboard, System
-from .FDcomponents import sidebar, widget, render_widget
+from .FDcomponents import sidebar, widget, render_widget, show_devices
 from .FDauth import Auth
 
 @rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud])
@@ -570,7 +570,7 @@ def recovery() -> rx.Component:
 def redirect() -> rx.Component:
     return rx.fragment()
 
-@rx.page("/account", title="FlexDash | Account", on_load=Dashboard.init_page)
+@rx.page("/account", title="FlexDash | Account", on_load=[Dashboard.init_page, Auth.prepare_devices])
 def account() -> rx.Component:
     return rx.box(
         rx.hstack(
@@ -579,31 +579,118 @@ def account() -> rx.Component:
                 rx.vstack(
                     rx.text("Account Settings", weight="bold", font_size="64px", opacity=0.95, margin_bottom="16px",),               
                 ),
-                rx.box(
+                rx.hstack(
+
                     rx.vstack(
-                        rx.text("Account Actions", font_size="32px"),
-                        rx.separator(),
-                        rx.hstack(
-                            rx.dialog.root(
-                                rx.dialog.trigger(rx.button("Sign out", color_scheme="tomato", variant="outline")),
-                                    rx.dialog.content(
-                                        rx.vstack(
-                                            rx.heading("Are you sure?", size="4"),
-                                            rx.hstack(
-                                                rx.button("Yes", color_scheme="tomato", variant="outline", size="3", on_click=Auth.signout),
-                                                rx.dialog.close(rx.button("No", color_scheme="green", size="3")),
-                                                width="100%",
-                                                justify="center"
-                                            ),  
-                                            width="100%",
-                                            align="center",
-                                            spacing="5"
-                                        ),
-                                        width="300px",
-                                    ),
+                        rx.box(
+                            rx.vstack(
+                                rx.text("Account Info", font_size="32px"),
+                                rx.separator(),
+                                rx.text(f"Username: {Auth.logged_username}")
                             ),
-                            rx.dialog.root(
-                                rx.dialog.trigger(rx.button("Delete Account", color_scheme="tomato", variant="outline")),
+                            padding="32px",
+                            border_radius=Dashboard.smoothness,
+                            background_color=Dashboard.colors["widget"],
+                            width="100%",
+                        ),
+                        rx.box(
+                            rx.vstack(
+                                rx.text("Devices Logged In", font_size="32px"),
+                                rx.separator(),
+                                rx.scroll_area(
+                                    rx.table.root(
+                                        rx.table.header(
+                                            rx.table.row(
+                                                rx.table.column_header_cell("Device Name"),
+                                                rx.table.column_header_cell("IP Address"),
+                                                rx.table.column_header_cell("Time EST"),
+                                            ),
+                                        ),
+                                        rx.table.body(
+                                            rx.foreach(Auth.logged_devices, show_devices),
+                                        ),
+                                    ),
+                                height="255px",
+                                width="100%",
+                                ),
+                            ),
+                            padding="32px",
+                            border_radius=Dashboard.smoothness,
+                            background_color=Dashboard.colors["widget"],
+                            width="100%",
+                        ),
+                        width="50%",
+                    ),
+                    rx.vstack(
+                        rx.box(
+                            rx.vstack(
+                                rx.text("Account Actions", font_size="32px"),
+                                rx.separator(),
+                                rx.hstack(
+                                    rx.dialog.root(
+                                        rx.dialog.trigger(rx.button("Sign out", color_scheme=Dashboard.colors["name"])), # type: ignore
+                                            rx.dialog.content(
+                                                rx.vstack(
+                                                    rx.heading("Are you sure?", size="4"),
+                                                    rx.hstack(
+                                                        rx.button("Yes", color_scheme="tomato", variant="outline", size="3", on_click=Auth.sign_out),
+                                                        rx.dialog.close(rx.button("No", color_scheme="green", size="3")),
+                                                        width="100%",
+                                                        justify="center"
+                                                    ),  
+                                                    width="100%",
+                                                    align="center",
+                                                    spacing="5"
+                                                ),
+                                                width="300px",
+                                            ),
+                                    ),
+                                    rx.dialog.root(
+                                        rx.dialog.trigger(rx.button("Change password", color_scheme=Dashboard.colors["name"])), # type: ignore
+                                            rx.dialog.content(
+                                                rx.vstack(
+                                                    rx.heading("Change password", size="4"),
+                                                    rx.form(
+                                                        rx.vstack(
+                                                            rx.text("Current password"),
+                                                            rx.input(placeholder="Blushies", width="100%", type="password", value=Auth.username_field, on_change=Auth.set_username),
+                                                            rx.text("New Password"),
+                                                            rx.input(placeholder="NotBlushies", width="100%", type="password", value=Auth.password_field, on_change=Auth.set_password),
+                                                            rx.text("Confirm New password",),
+                                                            rx.input(placeholder="NotBlushies", width="100%", type="password", value=Auth.password_2_field, on_change=Auth.set_2_password),
+                                                            rx.center(
+                                                                rx.button("Change password", background_color=Dashboard.colors["buttons"]),
+                                                                width="100%",
+                                                            ),
+                                                        ),
+                                                        on_submit=Auth.change_password,
+                                                    ),
+                                                    width="100%",
+                                                    align="center",
+                                                    spacing="5"
+                                                ),
+                                                width="300px",
+                                            ),
+                                        on_blur=Auth.clear,
+                                    ),
+
+                                    spacing="2",
+                                    width="100%"
+                                ),
+                                width="100%",
+                            ),
+                            height="100%",
+                            padding="32px",
+                            width="100%",
+                            border_radius=Dashboard.smoothness,
+                            background_color = Dashboard.colors["widget"],
+                        ),
+                        rx.box(
+                            rx.vstack(
+                                rx.text("Dangerous Area", font_size="32px"),
+                                rx.separator(),
+                                rx.dialog.root(
+                                    rx.dialog.trigger(rx.button("Delete Account", color_scheme="tomato", variant="outline", width="70px", height="70px")),
                                     rx.dialog.content(
                                         rx.vstack(
                                             rx.hstack(
@@ -633,19 +720,20 @@ def account() -> rx.Component:
                                         ),
                                         width="100%",
                                     ),
+
+                                ),
+                                width="100%",
                             ),
-                            spacing="5",
-                            width="100%"
+                            height="100%",
+                            padding="32px",
+                            width="100%",
+                            border_radius=Dashboard.smoothness,
+                            background_color = 'var(--ruby-3)',
                         ),
-                        width="100%",
+                        width="50%",
                     ),
-                    height="100%",
-                    padding="32px",
-                    width="100%",
-                    border_radius=Dashboard.smoothness,
-                    background_color = Dashboard.colors["widget"],
                 ),
-                width="50%",
+                width="87%", 
             ),
             
             width="100%",

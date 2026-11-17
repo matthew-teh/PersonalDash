@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta, UTC
 from pytz import timezone
 
-ENV = "DOCKER" # DOCKER
+ENV = "DEV" # DOCKER
 
 session = requests.Session()
 
@@ -186,7 +186,7 @@ def worldclock_get_time(term: str = ""):
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
-        response = client.request('localhost', port="3002", version=3, timeout=1) # DEV USE 
+        response = client.request('localhost', port="65502", version=3, timeout=1) # DEV USE 
     else: 
         response = client.request('ntp', port="123", version=3, timeout=1) # DOCKER USE 
 
@@ -202,7 +202,7 @@ def terracd_get_countdown():
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
-        unix = client.request('localhost', port="3002", version=3, timeout=1).tx_time # DEV USE 
+        unix = client.request('localhost', port="65502", version=3, timeout=1).tx_time # DEV USE 
     else: 
         unix = client.request('ntp', port="123", version=3, timeout=1).tx_time # DOCKER USE 
 

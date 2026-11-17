@@ -14,9 +14,10 @@ dependencies = [
     "psutil>=7.2.2",
     "pytz>=2026.6",
     "redis>=7.4.1",
-    "reflex>=0.10.1",
+    "reflex>=0.11.0",
     "reflex-motion>=0.0.1",
     "requests>=2.34.2",
+    "user-agents>=2.2.0",
 ]
 
 [project.scripts]

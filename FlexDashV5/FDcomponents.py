@@ -178,3 +178,11 @@ def render_widget(item: dict):
         )
     )
 # ---- WIDGETS ENDS
+
+def show_devices(device: list):
+    return rx.table.row(
+        rx.table.cell(device[0]),
+        rx.table.cell(device[1]),
+        rx.table.cell(device[2]),
+    
+    )

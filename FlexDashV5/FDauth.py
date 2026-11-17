@@ -3,23 +3,24 @@ import redis
 import json 
 import hashlib
 import secrets
-
+from user_agents import parse
 from typing import cast
 from argon2 import PasswordHasher 
 from .FDapi import worldclock_get_time
 
 ph = PasswordHasher()
-ENV = 'DOCKER' 
+ENV = 'DEV' 
+
 if ENV == 'DEV':
     r = redis.Redis(
         host= 'localhost',
-        port= 3001,
+        port= 65501,
         decode_responses= True
     )
 
 else:
     r = redis.Redis(
-        host= 'FlexDashV4Dragonfly',
+        host= 'FlexDashDragonfly',
         port= 6379,
         decode_responses= True
     )
@@ -27,6 +28,7 @@ else:
 class Auth(rx.State):
     logged_username: str = rx.Cookie(secure=True, same_site="lax")
     logged_cookie: str = rx.Cookie(secure=True, same_site="lax")
+    logged_devices: list[list[str]] =  []
 
     username_field: str = ""
     password_field: str = ""
@@ -88,13 +90,19 @@ class Auth(rx.State):
         result = False
         if self.logged_cookie and self.logged_username:
             try:
-                hashes = json.loads(cast(str, r.hget(f"user:{self.logged_username}", "hash")))
-                for h in hashes:
-                    if h["hash"] == self.logged_cookie:
-                        result = True
+                token_hash = hashlib.sha256(self.logged_cookie.encode()).hexdigest()
+                
+                hashes_raw = r.hget(f"user:{self.logged_username}", "hash")
+                if hashes_raw:
+                    hashes = json.loads(cast(str, hashes_raw))
+                    for h in hashes:
+                        if h.get("hash") == token_hash:
+                            result = True
+                            break
             except Exception as e:
                 print(e)
                 result = False
+                
         self.exist_acc = result
         if result:
             yield rx.toast.success(f"Welcome, {self.logged_username}")
@@ -106,37 +114,43 @@ class Auth(rx.State):
         self.recovery_token = ""
         username = self.username_field
         password = self.password_2_field
-        ua = self.router.headers.user_agent
-        ip = self.router.session.client_ip
+        
+        headers = self.router.headers or {}
+        ua_raw = self.router.headers.user_agent
+        ua = parse(ua_raw) if ua_raw else None
+        ua_formatted = f"{ua.browser.family} on {ua.os.family}" if ua else "Unknown Device"
+        
+        ip = getattr(self.router.session, "client_ip", "Unknown IP")
         time = worldclock_get_time("America/New_York")[0]
+        time_formatted = f"{time["time"]} {time["date"]}"
 
         if r.exists(f"user:{username}") == 1:
             user_data = cast(dict, r.hgetall(f"user:{username}"))
             try:
                 ph.verify(user_data["pass"], password)
+
                 token = secrets.token_urlsafe(32)
                 token_hash = hashlib.sha256(token.encode()).hexdigest()
-
-                
-                hashes = json.loads(user_data.get("hash", "[{}]"))
+                hashes = json.loads(user_data.get("hash", "[]"))
                 hashes.append({
                     "hash": token_hash,
-                    "device" : f"{ua}|{ip}|{time}",
+                    "device": f"{ua_formatted}|{ip}|{time_formatted}",
                 })
 
                 r.hset(f"user:{username}", "hash", json.dumps(hashes))
-                yield type(self).clear
-                self.logged_username = username
-                self.logged_cookie = token_hash
-                self.exist_acc = True
-                yield rx.toast.success(f"Welcome, {username}")
-                yield rx.redirect("/home")
-            except Exception as e:
-                yield rx.toast.warning("Incorrect username / password", position="top-center")
-                print(e)
-        else: yield rx.toast.warning("Incorrect username / password", position="top-center") # Instead saying username not exist ( increase security )
+                yield type(self).clear()
 
-        yield type(self).clear()
+                self.logged_username = username
+                self.logged_cookie = token
+                self.exist_acc = True
+
+                yield rx.toast.success(f"Welcome, {username}")
+                return rx.redirect("/home")
+            except Exception as e:
+                print(e)
+                yield rx.toast.warning("Incorrect username / password", position="top-center")
+        else:
+            yield rx.toast.warning("Incorrect username / password", position="top-center")
 
     @rx.event
     def sign_up(self):
@@ -150,7 +164,7 @@ class Auth(rx.State):
             token = secrets.token_urlsafe(16) # 2 USER
             
             token_hash = hashlib.sha256(token.encode()).hexdigest()
-
+            
             r.hset(f"user:{username}", mapping={
                 "pass" : hashed,
                 "hash" : "[]",
@@ -211,35 +225,25 @@ class Auth(rx.State):
 
 
     @rx.event
-    def signout(self):
-        username = self.logged_username
-        cookie = self.logged_cookie
-        result = False
-
-        if r.exists(f"user:{username}") == 1:
-            user_data = cast(dict, r.hgetall(f"user:{username}"))
-            try:
-                token_hash = hashlib.sha256(cookie.encode()).hexdigest()
-                hashes = json.loads(user_data.get("hash", "[{}]"))
-
-                processed = []
-                for h in hashes:
-                    if h.get("hash") != token_hash:
-                        processed.append(h)
-                r.hset(f"user:{username}", "hash", json.dumps(processed))
-                result = True
-            except:
-                result = False
-        else: result= False
+    def sign_out(self):
+        if self.logged_username and self.logged_cookie:
+            token_hash = hashlib.sha256(self.logged_cookie.encode()).hexdigest()
+            user_key = f"user:{self.logged_username}"
+            
+            if r.exists(user_key):
+                user_data = cast(dict, r.hgetall(user_key))
+                hashes = json.loads(user_data.get("hash", "[]"))
                 
-        if result:
-            self.exist_acc = False
-            self.logged_username, self.logged_cookie = "", ""
-            self.clear()
-            yield rx.toast.success("Logged out.", position="top-center")
-            yield rx.redirect("/signin")
-        else:
-            yield rx.toast.error("404 Logout, contact admin", position="top-center")
+                updated_hashes = [h for h in hashes if h.get("hash") != token_hash]
+                r.hset(user_key, "hash", json.dumps(updated_hashes))
+
+        self.logged_username = ""
+        self.logged_cookie = ""
+        self.exist_acc = False
+        
+        yield type(self).clear()
+        yield rx.toast.info("Signed out successfully", position="top-center")
+        return rx.redirect("/")
 
 
     @rx.event
@@ -270,3 +274,36 @@ class Auth(rx.State):
                     yield rx.toast.error(f"Unknown error: {result}", position="top-center")
         else:
             print("No pswd")
+
+    @rx.event
+    def prepare_devices(self):
+        user_data = cast(dict, r.hgetall(f"user:{self.logged_username}"))
+        self.logged_devices = []
+        try:
+            data = json.loads(user_data["hash"])
+            for h in data:
+                x = h["device"].split("|")
+                self.logged_devices.append(x)
+        except:
+            return []
+
+    @rx.event
+    def change_password(self):
+        
+            
+        if self.password_field != self.password_2_field:
+            return rx.toast.warning("Confirm password not same as password.", position="top-center")
+        
+        
+        user_data = cast(dict, r.hgetall(f"user:{self.logged_username}"))
+
+        try:    
+            ph.verify(user_data["pass"], self.username_field)
+
+            hashed = ph.hash(self.password_2_field)
+            r.hset(f"user:{self.logged_username}", "pass", hashed)
+
+            yield rx.toast.success("Password changed, login again.", position="top-center")
+            yield type(self).sign_out
+        except Exception as e:
+            yield rx.toast.warning("Incorrect password.", position="top-center")

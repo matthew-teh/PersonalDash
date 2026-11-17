@@ -58,7 +58,7 @@ class Dashboard(rx.State):
         "website": "var(--gray-1)"
     }
 
-    theme: list[themeSetting] = load_json("FlexDashV4/FDcolors.json")
+    theme: list[themeSetting] = load_json("FlexDashV5/FDcolors.json")
 
     @rx.event
     def edit_appearance(self, value):
@@ -136,7 +136,7 @@ class Dashboard(rx.State):
     # ---- WIDGETS MANAGEMENT START 
     
     widget_store_name: str = ""
-    widgets_store: list[widgetStore] = load_json("FlexDashV4/FDwidgets.json")
+    widgets_store: list[widgetStore] = load_json("FlexDashV5/FDwidgets.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):
@@ -184,6 +184,7 @@ class Dashboard(rx.State):
                     window=widget["data01"]
                 )
                 yield type(self).crypto_percentage(widget_id)
+
             if widget["type"].lower() == "crypto_v2":
                 widget["data00"] = crypto_get_price(
                     symbol=widget["data01"],
@@ -238,8 +239,6 @@ class Dashboard(rx.State):
             if widget["type"].lower() == "terracd_v1":
                 widget["data00"][0]["time"] = terracd_get_countdown()
                 
-
-            yield
                     
     @rx.event
     def update_all_widget(self):
@@ -300,6 +299,7 @@ class Dashboard(rx.State):
             if widget["id"] == widget_id:
                 value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
                 widget["data03"] = value
+        yield
 
     # POMODORO SPECIFIC
     pomodoro, short, long = "", "", ""
