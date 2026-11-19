@@ -249,7 +249,6 @@ class Dashboard(rx.State):
             if specific:
                 if widget["type"] == "crypto_v1" or widget["type"] == "crypto_v2":
                     yield type(self).update_widget(widget["id"])
-                    print("Update")
             else:
                 yield type(self).update_widget(widget["id"])
 

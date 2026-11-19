@@ -3,9 +3,12 @@ import redis
 import json 
 import hashlib
 import secrets
+import time
+import humanize
 from user_agents import parse
 from typing import cast
 from argon2 import PasswordHasher 
+from datetime import datetime, timezone
 from .FDapi import worldclock_get_time
 
 ph = PasswordHasher()
@@ -93,12 +96,16 @@ class Auth(rx.State):
                 token_hash = hashlib.sha256(self.logged_cookie.encode()).hexdigest()
                 
                 hashes_raw = r.hget(f"user:{self.logged_username}", "hash")
+
+                
                 if hashes_raw:
                     hashes = json.loads(cast(str, hashes_raw))
                     for h in hashes:
                         if h.get("hash") == token_hash:
                             result = True
+                            h["last_act"] = str(round(time.time()))
                             break
+                    r.hset(f"user:{self.logged_username}", "hash", json.dumps(hashes))
             except Exception as e:
                 print(e)
                 result = False
@@ -121,8 +128,8 @@ class Auth(rx.State):
         ua_formatted = f"{ua.browser.family} on {ua.os.family}" if ua else "Unknown Device"
         
         ip = getattr(self.router.session, "client_ip", "Unknown IP")
-        time = worldclock_get_time("America/New_York")[0]
-        time_formatted = f"{time["time"]} {time["date"]}"
+        timex = worldclock_get_time("America/New_York")[0] # CONFLICT with TIME.TIME()
+        time_formatted = f"{timex["time"]} {timex["date"]}"
 
         if r.exists(f"user:{username}") == 1:
             user_data = cast(dict, r.hgetall(f"user:{username}"))
@@ -132,9 +139,11 @@ class Auth(rx.State):
                 token = secrets.token_urlsafe(32)
                 token_hash = hashlib.sha256(token.encode()).hexdigest()
                 hashes = json.loads(user_data.get("hash", "[]"))
+                
                 hashes.append({
                     "hash": token_hash,
                     "device": f"{ua_formatted}|{ip}|{time_formatted}",
+                    "last_act" : time.time(),
                 })
 
                 r.hset(f"user:{username}", "hash", json.dumps(hashes))
@@ -283,20 +292,22 @@ class Auth(rx.State):
             data = json.loads(user_data["hash"])
             for h in data:
                 x = h["device"].split("|")
+                if h["hash"] == hashlib.sha256(self.logged_cookie.encode()).hexdigest():
+                    x[0] = f"{x[0]}|This Device"
+                last_active = int(h["last_act"]) if h.get("last_act") else 0
+                formatted = humanize.naturaltime(datetime.now(timezone.utc) - datetime.fromtimestamp(last_active, tz=timezone.utc))
+                x.append(formatted)        
+                x.append(h["hash"])
                 self.logged_devices.append(x)
-        except:
+        except Exception as e:
+            print(e)
             return []
 
     @rx.event
     def change_password(self):
-        
-            
         if self.password_field != self.password_2_field:
             return rx.toast.warning("Confirm password not same as password.", position="top-center")
-        
-        
         user_data = cast(dict, r.hgetall(f"user:{self.logged_username}"))
-
         try:    
             ph.verify(user_data["pass"], self.username_field)
 
@@ -306,4 +317,23 @@ class Auth(rx.State):
             yield rx.toast.success("Password changed, login again.", position="top-center")
             yield type(self).sign_out
         except Exception as e:
+            yield rx.toast.warning("Incorrect password.", position="top-center")
+
+    @rx.event()
+    def handle_logout_device(self, hash):
+        user_data = cast(dict, r.hgetall(f"user:{self.logged_username}"))
+        try:
+            ph.verify(user_data["pass"], self.password_field)
+
+            devices = json.loads(user_data["hash"])
+
+            processed = [device for device in devices if device["hash"] != hash]
+
+            r.hset(f"user:{self.logged_username}", "hash", json.dumps(processed))
+            yield type(self).prepare_devices
+            if hash == hashlib.sha256(self.logged_cookie.encode()).hexdigest():
+                yield type(self).sign_out
+
+        except Exception as e:
+            print(e)
             yield rx.toast.warning("Incorrect password.", position="top-center")

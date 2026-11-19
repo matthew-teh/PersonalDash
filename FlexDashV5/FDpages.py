@@ -604,6 +604,8 @@ def account() -> rx.Component:
                                                 rx.table.column_header_cell("Device Name"),
                                                 rx.table.column_header_cell("IP Address"),
                                                 rx.table.column_header_cell("Time EST"),
+                                                rx.table.column_header_cell("Last Active"),
+                                                rx.table.column_header_cell("Action"),
                                             ),
                                         ),
                                         rx.table.body(

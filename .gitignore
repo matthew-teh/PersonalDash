@@ -11,4 +11,4 @@ __pycache__
 .venv
 .env
 windows.txt
-binance_cache.sqlite3
+binance_cache.sqlite

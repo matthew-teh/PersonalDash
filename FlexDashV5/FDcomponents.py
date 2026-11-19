@@ -17,13 +17,14 @@ def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Compon
         ),
         opacity = rx.cond(Dashboard.page == link.lower(), 1 , 0.5),
         _hover={"opacity": 1.0},
-        transition="opacity 0.2s ease-in-out",
+        transition="all 0.2s ease-in-out",
         width="100%",
         variant="ghost",
         border_radius=Dashboard.smoothness,
         height="32px",
         on_click= Dashboard.set_page(link, redirect),
-        border = rx.cond(Dashboard.page == link.lower(), "1px solid rgba(255, 255, 255, 0.2)", ""),
+        border = rx.cond(Dashboard.page == link.lower(), "1px solid rgba(255, 255, 255, 0.2)", "1px solid transparent"),
+        
     )
 
 def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
@@ -182,8 +183,47 @@ def render_widget(item: dict):
 
 def show_devices(device: list):
     return rx.table.row(
-        rx.table.cell(device[0]),
+        rx.table.cell(
+            rx.cond(
+                device[0].contains("|"),
+                rx.vstack(
+                    rx.text(f"* {device[0].split("|")[1]}"),
+                    rx.text(device[0].split("|")[0]),
+                    spacing="0"
+                ),
+                rx.text(device[0])
+            ),
+        ),
         rx.table.cell(device[1]),
         rx.table.cell(device[2]),
-    
+        rx.table.cell(device[3]),
+        rx.table.cell(
+            rx.dialog.root(
+                rx.dialog.trigger(rx.button("Logout", variant='ghost', border_radius=Dashboard.smoothness, border=f"1px solid {Dashboard.colors["buttons"]}", on_click=Auth.clear)),
+                rx.dialog.content(
+                    rx.vstack(
+                        rx.hstack(
+                            rx.text(f"Enter password to continue"),
+                            rx.dialog.close(rx.icon('x'), opacity=0.5, _hover={"opacity": 1}),
+                            justify="between",
+                            width="100%",
+                        ),
+                        
+                        rx.input(
+                            placeholder="OvercookChicken", 
+                            width="100%", 
+                            value=Auth.password_field, 
+                            on_change=Auth.set_password,
+                            on_key_down=lambda key: rx.cond(
+                                key == "Enter",
+                                Auth.handle_logout_device(device[4]),
+                                None,
+                            ),
+                        ),
+                        rx.button(rx.text("Continue"), width="100%", on_click=Auth.handle_logout_device(device[4])),
+                        width="100%",
+                    )
+                )
+            )
+        )
     )
