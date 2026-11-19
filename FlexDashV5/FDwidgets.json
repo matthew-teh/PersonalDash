@@ -94,5 +94,17 @@
             "designed_data01": "",
             "designed_data02": "", 
             "designed_data03": 0
+        },
+        {
+            "name" : "Terra Countdown V2",
+            "desc" : "New Terra Countdown",
+            "image" : "/widget_store/terracdv2",
+            "available": true,
+            "designed_name": "Terra Countdown", 
+            "designed_type": "terracd_v2",
+            "designed_data00": [{"time":"000:00:00"}], 
+            "designed_data01": "",
+            "designed_data02": "", 
+            "designed_data03": 0
         }
-    ]
+    ]   

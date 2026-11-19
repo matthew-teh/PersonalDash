@@ -170,15 +170,15 @@ class Dashboard(rx.State):
     # ---- All widget management.
     @rx.event
     def update_widget(self, widget_id, widget_type=""):
-        for widget in self.widgets:
 
-            if widget_type:
-                try:
-                    if widget["type"].lower() != widget_type.lower():
-                        continue
-                except:
-                    pass
-            if not widget_type and widget["id"] != widget_id:
+        wt = ""
+
+        if isinstance(widget_type, str):
+            wt = widget_type
+
+        for widget in self.widgets:
+            if wt:
+                if widget["type"] != wt:
                     continue
 
             if widget["type"].lower() == "crypto_v1":
@@ -188,25 +188,25 @@ class Dashboard(rx.State):
                 )
                 yield type(self).crypto_percentage(widget_id)
 
-            if widget["type"].lower() == "crypto_v2":
+            elif widget["type"].lower() == "crypto_v2":
                 widget["data00"] = crypto_get_price(
                     symbol=widget["data01"],
                     window=widget["data02"]
                 )
                 yield type(self).crypto_percentage(widget_id)
 
-            if widget["type"].lower() == "weather_v1":
+            elif widget["type"].lower() == "weather_v1":
                 name, data = weather_get_data(widget["name"])
                 if name:
                     widget["data00"] = data
                 else:
                     yield rx.toast("Failed to update, city not found.")
 
-            if widget["type"].lower() == "worldclock_v1":
+            elif widget["type"].lower() == "worldclock_v1":
                 name = widget["data00"][0]["timezone"].replace(", ", "/").replace(" ", "_")
                 widget["data00"] = worldclock_get_time(name)
 
-            if widget["type"].lower() == "pomodoro_v1":
+            elif widget["type"].lower() == "pomodoro_v1":
                 if widget["data00"][0]["started"].lower() == "true":
                     sec = round(float(widget["data00"][0]["sec_left"])) - 1
                     widget["data00"][0]["sec_left"] = str(float(widget["data00"][0]["sec_left"]) - 1)
@@ -239,9 +239,11 @@ class Dashboard(rx.State):
                             seconds = f"0{seconds}"
                         widget["data00"][0]["timing"] = f"{minutes}:{seconds}"
 
-            if widget["type"].lower() == "terracd_v1":
+            elif widget["type"].lower() == "terracd_v1":
                 widget["data00"][0]["time"] = terracd_get_countdown()
-        yield
+
+            elif widget["type"].lower() == "terracd_v2":
+                widget["data00"][0]["diff"] = terracd_get_countdown(False)
                     
     @rx.event
     def update_all_widget(self, specific=False):
@@ -303,6 +305,8 @@ class Dashboard(rx.State):
     def crypto_percentage(self, widget_id):
         for widget in self.widgets:
             if widget["id"] == widget_id:
+                if widget["type"] != "crypto_v1" or widget["type"] != "crypto_v2": 
+                    continue
                 value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
                 widget["data03"] = float(value)
     # POMODORO SPECIFIC
@@ -431,6 +435,7 @@ class Dashboard(rx.State):
                         elif task["status"] == "incomplete":
                             task["status"] = "completed"
         yield type(self).sync_up_cloud
+
 starttime = time.time()
 class System(rx.State):
     cpu: float = 0
@@ -441,7 +446,7 @@ class System(rx.State):
     @rx.event
     async def update_server_status(self):
         self.uptime = time.time() - starttime
-        self.cpu = await asyncio.to_thread(psutil.cpu_percent)
+        self.cpu = await asyncio.to_thread(psutil.cpu_percent, interval=0.5)
         mem = await asyncio.to_thread(psutil.virtual_memory)
         self.ram = mem.percent
         days, remainder = divmod(self.uptime, 86400)

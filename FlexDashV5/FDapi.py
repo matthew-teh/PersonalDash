@@ -199,7 +199,7 @@ def worldclock_get_time(term: str = ""):
     date, timex, dst =f"{dt_local.strftime('%Y-%m-%d %H:%M:%S')} {dst}".split(' ')
     return [{"timezone": timezone_id.replace("/", ", ").replace("_", " "), "tz": dt_local.strftime('%z'), "date": date, "time": timex, "dst": str(dst)}]
 
-def terracd_get_countdown():
+def terracd_get_countdown(formatted=True):
     client = ntplib.NTPClient()
 
     if ENV == "DEV":
@@ -223,21 +223,26 @@ def terracd_get_countdown():
     t_unix = t_ny.timestamp()
 
     diff = int(t_unix - unix)
+    if formatted: 
+        hours = diff // 3600
+        minutes = (diff % 3600) // 60
+        seconds = diff % 60
 
-
-    hours = diff // 3600
-    minutes = (diff % 3600) // 60
-    seconds = diff % 60
-
-    if len(str(hours)) == 1:
-        hours = f"0{hours}"
-    
-    if len(str(minutes)) == 1:
-        minutes = f"0{minutes}"
-
-    if len(str(seconds)) == 1:
-        seconds = f"0{seconds}"
+        if len(str(hours)) == 1:
+            hours = f"0{hours}"
         
-    countdown = f"{hours}:{minutes}:{seconds}"
+        if len(str(minutes)) == 1:
+            minutes = f"0{minutes}"
 
-    return countdown
+        if len(str(seconds)) == 1:
+            seconds = f"0{seconds}"
+            
+        countdown = f"{hours}:{minutes}:{seconds}"
+
+        return countdown
+    else:
+        days = round(diff / 86400)
+        hours = (diff % 86400) // 3600
+        minutes = (diff % 3600) // 60
+        seconds = diff % 60
+        return f"{days}|{hours}|{minutes}|{seconds}"

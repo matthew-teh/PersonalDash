@@ -176,6 +176,7 @@ def render_widget(item: dict):
             ("terracd_v1", FDwidgetsV1.terracd_widget(item)),
             ("crypto_v2", FDwidgetsV2.crypto_widget(item)),
             ("checklist_v2", FDwidgetsV2.checklist_widget(item)),
+            ("terracd_v2", FDwidgetsV2.terracd_widget(item)),
             rx.box(),   
         )
     )
@@ -226,4 +227,50 @@ def show_devices(device: list):
                 )
             )
         )
+    )
+
+def circle_progress(progress, size, label) -> rx.Component:
+    circumference = 251.2
+    progress_val = progress
+    stroke_dashoffset = circumference - (progress_val * circumference)
+    swid = max(2, size * 0.03)
+    return rx.el.svg(
+        rx.el.circle(
+            cx="50",
+            cy="50",
+            r="40",
+            fill="none",
+            stroke=Dashboard.colors["page"],
+            stroke_width=swid,
+        ),
+        rx.el.circle(
+            cx="50",
+            cy="50",
+            r="40",
+            fill="none",
+            stroke=Dashboard.colors["text"],
+            stroke_width=swid,
+            stroke_dasharray=str(circumference),
+            stroke_dashoffset=stroke_dashoffset,
+            stroke_linecap="round",
+            style={
+                "transform": "rotate(-90deg)",
+                "transform-origin": "50px 50px",
+                "transition": "stroke-dashoffset 0.5s ease-in-out",
+            },
+        ),
+        rx.el.text(
+            label,
+            x="50",
+            y="50",
+            text_anchor="middle",
+            dominant_baseline="central",
+            fill=Dashboard.colors["text"], # Adjusted for your dark background
+            font_size="32px",
+            font_weight="500",
+            opacity=0.8
+        ),
+        view_box="0 0 100 100",
+        width=f"{size}px",
+        height=f"{size}px",
     )

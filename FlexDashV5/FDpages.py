@@ -47,7 +47,8 @@ def home() -> rx.Component:
                         on_change=[
                             Dashboard.update_widget("",widget_type="pomodoro_v1"),  # type: ignore
                             Dashboard.update_widget("", widget_type="worldclock_v1"), # type: ignore
-                            Dashboard.update_widget("", widget_type="terracd_v1") # type: ignore
+                            Dashboard.update_widget("", widget_type="terracd_v1"), # type: ignore
+                            Dashboard.update_widget("", widget_type="terracd_v2") # type: ignore
                         ],
                         display="None",
                     ),
