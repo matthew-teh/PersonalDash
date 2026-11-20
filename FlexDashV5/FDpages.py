@@ -27,7 +27,7 @@ def home() -> rx.Component:
                         width="100%",
                         height="100%"
                     ),
-                    width="87%", 
+                    width=rx.cond(Dashboard.expanded, "87%", "100%"), 
                     height="100%", 
                     background_color = Dashboard.colors["page"], 
                     border_radius=Dashboard.smoothness
@@ -57,7 +57,7 @@ def home() -> rx.Component:
                         on_change=Dashboard.sync_up_cloud,
                         display="None"
                     ),
-                    width="87%", 
+                    width=rx.cond(Dashboard.expanded, "87%", "100%"), 
                     height="100%", 
                     background_color = Dashboard.colors["page"], 
                     border_radius=Dashboard.smoothness
@@ -82,14 +82,43 @@ def widgets() -> rx.Component:
                 rx.vstack(
                     rx.text("FlexDash Widgets", weight="bold", font_size="64px", opacity=0.95),
                     rx.scroll_area(
-                        rx.grid(
-                            rx.foreach(
-                                Dashboard.widgets_store,
-                                lambda item : widget(item.name, item.image, item.desc, item.available),
+                        rx.vstack(
+                            rx.hstack(
+                                rx.separator(flex_grow="1"),
+                                rx.text("FlexDash V1 Widgets", white_space="nowrap", opacity=0.5),
+                                rx.separator(flex_grow="1"),
+                                width="100%",
+                                align="center",
+                                spacing="4",
                             ),
-                            gap="8px",
-                            columns="4",
+                            rx.grid(
+                                rx.foreach(
+                                    Dashboard.widgets_store,
+                                    lambda item : widget(item.name, item.designed_type, item.image, item.desc, item.available),
+                                ),
+                                gap="8px",
+                                columns="4",
+                                width="100%",
+                            ),
+                            rx.hstack(
+                                rx.separator(flex_grow="1"),
+                                rx.text("FlexDash V2 Widgets", white_space="nowrap", opacity=0.5),
+                                rx.separator(flex_grow="1"),
+                                width="100%",
+                                align="center",
+                                spacing="4"
+                            ),
+                            rx.grid(
+                                rx.foreach(
+                                    Dashboard.widget_storev2,
+                                    lambda item : widget(item.name, item.designed_type, item.image, item.desc, item.available),
+                                ),
+                                gap="8px",
+                                columns="4",
+                                width="100%",
+                            ),
                             width="100%",
+                            height="100%",
                         ),
                         height="84vh",
                         width="100%",
@@ -98,7 +127,7 @@ def widgets() -> rx.Component:
                     spacing="1",
                 ),
                 padding="8px",
-                width="87%", 
+                width=rx.cond(Dashboard.expanded, "87%", "100%"), 
                 height="100%", 
                 background_color = Dashboard.colors["page"], 
                 border_radius=Dashboard.smoothness),
@@ -335,14 +364,14 @@ def settings() -> rx.Component:
                     ),
                 ),
                 padding="8px",
-                width="87%", 
+                width=rx.cond(Dashboard.expanded, "87%", "100%"), 
                 height="100%", 
                 background_color = Dashboard.colors["page"], 
                 border_radius=Dashboard.smoothness),
             width="100%",
             height="100%",
         ),
-        width="100vw",
+        width="100%",
         height="100vh",
         padding="8px",
         background_color = Dashboard.colors["page"],
@@ -736,7 +765,7 @@ def account() -> rx.Component:
                         width="50%",
                     ),
                 ),
-                width="87%", 
+                width=rx.cond(Dashboard.expanded, "87%", "100%"), 
             ),
             
             width="100%",

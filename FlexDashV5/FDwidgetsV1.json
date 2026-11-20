@@ -1,6 +1,6 @@
 [
         {
-            "name" : "Crypto V1", 
+            "name" : "Crypto", 
             "desc" : "Shows specific crypto coins info.", 
             "image": "/widget_store/cryptov1",
             "available": true, 
@@ -12,7 +12,7 @@
             "designed_data03": 0
         },
         {
-            "name" : "Weather V1", 
+            "name" : "Weather", 
             "desc" : "Shows weather info for a city.", 
             "image": "/widget_store/weatherv1",
             "available": true, 
@@ -24,7 +24,7 @@
             "designed_data03": 0
         },
         {
-            "name" : "World Clock V1", 
+            "name" : "World Clock", 
             "desc" : "Shows UTC time info for a city.", 
             "image": "/widget_store/worldclockv1",
             "available": true, 
@@ -36,7 +36,7 @@
             "designed_data03": 0
         },
         {
-            "name" : "Pomodoro Timer V1", 
+            "name" : "Pomodoro Timer", 
             "desc" : "A countdown designed to focus work.", 
             "image": "/widget_store/pomodorov1",
             "available": true, 
@@ -48,7 +48,7 @@
             "designed_data03": 0
         },
         {
-            "name" : "Quick Notes V1", 
+            "name" : "Quick Notes", 
             "desc" : "A empty box for you to type anything.", 
             "image": "/widget_store/quicknotesv1",
             "available": true, 
@@ -60,48 +60,12 @@
             "designed_data03": 0
         },
         {
-            "name" : "Terra Countdown V1", 
+            "name" : "Terra Countdown", 
             "desc" : "Shows how much time left to ship.", 
             "image": "/widget_store/terracdv1",
             "available": true, 
             "designed_name": "Terra Countdown", 
             "designed_type": "terracd_v1",
-            "designed_data00": [{"time":"000:00:00"}], 
-            "designed_data01": "",
-            "designed_data02": "", 
-            "designed_data03": 0
-        },
-        {
-            "name" : "Crypto V2", 
-            "desc" : "Whoa? New Crypto Widget", 
-            "image": "/widget_store/cryptov2",
-            "available": true, 
-            "designed_name": "BITCOIN BTC", 
-            "designed_type": "crypto_v2",
-            "designed_data00": [{}], 
-            "designed_data01": "BTCUSDT",
-            "designed_data02": "15m", 
-            "designed_data03": 0
-        },
-        {
-            "name" : "Checklist V2", 
-            "desc" : "A checklist for you to add anything, mark as done.", 
-            "image": "/widget_store/checklistv2",
-            "available": true, 
-            "designed_name": "Checklist", 
-            "designed_type": "checklist_v2",
-            "designed_data00": [], 
-            "designed_data01": "",
-            "designed_data02": "", 
-            "designed_data03": 0
-        },
-        {
-            "name" : "Terra Countdown V2",
-            "desc" : "New Terra Countdown",
-            "image" : "/widget_store/terracdv2",
-            "available": true,
-            "designed_name": "Terra Countdown", 
-            "designed_type": "terracd_v2",
             "designed_data00": [{"time":"000:00:00"}], 
             "designed_data01": "",
             "designed_data02": "", 

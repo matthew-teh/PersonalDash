@@ -49,6 +49,7 @@ def load_json(json_path):
 class Dashboard(rx.State):
     # ---- THEME START
     appearance: Literal['dark', 'inherit', 'light'] = "dark"
+    expanded: bool = False
     colors = {
         "name": "gray",
         "text": "var(--gray-12)",
@@ -60,6 +61,10 @@ class Dashboard(rx.State):
 
     theme: list[themeSetting] = load_json("FlexDashV5/FDcolors.json")
 
+    @rx.event
+    def flip_expanded(self):
+        self.expanded = not self.expanded
+        
     @rx.event
     def edit_appearance(self, value):
         self.appearance = value
@@ -136,7 +141,8 @@ class Dashboard(rx.State):
     # ---- WIDGETS MANAGEMENT START 
     
     widget_store_name: str = ""
-    widgets_store: list[widgetStore] = load_json("FlexDashV5/FDwidgets.json")
+    widgets_store: list[widgetStore] = load_json("FlexDashV5/FDwidgetsV1.json")
+    widget_storev2: list[widgetStore] = load_json("FlexDashV5/FDwidgetsV2.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):
@@ -144,8 +150,8 @@ class Dashboard(rx.State):
 
     @rx.event
     def add_widget(self, name):
-        for widget in self.widgets_store:
-            if name == widget["name"]:
+        for widget in self.widgets_store + self.widget_storev2:
+            if name == widget["designed_type"]:
                 if widget["available"]:
 
                     widget_id = str(uuid.uuid4())
@@ -171,16 +177,15 @@ class Dashboard(rx.State):
     @rx.event
     def update_widget(self, widget_id, widget_type=""):
 
-        wt = ""
-
-        if isinstance(widget_type, str):
-            wt = widget_type
-
         for widget in self.widgets:
-            if wt:
-                if widget["type"] != wt:
-                    continue
 
+            if widget_type:
+                if widget.get("type").lower() != widget_type.lower():
+                    continue
+            else:
+                if widget.get("id") != widget_id:
+                    continue
+            
             if widget["type"].lower() == "crypto_v1":
                 widget["data00"] = crypto_get_price(
                     symbol=widget["name"],
@@ -304,11 +309,13 @@ class Dashboard(rx.State):
     @rx.event
     def crypto_percentage(self, widget_id):
         for widget in self.widgets:
-            if widget["id"] == widget_id:
-                if widget["type"] != "crypto_v1" or widget["type"] != "crypto_v2": 
-                    continue
-                value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
-                widget["data03"] = float(value)
+            
+            if widget["id"] != widget_id:
+                continue
+            if widget["type"].lower() != "crypto_v1" and widget["type"].lower() != "crypto_v2":
+                continue
+            value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
+            widget["data03"] = float(value)
     # POMODORO SPECIFIC
     pomodoro, short, long = "", "", ""
 

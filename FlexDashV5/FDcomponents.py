@@ -8,30 +8,37 @@ from . import FDwidgetsV2
 # ---- SIDEBAR START
 def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Component:
     return rx.button(
-        rx.hstack(
-            rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
-            rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
+            rx.hstack(
+                rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
+                rx.cond(Dashboard.expanded, rx.text(name, font_size="16px", color=Dashboard.colors["text"], white_space="nowrap"), rx.fragment()),
+                width="100%",
+                height="100%",
+                align="center",
+            ),
+            opacity = rx.cond(Dashboard.page == link.lower(), 1 , 0.5),
+            _hover={"opacity": 1.0},
+            transition="all 0.2s ease-in-out",
             width="100%",
-            height="100%",
-            align="center",
-        ),
-        opacity = rx.cond(Dashboard.page == link.lower(), 1 , 0.5),
-        _hover={"opacity": 1.0},
-        transition="all 0.2s ease-in-out",
-        width="100%",
-        variant="ghost",
-        border_radius=Dashboard.smoothness,
-        height="32px",
-        on_click= Dashboard.set_page(link, redirect),
-        border = rx.cond(Dashboard.page == link.lower(), "1px solid rgba(255, 255, 255, 0.2)", "1px solid transparent"),
-        
-    )
-
+            variant="ghost",
+            border_radius=Dashboard.smoothness,
+            height="32px",
+            on_click= Dashboard.set_page(link, redirect),
+            border = rx.cond(
+                Dashboard.page == link.lower(), 
+                rx.cond(
+                    Dashboard.appearance=="dark",
+                    "1px solid rgba(255, 255, 255, 0.2)",
+                    "1px solid rgba(0, 0, 0, 0.2)"
+                ),
+                "1px solid transparent"
+            ),
+            
+        )
 def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
     return rx.button(
         rx.hstack(
             rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
-            rx.text(name, font_size="16px", color=Dashboard.colors["text"]),
+            rx.cond(Dashboard.expanded, rx.text(name, font_size="16px", color=Dashboard.colors["text"], white_space="nowrap"), ""),
             width="100%",
             height="100%",
             align="center",
@@ -46,31 +53,56 @@ def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
         on_click=function,
     )
 
+def sidebar_separator(text) -> rx.Component:
+    return rx.cond(
+        Dashboard.expanded,
+        rx.hstack(
+            rx.separator(flex_grow="1"),
+            rx.text(text, font_size="12px", opacity=0.8, white_space="nowrap"),
+            rx.separator(flex_grow="1"),
+            spacing="4",
+            align="center",
+            width="100%",
+            height="40px"
+        ),
+        rx.hstack(rx.separator(flex_grow="1"), width="100%", spacing="4", align="center", height="40px"),
+    )
 def sidebar() -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.image(src="/logo.svg", border_radius="4px", width="19%", height="auto"),
-                rx.vstack(
-                    rx.text("FlexDash V4", weight="bold", font_size="24px"),
-                    rx.text(Auth.logged_username, font_size="16px", opacity=0.5),
-                    spacing="0",    
-                    width="100%",
+                rx.image(
+                    src="/logo.svg", 
+                    border_radius="4px", 
+                    width=rx.cond(Dashboard.expanded, "19%", "48px"),
+                    height="auto",
+                    on_click=Dashboard.flip_expanded,
+                ),
+                rx.cond(
+                    Dashboard.expanded,                
+                    rx.vstack(
+                        rx.text("FlexDash V4", weight="bold", font_size="24px", white_space="nowrap"),
+                        rx.text(Auth.logged_username, font_size="16px", opacity=0.5),
+                        spacing="0",    
+                        width="100%",
+                    ),
+                    rx.fragment(),
                 ),
                 align_items="center",
+                min_height="58px",
             ),  
             rx.vstack(
-                rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets home", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_separator("Widgets Home"),
                 sidebar_items("Dashboard", "/lucide_icons/house", "/home", True),
                 sidebar_items("Add widgets", "/lucide_icons/shopping_bag", "/widgets", True),
-                rx.hstack(rx.separator(max_width="25%"), rx.text("Widgets control", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_separator("Widgets control"),
                 sidebar_items_functional("Refresh all", "/lucide_icons/refresh_cw", Dashboard.update_all_widget),
                 sidebar_items_functional("Delete all", "/lucide_icons/trash", Dashboard.delete_all_widget),
-                rx.hstack(rx.separator(max_width="25%"), rx.text("Cloud status", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_separator("Cloud Status"),
                 sidebar_items_functional("Sync now", "/lucide_icons/cloud_sync", Dashboard.sync_up_cloud),
                 rx.hstack(
                     rx.image(src=f"/lucide_icons/cloud_check_{Dashboard.appearance}.svg"),
-                    rx.text(Dashboard.sync_status),
+                    rx.cond(Dashboard.expanded,rx.text(Dashboard.sync_status, white_space="nowrap"), rx.fragment()),
                     opacity = 0.5,
                     _hover={"opacity": 1.0},
                     transition="opacity 0.2s ease-in-out",
@@ -81,11 +113,15 @@ def sidebar() -> rx.Component:
                 ),
                 rx.flex(
                     rx.vstack(
-                        rx.image(src=rx.cond(Dashboard.appearance=="dark","lucide_icons/square_dashed_mouse_pointer_dark.svg", "lucide_icons/square_dashed_mouse_pointer_light.svg"), opacity=rx.cond(Dashboard.parking, 1.0, 0.5)),
+                        rx.image(src=f"lucide_icons/square_dashed_mouse_pointer_{Dashboard.appearance}.svg", opacity=rx.cond(Dashboard.parking, 1.0, 0.5)),
                         rx.cond(
-                            Dashboard.parking,
-                            rx.text("CURSOR PARKED HERE", opacity=1.0, white_space="pre-wrap"),
-                            rx.text("CURSOR PARKING AREA", opacity=0.5, white_space="pre-wrap"),
+                            Dashboard.expanded,
+                            rx.cond(
+                                Dashboard.parking,
+                                rx.text("CURSOR PARKED HERE", opacity=1.0, white_space="nowrap"),
+                                rx.text("CURSOR PARKING AREA", opacity=0.5, white_space="nowrap"),
+                            ),
+                            rx.fragment(),
                         ),
                         align="center",
                         justify="center",
@@ -103,28 +139,35 @@ def sidebar() -> rx.Component:
                 ),
 
 
-                rx.hstack(rx.separator(max_width="25%"), rx.text("Preferences", font_size="12px", opacity=0.8), rx.separator(max_width="25%"), width="100%", justify="between", align="center"),
+                sidebar_separator("Preferences"),
                 sidebar_items("Account", "/lucide_icons/user_round", "/account", True),
                 sidebar_items("Settings", "/lucide_icons/settings", "/settings", True),
-                width="100%",
+                width="96%",
                 height="100%",
+                justify="center",
+                align="center",
             ),
             height="100%",
             align="center"
         ),
-        width="13%",
+        width=rx.cond(Dashboard.expanded, "13%", "2.5%"),
         height="100%",
         padding="8px",
         border_radius=Dashboard.smoothness,
-        color=Dashboard.colors["text"]
+        color=Dashboard.colors["text"],
+        overflow="hidden",
+        style={
+            "transition" : "width 1s ease-in-out",
+        },
     )
+        
 
 
 # ---- SIDEBAR ENDS
 
 # ---- WIDGETS STARTS
-def widget(name: str, image:str="", desc: str="", available: bool=False):
-    is_active = Dashboard.widget_store_name == name
+def widget(name: str, type:str, image:str="", desc: str="", available: bool=False):
+    is_active = Dashboard.widget_store_name == type
     return rx.card(
         rx.vstack(
             rx.text(name, weight="bold"),
@@ -142,7 +185,7 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             rx.box(
                 rx.text(desc),
                 rx.flex(
-                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["buttons"], on_click=Dashboard.add_widget(name)),
+                    rx.button(rx.text("Add to dashboard", color=Dashboard.colors["text"]), border_radius=Dashboard.smoothness, width="100%", background_color=Dashboard.colors["buttons"], on_click=Dashboard.add_widget(type)),
                     width="100%",
                     opacity=rx.cond(is_active, 1, 0),   
                     transition="all 0.3s ease-in-out",
@@ -158,13 +201,13 @@ def widget(name: str, image:str="", desc: str="", available: bool=False):
             align = "center",
             justify="between",
         ),
-        on_mouse_enter=Dashboard.set_widget_store_name(name),
+        on_mouse_enter=Dashboard.set_widget_store_name(type),
         on_mouse_leave=Dashboard.set_widget_store_name(value=""),
         border_radius=Dashboard.smoothness,
         color=Dashboard.colors["text"]
     )
 
-def render_widget(item: dict):
+def render_widget(item: dict) -> rx.Component:
     return rx.box(
         rx.match(
             item["type"].lower(),
@@ -178,7 +221,7 @@ def render_widget(item: dict):
             ("checklist_v2", FDwidgetsV2.checklist_widget(item)),
             ("terracd_v2", FDwidgetsV2.terracd_widget(item)),
             rx.box(),   
-        )
+        ),
     )
 # ---- WIDGETS ENDS
 
