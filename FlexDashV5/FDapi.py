@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta, UTC
 from pytz import timezone
 
-ENV = "DEV" # DOCKER
+ENV = "DOCKER" # DOCKER
 
 session = requests_cache.CachedSession(
     'binance_cache',  # Name of the local cache file/storage

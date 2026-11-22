@@ -21,5 +21,12 @@ services:
     environment:
       - NTP_SERVERS=time.cloudflare.com, time.google.com
 
+  flexdash:
+    image: nuggetteh/personal-dashboard:flexdashv5
+    container_name: FlexDashAPPV5
+    ports:
+      - "65510:65510"
+    restart: unless-stopped
+
 volumes:
   dragonflydata: 

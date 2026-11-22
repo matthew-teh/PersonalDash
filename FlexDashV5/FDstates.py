@@ -45,7 +45,7 @@ def load_json(json_path):
     except Exception as e:
         print(e)
         return []
-        
+
 class Dashboard(rx.State):
     # ---- THEME START
     appearance: Literal['dark', 'inherit', 'light'] = "dark"

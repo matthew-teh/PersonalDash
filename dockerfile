@@ -20,6 +20,6 @@ RUN uv sync
 
 EXPOSE 3000
 
-CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "65505", "--loglevel", "debug"]
+CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "65510", "--loglevel", "debug"]
 
 # docker build -t flexdash:latest . 

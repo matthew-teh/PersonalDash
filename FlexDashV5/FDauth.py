@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from .FDapi import worldclock_get_time
 
 ph = PasswordHasher()
-ENV = 'DEV' 
+ENV = 'DOCKER' 
 
 if ENV == 'DEV':
     r = redis.Redis(
@@ -23,7 +23,7 @@ if ENV == 'DEV':
 
 else:
     r = redis.Redis(
-        host= 'FlexDashDragonfly',
+        host= 'dragonfly_db',
         port= 6379,
         decode_responses= True
     )

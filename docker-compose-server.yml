@@ -1,0 +1,41 @@
+services:
+  dragonfly_db:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    container_name: FlexDashV5Dragonfly
+    restart: unless-stopped
+    ulimits:
+      memlock: -1
+    ports:
+      - "65501:6379"
+    volumes:
+      - dragonflydata:/data
+    command: 
+      - "--snapshot_cron=*/5 * * * *"
+
+  ntp:
+    image: cturra/ntp:latest
+    container_name: FlexDashV5NTP
+    restart: unless-stopped
+    ports:
+      - "65502:123/udp"
+    environment:
+      - NTP_SERVERS=time.cloudflare.com, time.google.com
+
+  flexdash:
+    image: flexdashv5:latest
+    container_name: FlexDashV5APP
+    ports:
+      - "65510:65510"
+    restart: unless-stopped
+    
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: FlexDashTunnelV5
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    depends_on:
+      - flexdash
+
+
+volumes:
+  dragonflydata: 

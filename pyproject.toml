@@ -1,5 +1,5 @@
 [project]
-name = "flexdashv4"
+name = "flexdashv5"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-flexdashv4 = "flexdashv4:main"
+flexdashv5 = "flexdashv5:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]

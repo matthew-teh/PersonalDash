@@ -385,7 +385,7 @@ def signin() -> rx.Component:
                 rx.box(
                     rx.vstack(
                         rx.vstack(
-                            rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                            rx.image(src="/logo_light.svg", width="60px", border_radius="5px"),
                             rx.heading("Sign in to your account", size="7"),
                             width="100%",
                             align="center",
@@ -444,7 +444,7 @@ def signup() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.vstack(
-                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.image(src="/logo_light.svg", width="60px", border_radius="5px"),
                         rx.heading("Create account", size="7"),
                         width="100%",
                         align="center",
@@ -503,7 +503,7 @@ def security() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.vstack(
-                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.image(src="/logo_light.svg", width="60px", border_radius="5px"),
                         rx.heading("Action needed", size="7"),
                         spacing="5",
                         width="100%",
@@ -544,7 +544,7 @@ def recovery() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.vstack(
-                        rx.image(src="/logo.svg", width="60px", border_radius="5px"),
+                        rx.image(src="/logo_light.svg", width="60px", border_radius="5px"),
                         rx.heading("Forgot Password", size="7"),
                         width="100%",
                         align="center",

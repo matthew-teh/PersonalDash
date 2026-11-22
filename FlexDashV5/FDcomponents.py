@@ -8,32 +8,32 @@ from . import FDwidgetsV2
 # ---- SIDEBAR START
 def sidebar_items(name: str, image: str, link: str, redirect: bool) -> rx.Component:
     return rx.button(
-            rx.hstack(
-                rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
-                rx.cond(Dashboard.expanded, rx.text(name, font_size="16px", color=Dashboard.colors["text"], white_space="nowrap"), rx.fragment()),
-                width="100%",
-                height="100%",
-                align="center",
-            ),
-            opacity = rx.cond(Dashboard.page == link.lower(), 1 , 0.5),
-            _hover={"opacity": 1.0},
-            transition="all 0.2s ease-in-out",
+        rx.hstack(
+            rx.image(src=f"{image}_{Dashboard.appearance}.svg"),
+            rx.cond(Dashboard.expanded, rx.text(name, font_size="16px", color=Dashboard.colors["text"], white_space="nowrap"), rx.fragment()),
             width="100%",
-            variant="ghost",
-            border_radius=Dashboard.smoothness,
-            height="32px",
-            on_click= Dashboard.set_page(link, redirect),
-            border = rx.cond(
-                Dashboard.page == link.lower(), 
-                rx.cond(
-                    Dashboard.appearance=="dark",
-                    "1px solid rgba(255, 255, 255, 0.2)",
-                    "1px solid rgba(0, 0, 0, 0.2)"
-                ),
-                "1px solid transparent"
+            height="100%",
+            align="center",
+            justify=rx.cond(Dashboard.expanded, "start", "center"),
+        ),
+        opacity = rx.cond(Dashboard.page == link.lower(), 1 , 0.5),
+        _hover={"opacity": 1.0},
+        transition="all 0.2s ease-in-out",
+        width="100%",
+        variant="ghost",
+        border_radius=Dashboard.smoothness,
+        height="32px",
+        on_click= Dashboard.set_page(link, redirect),
+        border = rx.cond(
+            Dashboard.page == link.lower(), 
+            rx.cond(
+                Dashboard.appearance=="dark",
+                "1px solid rgba(255, 255, 255, 0.2)",
+                "1px solid rgba(0, 0, 0, 0.2)"
             ),
-            
-        )
+            "1px solid transparent"
+            )
+    )
 def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
     return rx.button(
         rx.hstack(
@@ -41,7 +41,8 @@ def sidebar_items_functional(name: str, image: str, function) -> rx.Component:
             rx.cond(Dashboard.expanded, rx.text(name, font_size="16px", color=Dashboard.colors["text"], white_space="nowrap"), ""),
             width="100%",
             height="100%",
-            align="center",
+            align_items="center",
+            justify=rx.cond(Dashboard.expanded, "start", "center"),
         ),
         opacity = 0.5,
         _hover={"opacity": 1.0},
@@ -72,7 +73,7 @@ def sidebar() -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.image(
-                    src="/logo.svg", 
+                    src=f"/logo_{Dashboard.appearance}.svg", 
                     border_radius="4px", 
                     width=rx.cond(Dashboard.expanded, "19%", "48px"),
                     height="auto",
@@ -110,6 +111,7 @@ def sidebar() -> rx.Component:
                     variant="ghost",
                     border_radius=Dashboard.smoothness,
                     height="32px",
+                    justify=rx.cond(Dashboard.expanded, "start", "center"),
                 ),
                 rx.flex(
                     rx.vstack(
@@ -157,7 +159,7 @@ def sidebar() -> rx.Component:
         color=Dashboard.colors["text"],
         overflow="hidden",
         style={
-            "transition" : "width 1s ease-in-out",
+            "transition" : "width 0.2s ease-in-out",
         },
     )
         
@@ -263,6 +265,7 @@ def show_devices(device: list):
                                 Auth.handle_logout_device(device[4]),
                                 None,
                             ),
+                            type="password"
                         ),
                         rx.button(rx.text("Continue"), width="100%", on_click=Auth.handle_logout_device(device[4])),
                         width="100%",
