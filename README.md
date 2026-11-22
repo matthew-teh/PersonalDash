@@ -12,7 +12,7 @@ A website built with **Python Reflex**, includes daily needed widget. ( Formerly
 - **Checklist** - A widget allows you to add tasks, mark as done, delete
 
 ## Versions
-- FlexDash V5 , [Website Link][https://v5.flexdashboard.xyz]
+- FlexDash V5 , [Website Link](https://v5.flexdashboard.xyz)
 - FlexDash V4 , [Website Link](https://flexdasboard.xyz/home)
 - FlexDash V3 , Released
 - Personal Dashboard V2  , Released
