@@ -1,7 +1,7 @@
 services:
   dragonfly_db:
     image: docker.dragonflydb.io/dragonflydb/dragonfly
-    container_name: FlexDashV5Dragonfly
+    container_name: FlexDashV6Dragonfly
     restart: unless-stopped
     ulimits:
       memlock: -1
@@ -13,20 +13,13 @@ services:
       - "--snapshot_cron=*/5 * * * *"
 
   ntp:
-    image: cturra/ntp:latest
-    container_name: FlexDashV5NTP
+    image: docker.io/cturra/ntp:latest
+    container_name: FlexDashV6NTP
     restart: unless-stopped
     ports:
       - "65502:123/udp"
     environment:
       - NTP_SERVERS=time.cloudflare.com, time.google.com
-
-  flexdash:
-    image: nuggetteh/personal-dashboard:flexdashv5
-    container_name: FlexDashAPPV5
-    ports:
-      - "65510:65510"
-    restart: unless-stopped
 
 volumes:
   dragonflydata: 

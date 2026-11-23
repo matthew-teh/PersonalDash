@@ -1,8 +1,8 @@
 import reflex as rx
-from FlexDashV5.FDstates import Dashboard
+from FlexDashV6.FDstates import Dashboard
 
 config = rx.Config(
-    app_name="FlexDashV5",
+    app_name="FlexDashV6",
     plugins=[
         rx.plugins.SitemapPlugin(),
         rx.plugins.TailwindV4Plugin(),

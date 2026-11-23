@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from .FDapi import worldclock_get_time
 
 ph = PasswordHasher()
-ENV = 'DOCKER' 
+ENV = 'DEV' 
 
 if ENV == 'DEV':
     r = redis.Redis(

@@ -59,7 +59,7 @@ class Dashboard(rx.State):
         "website": "var(--gray-1)"
     }
 
-    theme: list[themeSetting] = load_json("FlexDashV5/FDcolors.json")
+    theme: list[themeSetting] = load_json("FlexDashV6/FDcolors.json")
 
     @rx.event
     def flip_expanded(self):
@@ -141,8 +141,8 @@ class Dashboard(rx.State):
     # ---- WIDGETS MANAGEMENT START 
     
     widget_store_name: str = ""
-    widgets_store: list[widgetStore] = load_json("FlexDashV5/FDwidgetsV1.json")
-    widget_storev2: list[widgetStore] = load_json("FlexDashV5/FDwidgetsV2.json")
+    widgets_store: list[widgetStore] = load_json("FlexDashV6/FDwidgetsV1.json")
+    widget_storev2: list[widgetStore] = load_json("FlexDashV6/FDwidgetsV2.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):

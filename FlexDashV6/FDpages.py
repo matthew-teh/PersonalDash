@@ -596,9 +596,62 @@ def recovery() -> rx.Component:
         color=Dashboard.colors["text"]
     )
 
-@rx.page(route="/", title="FlexDash | Redirect", on_load=Dashboard.redirect_to_home)
+@rx.page("/", title="FlexDash | Home")
 def redirect() -> rx.Component:
-    return rx.fragment()
+    return rx.vstack(
+        rx.hstack(
+            rx.image("/logo_light.svg", height="100%", width="auto", border_radius="8px"),
+            rx.text("FlexDash V6", font_size="16px", weight="bold"),
+            rx.spacer(),
+            rx.text("Sign In"),
+            rx.separator(orientation="vertical"),
+            rx.text("Create Account"),
+            align="center",
+            height="42px",
+            padding="8px",
+            padding_left = "16px",
+            width="80%",
+            background_color="var(--sky-2)",
+            border_radius="8px",
+        ),
+        rx.scroll_area(
+            rx.hstack(
+                rx.vstack(
+                    rx.box(height="64px"),
+                    rx.text("THE CUSTOMIZABLE", font_size="48px", weight="bold"),
+                    rx.text("DASHBOARD", font_size="82px", weight="bold", color="var(--sky-10)", style={"text_decoration": "underline"},),
+                    rx.image("/images/introduction.svg", height="80%", width="80%", border_radius="8px", opacity=0.5, _hover={"opacity": 1}, transition="all 0.2s ease-in-out"),
+                    spacing="1",
+                    align="center",
+                    
+                ),
+                height="100vh",
+                align="center",
+                justify="center",
+            ),
+        ),
+        rx.hstack(
+            rx.image("/logo_light.svg", height="100%", width="auto", border_radius="8px"),
+            rx.text("FlexDash V6", font_size="16px", weight="bold"),
+            rx.spacer(),
+            rx.text("Sign In"),
+            rx.separator(orientation="vertical"),
+            rx.text("Create Account"),
+            align="center",
+            height="42px",
+            padding="8px",
+            padding_left = "16px",
+            width="80%",
+            background_color="var(--sky-2)",
+            border_radius="8px",
+        ),
+        padding="8px",
+        justify="start",
+        align="center",
+        width="100vw",
+        height="100vh",
+        background_color="var(--gray-1)",
+    )
 
 @rx.page("/account", title="FlexDash | Account", on_load=[Dashboard.init_page, Auth.prepare_devices])
 def account() -> rx.Component:
