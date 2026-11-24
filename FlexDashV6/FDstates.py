@@ -462,4 +462,10 @@ class System(rx.State):
         seconds = round(seconds,1)
         self.formatted_uptime = f"{days}d, {hours}h, {minutes}m, {seconds}s"
 
-    
+
+class Landing(rx.State):
+    on_page = ""
+
+    @rx.event
+    def init(self):
+        self.on_page = self.router.url.path.lower()

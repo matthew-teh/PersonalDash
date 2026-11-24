@@ -1,6 +1,6 @@
 import reflex as rx
 
-from .FDstates import Dashboard
+from .FDstates import Dashboard, Landing
 from .FDauth import Auth
 from . import FDwidgetsV1
 from . import FDwidgetsV2
@@ -319,4 +319,124 @@ def circle_progress(progress, size, label) -> rx.Component:
         view_box="0 0 100 100",
         width=f"{size}px",
         height=f"{size}px",
+    )
+
+
+def create_button(text, link) -> rx.Component:
+    return rx.text(
+        text,
+        font_size="16px",
+        padding_left ="12px",
+        padding_right="12px",
+        border_radius="4px",
+        opacity= rx.cond(Landing.on_page.lower() == link.lower(), 1, 0.8),
+        _hover={"opacity": 2},
+        cursor="pointer",
+    )
+
+def create_link(text, link, external=False) -> rx.Component:
+    return rx.text(
+        text, 
+        opacity=0.8,
+        _hover={"opacity": 1},
+        cursor="pointer",
+        on_click=rx.redirect(link, is_external=external)
+    )
+    
+def landing_header() -> rx.Component:
+    return rx.hstack(
+        rx.box(width="15%"),
+        rx.image(src="/logo_light.svg", height="100%", width="auto", border_radius="8px"),
+        rx.text("FlexDash", weight="bold", font_size="20px"),
+        rx.spacer(),
+        rx.hstack(
+            create_button("Home", "/"),
+            create_button("Dashboard", "/home"),    
+            create_button("Explore widgets", "/explore_widgets"),
+            create_button("Demo", "/demo"),
+        ),
+        rx.spacer(),
+        rx.button(rx.text("Sign In", color="#FFFFFF"), variant="outline", color_scheme="mint"),
+        rx.button(rx.text("Sign Up", color="#000000"), background_color="var(--gray-12)", high_contrast=True),
+        rx.box(width="15%"),
+        background_color="var(--gray-2)",
+        height="5%",
+        width="100%",
+        padding="8px",
+        align="center",
+        border_radius="8px",
+    )
+
+def landing_footer() -> rx.Component:
+    return rx.hstack(
+        rx.box(width="15%"),
+        rx.hstack(
+            rx.image(src="/logo_light.svg", height="40px", width="auto", border_radius="8px"),
+            rx.vstack(
+                rx.text("FlexDash", weight="bold", font_size="20px"),
+                rx.text("2026", opacity=0.6),
+                spacing="0",
+                height="100%"
+            ),
+            align="center",
+        ),
+        rx.spacer(),
+        rx.vstack(
+            rx.text("Links", weight="bold"),
+            create_link("Home", "/"),
+            create_link("Dashboard", "/dashboard"),
+            create_link("Explore widgets", "/explore_widgets"),
+            create_link("Demo", "/demo"),
+            spacing="2"
+        ),
+        rx.spacer(),
+        rx.vstack(
+            rx.text("Social", weight="bold"),
+            create_link("Slack", "https://hackclub.enterprise.slack.com/team/U0A9CFG6519", True),
+            create_link("GitHub", "https://github.com/matthew-teh", True),
+            create_link("Hackatime", "https://hackatime.hackclub.com/@Matthew-Teh", True),
+            create_link("Instagram", "https://www.instagram.com/matthew._.teh?avpt=amUyZ2Y0ejR0MjZ5", True),
+            spacing="2"
+        ),
+        rx.spacer(),
+        rx.vstack(
+            rx.text("Tech Stack", weight="bold"),
+            create_link("Python", "https://www.python.org/", True),
+            create_link("Reflex", "https://reflex.dev/", True),
+            create_link("Dragonfly DB", "https://www.dragonflydb.io/", True),
+            create_link("Cloudflare Tunnel", "https://developers.cloudflare.com/tunnel/", True),
+        ),
+        rx.spacer(),
+        rx.vstack(
+            rx.vstack(
+                rx.text("Open Source", weight="bold"),
+                rx.hstack(
+                    rx.box(
+                        rx.hstack(
+                            rx.text("Available on"),
+                            rx.image(src="/lockup-github-16.svg", filter="invert(100%)"), 
+                            align="center"
+                        ),
+                        on_click= rx.redirect("https://github.com/matthew-teh/PersonalDash", is_external=True),
+                        hover="none",
+                        cursor="pointer",
+                    ),# todo: make attribution
+                    align="center",
+                    opacity=0.8,
+                    _hover={"opacity": 1}
+                ),
+            ),
+            rx.vstack(
+                rx.text("Status", weight="bold"),
+                create_link("All System Normal", "https://status.flexdasboard.xyz", True),
+                spacing="1"
+            ),
+            spacing="3"
+        ),
+        rx.box(width="15%"),
+        background_color="var(--gray-2)",
+        height="22%",
+        width="100%",
+        padding="8px",
+        border_radius="8px",
     )

@@ -1,7 +1,7 @@
 import reflex as rx
 from reflex.style import set_color_mode, color_mode
-from .FDstates import Dashboard, System
-from .FDcomponents import sidebar, widget, render_widget, show_devices
+from .FDstates import Dashboard, System, Landing
+from .FDcomponents import *
 from .FDauth import Auth
 
 @rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud, Dashboard.update_all_widget(True)])
@@ -596,61 +596,25 @@ def recovery() -> rx.Component:
         color=Dashboard.colors["text"]
     )
 
-@rx.page("/", title="FlexDash | Home")
-def redirect() -> rx.Component:
-    return rx.vstack(
-        rx.hstack(
-            rx.image("/logo_light.svg", height="100%", width="auto", border_radius="8px"),
-            rx.text("FlexDash V6", font_size="16px", weight="bold"),
-            rx.spacer(),
-            rx.text("Sign In"),
-            rx.separator(orientation="vertical"),
-            rx.text("Create Account"),
+@rx.page("/", title="FlexDash | Landing", on_load=Landing.init)
+def landing() -> rx.Component:
+    return rx.scroll_area(
+        rx.vstack(
+            landing_header(),
+            rx.box(min_height="120vh", width="100%", background_color="var(--sky-1)"),
+            landing_footer(),
+            margin="0px",
+            padding_left="4px",
+            padding_right="4px",
+            justify="start",
             align="center",
-            height="42px",
-            padding="8px",
-            padding_left = "16px",
-            width="80%",
-            background_color="var(--sky-2)",
-            border_radius="8px",
+            width="100vw",
+            height="100vh",
+            background_color="var(--gray-2)",
+            spacing="0"
         ),
-        rx.scroll_area(
-            rx.hstack(
-                rx.vstack(
-                    rx.box(height="64px"),
-                    rx.text("THE CUSTOMIZABLE", font_size="48px", weight="bold"),
-                    rx.text("DASHBOARD", font_size="82px", weight="bold", color="var(--sky-10)", style={"text_decoration": "underline"},),
-                    rx.image("/images/introduction.svg", height="80%", width="80%", border_radius="8px", opacity=0.5, _hover={"opacity": 1}, transition="all 0.2s ease-in-out"),
-                    spacing="1",
-                    align="center",
-                    
-                ),
-                height="100vh",
-                align="center",
-                justify="center",
-            ),
-        ),
-        rx.hstack(
-            rx.image("/logo_light.svg", height="100%", width="auto", border_radius="8px"),
-            rx.text("FlexDash V6", font_size="16px", weight="bold"),
-            rx.spacer(),
-            rx.text("Sign In"),
-            rx.separator(orientation="vertical"),
-            rx.text("Create Account"),
-            align="center",
-            height="42px",
-            padding="8px",
-            padding_left = "16px",
-            width="80%",
-            background_color="var(--sky-2)",
-            border_radius="8px",
-        ),
-        padding="8px",
-        justify="start",
-        align="center",
-        width="100vw",
         height="100vh",
-        background_color="var(--gray-1)",
+        width="100vw",
     )
 
 @rx.page("/account", title="FlexDash | Account", on_load=[Dashboard.init_page, Auth.prepare_devices])
