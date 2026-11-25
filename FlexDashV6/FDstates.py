@@ -54,8 +54,8 @@ class Dashboard(rx.State):
         "name": "gray",
         "text": "var(--gray-12)",
         "buttons": "var(--gray-7)",
-        "widget": "var(--gray-3)",
-        "page": "var(--gray-2)",
+        "widget": "var(--gray-2)",
+        "page": "var(--gray-1)",
         "website": "var(--gray-1)"
     }
 

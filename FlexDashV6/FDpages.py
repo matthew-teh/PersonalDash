@@ -33,14 +33,16 @@ def home() -> rx.Component:
                     border_radius=Dashboard.smoothness
                 ),
                 rx.box(
-                    rx.grid(
-                        rx.foreach(
-                            Dashboard.widgets,
-                            lambda item: render_widget(item)
+                    rx.scroll_area(
+                        rx.grid(
+                            rx.foreach(
+                                Dashboard.widgets,
+                                lambda item: render_widget(item)
+                            ),
+                            padding="8px",
+                            columns=Dashboard.widget_per_row,
+                            gap="8px",
                         ),
-                        padding="8px",
-                        columns=Dashboard.widget_per_row,
-                        gap="8px",
                     ),
                     rx.moment(
                         interval=1000,
@@ -598,21 +600,255 @@ def recovery() -> rx.Component:
 
 @rx.page("/", title="FlexDash | Landing", on_load=Landing.init)
 def landing() -> rx.Component:
-    return rx.scroll_area(
-        rx.vstack(
-            landing_header(),
-            rx.box(min_height="120vh", width="100%", background_color="var(--sky-1)"),
-            landing_footer(),
-            margin="0px",
-            padding_left="4px",
-            padding_right="4px",
-            justify="start",
-            align="center",
-            width="100vw",
+    return rx.vstack(
+    landing_header(),
+        rx.scroll_area(
+            rx.vstack(
+                rx.box(
+                    
+                    rx.hstack(
+                        rx.box(width="15%"),
+                        rx.vstack(
+                            rx.vstack(
+                                rx.text("Your Dashboard, Your Way.", font_size="32px", weight="bold"),
+                                rx.text("Design your own dashboard, your choice, your creativity. Everything customizable.", opacity=0.8),
+                                spacing='2'
+                            ),
+                            rx.vstack(
+                                rx.hstack(
+                                    rx.button(rx.text("Try Now", color="#FFFFFF"), variant="outline", width="128px"),
+                                    rx.button(rx.text("Create Account", color="#FFFFFF"), variant="outline", width="128px"),
+                                ),
+                                rx.button(rx.text("Enter Dashboard",  color="var(--gray-1)"), width="100%", background_color="var(--gray-12)", opacity=1, _hover={"opacity": 0.8}),
+                            ),
+                            rx.vstack(
+                                rx.text("Hosted with Cloudflare Tunnel.", opacity=0.8),
+                                rx.hstack(
+                                    rx.text("Completely Free & Open Sourced on ", opacity=0.8),
+                                    rx.image(
+                                        src="lockup-github-16.svg",
+                                        filter="invert(100%)"
+                                    ),
+                                    align="center",
+                                    opacity=0.8,
+                                    _hover={"opacity": 1},
+                                    on_click=rx.redirect("https://github.com/matthew-teh/PersonalDash", is_external=True),
+                                    cursor="pointer",
+                                ),
+                                spacing='1'
+                            ),
+                            justify="between",
+                            width="23%",
+                            height="45%",
+                        ),
+                        rx.vstack(
+                            rx.image(
+                                src="/images/introduction.svg", 
+                                border_radius="32px", 
+                                width="100%", 
+                                height="auto",
+                                
+                            ),
+                            width="47%",
+                            height="45%",
+                            justify="center",
+                            align="center",
+                        ),
+                        rx.box(width="15%"),
+                        align="center",
+                        height="100%",
+                        spacing="2"
+                    ),    
+                    min_height="100vh", 
+                    width="100%", 
+                    background_color="var(--gray-2)",
+                    id="home"
+                ),
+                rx.box(
+                    rx.hstack(
+                        rx.box(width="15%"),
+                        rx.vstack(
+                            rx.hstack(
+                                rx.text("Explore Widgets", font_size="48px", weight="bold"),
+                                rx.box(
+                                    width="5%",
+                                ),
+                                rx.vstack(
+                                    rx.text("Horizontal Scrolling", opacity=0.8),
+                                    rx.hstack(
+                                        rx.text("Shift", font_size="24px", padding="8px", border="1px solid rgba(255, 255, 255, 0.2)", border_radius="8px"),
+                                        rx.text("+"),
+                                        rx.text("Mouse Scroll", font_size="24px", padding="8px", border="1px solid rgba(255, 255, 255, 0.2)", border_radius="8px"),
+                                        align="center",
+                                    ),
+                                    spacing="1",
+                                    align="center",
+                                ),
+
+                               align="center",
+                               width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Widgets V1", font_size="16px", opacity=0.8, _hover={"opacity": 1}),
+                                rx.scroll_area(
+                                    rx.hstack(
+                                        rx.foreach(
+                                            Dashboard.widgets_store, 
+                                            lambda item : rx.box(
+                                                rx.dialog.root(
+                                                    rx.dialog.trigger(
+                                                        rx.box(
+                                                            rx.image(
+                                                                src=f"{item.image}_dark.svg",
+                                                                width="380px",
+                                                                height="auto",
+                                                                opacity=1,
+                                                                _hover={"opacity": 0.8},
+                                                                border_radius="8px",
+                                                            ),
+                                                            opacity=1,
+                                                            _hover={"opacity": 0.8},
+                                                            padding="0px",
+                                                        ),
+                                                    ),
+                                                    rx.dialog.content(
+                                                        rx.vstack(
+                                                            rx.hstack(
+                                                                rx.text("Widget Info", font_size="24px"),
+                                                                rx.dialog.close(rx.icon('x', opacity=0.8, _hover={"opacity": 1})),
+                                                                width="100%",
+                                                                justify="between",
+                                                            ),
+                                                            rx.vstack(
+                                                                rx.image(
+                                                                    src=f"{item.image}_dark.svg",
+                                                                    width="360px",
+                                                                    height="auto",
+                                                                    border_radius="8px"
+                                                                ),
+                                                                rx.text(item.desc),
+                                                                rx.button(
+                                                                    rx.text("Add to my dashboard", color="#000000"),
+                                                                    background_color="#FFFFFF",
+                                                                    width="100%",
+                                                                    opacity=1,
+                                                                    _hover={"opacity": 0.8},
+                                                                    on_click=rx.toast("This Feature Is Coming Soon"), # TODO : Make 
+                                                                ),
+                                                                height="100%",
+                                                                justify="between",
+                                                            ),
+                                                            padding="8px",
+                                                            height="100%",
+                                                            width="100%"
+                                                        ),
+                                                        background_color="var(--gray-2)",
+                                                        width="376px",
+                                                    ),
+                                                ),
+                                                height="384px",
+                                                width="384px",
+                                                background_color="var(--gray-2)",
+                                                padding="4px",
+                                            ),
+                                        )
+                                    ),
+                                    scroll_bars="horizontal",
+                                    max_height="100%",
+                                    max_width="100%",
+                                ),
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Widgets V2", font_size="16px", opacity=0.8, _hover={"opacity": 1}),
+                                rx.scroll_area(
+                                    rx.hstack(
+                                        rx.foreach(
+                                            Dashboard.widget_storev2,
+                                            lambda item : rx.box(
+                                                rx.dialog.root(
+                                                    rx.dialog.trigger(
+                                                        rx.image(
+                                                            src=f"{item.image}_dark.svg",
+                                                            width="380px",
+                                                            height="auto",
+                                                            opacity=1,
+                                                            _hover={"opacity": 0.8},
+                                                            border_radius="8px",
+                                                        ),
+                                                    ),
+                                                    rx.dialog.content(
+                                                        rx.vstack(
+                                                            rx.hstack(
+                                                                rx.text("Widget Info", font_size="24px"),
+                                                                rx.dialog.close(rx.icon('x', opacity=0.8, _hover={"opacity": 1})),
+                                                                width="100%",
+                                                                justify="between",
+                                                            ),
+                                                            rx.vstack(
+                                                                rx.image(
+                                                                    src=f"{item.image}_dark.svg",
+                                                                    width="360px",
+                                                                    height="auto",
+                                                                    border_radius="8px",
+                                                                ),
+                                                                rx.text(item.desc),
+                                                                rx.button(
+                                                                    rx.text("Add to my dashboard", color="var(--gray-1)"),
+                                                                    background_color="var(--gray-12)",
+                                                                    width="100%",
+                                                                    opacity=1,
+                                                                    _hover={"opacity": 0.8},
+                                                                    on_click=rx.toast("This Feature Is Coming Soon"), # TODO 
+                                                                ),
+                                                                height="100%",
+                                                                justify="between"
+                                                            ),
+                                                            padding="8px",
+                                                            height="100%",
+                                                            width="100%",
+                                                        ),
+                                                        background_color="var(--gray-2)",
+                                                        width="376px",
+                                                    ),
+                                                ),
+                                                opacity=1,
+                                                _hover={"opacity": 0.8},
+                                                padding="0px"
+                                            )
+                                        ),
+                                    
+                                    ),
+                                ),
+                            ),
+                            
+                            width="70%",
+                        ),
+                        rx.box(width="15%"),
+                        height="100%",
+                        id="explore_widgets"
+                    ),
+                    min_height="100vh",
+                    width="100%",
+                    background_color="var(--gray-2)",
+                ),
+
+                landing_footer(),
+                margin="0px",
+                padding_left="4px",
+                padding_right="4px",
+                justify="start",
+                align="center",
+                width="100vw",
+                height="100vh",
+                background_color="var(--gray-2)",
+                spacing="0"
+            ),
             height="100vh",
-            background_color="var(--gray-2)",
-            spacing="0"
+            width="100vw",
+            type="scroll",
         ),
+        spacing="0",
         height="100vh",
         width="100vw",
     )

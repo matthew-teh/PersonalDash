@@ -3,240 +3,240 @@
         "name": "gray",
         "text": "var(--gray-12)",
         "buttons": "var(--gray-8)",
-        "widget": "var(--gray-3)",
-        "page": "var(--gray-2)",
+        "widget": "var(--gray-2)",
+        "page": "var(--gray-1)",
         "website": "var(--gray-1)"
     },
     {
         "name": "mauve",
         "text": "var(--gray-12)",
         "buttons": "var(--mauve-8)",
-        "widget": "var(--mauve-3)",
-        "page": "var(--mauve-2)",
+        "widget": "var(--mauve-2)",
+        "page": "var(--mauve-1)",
         "website": "var(--mauve-1)"
     },
     {
         "name": "sage",
         "text": "var(--gray-12)",
         "buttons": "var(--sage-8)",
-        "widget": "var(--sage-3)",
-        "page": "var(--sage-2)",
+        "widget": "var(--sage-2)",
+        "page": "var(--sage-1)",
         "website": "var(--sage-1)"
     },
     {
         "name": "olive",
         "text": "var(--gray-12)",
         "buttons": "var(--olive-8)",
-        "widget": "var(--olive-3)",
-        "page": "var(--olive-2)",
+        "widget": "var(--olive-2)",
+        "page": "var(--olive-1)",
         "website": "var(--olive-1)"
     },
     {
         "name": "sand",
         "text": "var(--gray-12)",
         "buttons": "var(--sand-8)",
-        "widget": "var(--sand-3)",
-        "page": "var(--sand-2)",
+        "widget": "var(--sand-2)",
+        "page": "var(--sand-1)",
         "website": "var(--sand-1)"
     },
     {
         "name": "tomato",
         "text": "var(--gray-12)",
         "buttons": "var(--tomato-8)",
-        "widget": "var(--tomato-3)",
-        "page": "var(--tomato-2)",
+        "widget": "var(--tomato-2)",
+        "page": "var(--tomato-1)",
         "website": "var(--tomato-1)"
     },
     {
         "name": "red",
         "text": "var(--gray-12)",
         "buttons": "var(--red-8)",
-        "widget": "var(--red-3)",
-        "page": "var(--red-2)",
+        "widget": "var(--red-2)",
+        "page": "var(--red-1)",
         "website": "var(--red-1)"
     },
     {
         "name": "ruby",
         "text": "var(--gray-12)",
         "buttons": "var(--ruby-8)",
-        "widget": "var(--ruby-3)",
-        "page": "var(--ruby-2)",
+        "widget": "var(--ruby-2)",
+        "page": "var(--ruby-1)",
         "website": "var(--ruby-1)"
     },
     {
         "name": "crimson",
         "text": "var(--gray-12)",
         "buttons": "var(--crimson-8)",
-        "widget": "var(--crimson-3)",
-        "page": "var(--crimson-2)",
+        "widget": "var(--crimson-2)",
+        "page": "var(--crimson-1)",
         "website": "var(--crimson-1)"
     },
     {
         "name": "pink",
         "text": "var(--gray-12)",
         "buttons": "var(--pink-8)",
-        "widget": "var(--pink-3)",
-        "page": "var(--pink-2)",
+        "widget": "var(--pink-2)",
+        "page": "var(--pink-1)",
         "website": "var(--pink-1)"
     },
     {
         "name": "plum",
         "text": "var(--gray-12)",
         "buttons": "var(--plum-8)",
-        "widget": "var(--plum-3)",
-        "page": "var(--plum-2)",
+        "widget": "var(--plum-2)",
+        "page": "var(--plum-1)",
         "website": "var(--plum-1)"
     },
     {
         "name": "purple",
         "text": "var(--gray-12)",
         "buttons": "var(--purple-8)",
-        "widget": "var(--purple-3)",
-        "page": "var(--purple-2)",
+        "widget": "var(--purple-2)",
+        "page": "var(--purple-1)",
         "website": "var(--purple-1)"
     },
     {
         "name": "violet",
         "text": "var(--gray-12)",
         "buttons": "var(--violet-8)",
-        "widget": "var(--violet-3)",
-        "page": "var(--violet-2)",
+        "widget": "var(--violet-2)",
+        "page": "var(--violet-1)",
         "website": "var(--violet-1)"
     },
     {
         "name": "iris",
         "text": "var(--gray-12)",
         "buttons": "var(--iris-8)",
-        "widget": "var(--iris-3)",
-        "page": "var(--iris-2)",
+        "widget": "var(--iris-2)",
+        "page": "var(--iris-1)",
         "website": "var(--iris-1)"
     },
     {
         "name": "indigo",
         "text": "var(--gray-12)",
         "buttons": "var(--indigo-8)",
-        "widget": "var(--indigo-3)",
-        "page": "var(--indigo-2)",
+        "widget": "var(--indigo-2)",
+        "page": "var(--indigo-1)",
         "website": "var(--indigo-1)"
     },
     {
         "name": "blue",
         "text": "var(--gray-12)",
         "buttons": "var(--blue-8)",
-        "widget": "var(--blue-3)",
-        "page": "var(--blue-2)",
+        "widget": "var(--blue-2)",
+        "page": "var(--blue-1)",
         "website": "var(--blue-1)"
     },
     {
         "name": "cyan",
         "text": "var(--gray-12)",
         "buttons": "var(--cyan-8)",
-        "widget": "var(--cyan-3)",
-        "page": "var(--cyan-2)",
+        "widget": "var(--cyan-2)",
+        "page": "var(--cyan-1)",
         "website": "var(--cyan-1)"
     },
     {
         "name": "teal",
         "text": "var(--gray-12)",
         "buttons": "var(--teal-8)",
-        "widget": "var(--teal-3)",
-        "page": "var(--teal-2)",
+        "widget": "var(--teal-2)",
+        "page": "var(--teal-1)",
         "website": "var(--teal-1)"
     },
     {
         "name": "jade",
         "text": "var(--gray-12)",
         "buttons": "var(--jade-8)",
-        "widget": "var(--jade-3)",
-        "page": "var(--jade-2)",
+        "widget": "var(--jade-2)",
+        "page": "var(--jade-1)",
         "website": "var(--jade-1)"
     },
     {
         "name": "green",
         "text": "var(--gray-12)",
         "buttons": "var(--green-8)",
-        "widget": "var(--green-3)",
-        "page": "var(--green-2)",
+        "widget": "var(--green-2)",
+        "page": "var(--green-1)",
         "website": "var(--green-1)"
     },
     {
         "name": "grass",
         "text": "var(--gray-12)",
         "buttons": "var(--grass-8)",
-        "widget": "var(--grass-3)",
-        "page": "var(--grass-2)",
+        "widget": "var(--grass-2)",
+        "page": "var(--grass-1)",
         "website": "var(--grass-1)"
     },
     {
         "name": "bronze",
         "text": "var(--gray-12)",
         "buttons": "var(--bronze-8)",
-        "widget": "var(--bronze-3)",
-        "page": "var(--bronze-2)",
+        "widget": "var(--bronze-2)",
+        "page": "var(--bronze-1)",
         "website": "var(--bronze-1)"
     },
     {
         "name": "gold",
         "text": "var(--gray-12)",
         "buttons": "var(--gold-8)",
-        "widget": "var(--gold-3)",
-        "page": "var(--gold-2)",
+        "widget": "var(--gold-2)",
+        "page": "var(--gold-1)",
         "website": "var(--gold-1)"
     },
     {
         "name": "brown",
         "text": "var(--gray-12)",
         "buttons": "var(--brown-8)",
-        "widget": "var(--brown-3)",
-        "page": "var(--brown-2)",
+        "widget": "var(--brown-2)",
+        "page": "var(--brown-1)",
         "website": "var(--brown-1)"
     },
     {
         "name": "orange",
         "text": "var(--gray-12)",
         "buttons": "var(--orange-8)",
-        "widget": "var(--orange-3)",
-        "page": "var(--orange-2)",
+        "widget": "var(--orange-2)",
+        "page": "var(--orange-1)",
         "website": "var(--orange-1)"
     },
     {
         "name": "amber",
         "text": "var(--gray-12)",
         "buttons": "var(--amber-8)",
-        "widget": "var(--amber-3)",
-        "page": "var(--amber-2)",
+        "widget": "var(--amber-2)",
+        "page": "var(--amber-1)",
         "website": "var(--amber-1)"
     },
     {
         "name": "yellow",
         "text": "var(--gray-12)",
         "buttons": "var(--yellow-8)",
-        "widget": "var(--yellow-3)",
-        "page": "var(--yellow-2)",
+        "widget": "var(--yellow-2)",
+        "page": "var(--yellow-1)",
         "website": "var(--yellow-1)"
     },
     {
         "name": "lime",
         "text": "var(--gray-12)",
         "buttons": "var(--lime-8)",
-        "widget": "var(--lime-3)",
-        "page": "var(--lime-2)",
+        "widget": "var(--lime-2)",
+        "page": "var(--lime-1)",
         "website": "var(--lime-1)"
     },
     {
         "name": "mint",
         "text": "var(--gray-12)",
         "buttons": "var(--mint-8)",
-        "widget": "var(--mint-3)",
-        "page": "var(--mint-2)",
+        "widget": "var(--mint-2)",
+        "page": "var(--mint-1)",
         "website": "var(--mint-1)"
     },
     {
         "name": "sky",
         "text": "var(--gray-12)",
         "buttons": "var(--sky-8)",
-        "widget": "var(--sky-3)",
-        "page": "var(--sky-2)",
+        "widget": "var(--sky-2)",
+        "page": "var(--sky-1)",
         "website": "var(--sky-1)"
     }
 ]

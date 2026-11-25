@@ -21,8 +21,8 @@ for color in radix_colors:
         "name": f"{color.lower()}",
         "text": f"var(--gray-12)",
         "buttons": f"var(--{color}-8)",
-        "widget": f"var(--{color}-3)",
-        "page": f"var(--{color}-2)",
+        "widget": f"var(--{color}-2)",
+        "page": f"var(--{color}-1)",
         "website": f"var(--{color}-1)"
     })
 

@@ -176,7 +176,7 @@ def widget(name: str, type:str, image:str="", desc: str="", available: bool=Fals
             rx.cond(
                 image,
                 rx.image(
-                    src=f"{image}_{Dashboard.appearance}.png",
+                    src=f"{image}_{Dashboard.appearance}.svg",
                     width="260px",
                     height="260px",
                     border_radius=Dashboard.smoothness,
@@ -322,56 +322,54 @@ def circle_progress(progress, size, label) -> rx.Component:
     )
 
 
-def create_button(text, link) -> rx.Component:
+
+def create_link(text, link, external=False, paddin=False) -> rx.Component:
     return rx.text(
         text,
         font_size="16px",
-        padding_left ="12px",
-        padding_right="12px",
+        padding= rx.cond(
+            paddin,
+            "0px 12px 0px 12px",
+            "0px"
+        ),
         border_radius="4px",
-        opacity= rx.cond(Landing.on_page.lower() == link.lower(), 1, 0.8),
         _hover={"opacity": 2},
         cursor="pointer",
-    )
-
-def create_link(text, link, external=False) -> rx.Component:
-    return rx.text(
-        text, 
-        opacity=0.8,
-        _hover={"opacity": 1},
-        cursor="pointer",
-        on_click=rx.redirect(link, is_external=external)
+        opacity= rx.cond(Landing.on_page.lower() == link.lower(), 1, 0.8),
+        on_click=rx.redirect(link, is_external=external),
     )
     
 def landing_header() -> rx.Component:
     return rx.hstack(
         rx.box(width="15%"),
-        rx.image(src="/logo_light.svg", height="100%", width="auto", border_radius="8px"),
+        rx.image(src="/logo_light.svg", height="100%", width="auto", border_radius="8px",  border="1px solid rgba(255, 255, 255, 0.25)"),
         rx.text("FlexDash", weight="bold", font_size="20px"),
         rx.spacer(),
         rx.hstack(
-            create_button("Home", "/"),
-            create_button("Dashboard", "/home"),    
-            create_button("Explore widgets", "/explore_widgets"),
-            create_button("Demo", "/demo"),
+            create_link("Home", "#home", False, True),
+            create_link("Explore widgets", "#explore_widgets", False, True),
+            create_link("Demo", "#demo", False, True),
+            create_link("Dashboard", "/home", True, True),  
+            align="center",
+            height="100%"
         ),
         rx.spacer(),
         rx.button(rx.text("Sign In", color="#FFFFFF"), variant="outline", color_scheme="mint"),
-        rx.button(rx.text("Sign Up", color="#000000"), background_color="var(--gray-12)", high_contrast=True),
+        rx.button(rx.text("Sign Up", color="#000000"), background_color="var(--gray-12)", opacity=1, _hover={"opacity": 0.8}),
         rx.box(width="15%"),
         background_color="var(--gray-2)",
         height="5%",
         width="100%",
         padding="8px",
         align="center",
-        border_radius="8px",
+        border_bottom="1px solid rgba(255, 255, 255, 0.15)"
     )
 
 def landing_footer() -> rx.Component:
     return rx.hstack(
         rx.box(width="15%"),
         rx.hstack(
-            rx.image(src="/logo_light.svg", height="40px", width="auto", border_radius="8px"),
+            rx.image(src="/logo_light.svg", height="40px", width="auto", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.25)"),
             rx.vstack(
                 rx.text("FlexDash", weight="bold", font_size="20px"),
                 rx.text("2026", opacity=0.6),
@@ -383,10 +381,10 @@ def landing_footer() -> rx.Component:
         rx.spacer(),
         rx.vstack(
             rx.text("Links", weight="bold"),
-            create_link("Home", "/"),
-            create_link("Dashboard", "/dashboard"),
+            create_link("Home", "#home"),
             create_link("Explore widgets", "/explore_widgets"),
             create_link("Demo", "/demo"),
+            create_link("Dashboard", "/home"),
             spacing="2"
         ),
         rx.spacer(),
@@ -437,6 +435,6 @@ def landing_footer() -> rx.Component:
         background_color="var(--gray-2)",
         height="22%",
         width="100%",
-        padding="8px",
-        border_radius="8px",
+        padding="32px 8px 8px 8px",
+        border_top="1px solid rgba(255, 255, 255, 0.15)"
     )
