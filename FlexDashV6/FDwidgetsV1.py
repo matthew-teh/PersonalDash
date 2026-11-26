@@ -352,7 +352,7 @@ def quicknotes_widget(widget) -> rx.Component:
             ),
             rx.vstack(
                 rx.heading(widget["name"], size="3"),
-                rx.text("A text area to note, auto saved.   "),
+                rx.text("A text area to make note, auto saved.   "),
                 spacing="0",
             ),
             rx.spacer(),

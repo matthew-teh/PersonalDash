@@ -3,6 +3,7 @@ from reflex.style import set_color_mode, color_mode
 from .FDstates import Dashboard, System, Landing
 from .FDcomponents import *
 from .FDauth import Auth
+from .FDapi import terracd_get_countdown
 
 @rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud, Dashboard.update_all_widget(True)])
 def home() -> rx.Component:
@@ -112,7 +113,7 @@ def widgets() -> rx.Component:
                             ),
                             rx.grid(
                                 rx.foreach(
-                                    Dashboard.widget_storev2,
+                                    Dashboard.widgets_storev2,
                                     lambda item : widget(item.name, item.designed_type, item.image, item.desc, item.available),
                                 ),
                                 gap="8px",
@@ -369,7 +370,8 @@ def settings() -> rx.Component:
                 width=rx.cond(Dashboard.expanded, "87%", "100%"), 
                 height="100%", 
                 background_color = Dashboard.colors["page"], 
-                border_radius=Dashboard.smoothness),
+                border_radius=Dashboard.smoothness
+                ),
             width="100%",
             height="100%",
         ),
@@ -600,8 +602,28 @@ def recovery() -> rx.Component:
 
 @rx.page("/", title="FlexDash | Landing", on_load=Landing.init)
 def landing() -> rx.Component:
+    def tech_stack(image, name, desc, link) -> rx.Component:
+        return rx.hstack(
+            rx.image(
+                src=f"/landing_icons/{image}",
+                height="32px",
+                width="auto",
+            ),
+            rx.vstack(
+                rx.text(name),
+                rx.text(desc),
+                spacing="1"
+            ),
+            rx.spacer(),
+            rx.link(rx.icon("arrow_up_right", size=36, opacity=1, _hover={"opacity": 0.8}, href=link, is_external=True)),
+            align="center",
+            padding="12px",
+            border_radius="8px",
+            border="1px solid rgba(255, 255, 255, 0.15)",
+            width="320px"
+        )
     return rx.vstack(
-    landing_header(),
+        landing_header(),
         rx.scroll_area(
             rx.vstack(
                 rx.box(
@@ -616,10 +638,10 @@ def landing() -> rx.Component:
                             ),
                             rx.vstack(
                                 rx.hstack(
-                                    rx.button(rx.text("Try Now", color="#FFFFFF"), variant="outline", width="128px"),
-                                    rx.button(rx.text("Create Account", color="#FFFFFF"), variant="outline", width="128px"),
+                                    rx.button(rx.text("Try Now", color="#FFFFFF"), variant="outline", width="128px", cursor="pointer", on_click=rx.redirect("#try")),
+                                    rx.button(rx.text("Create Account", color="#FFFFFF"), variant="outline", width="128px", cursor="pointer", on_click=rx.redirect("/signup")),
                                 ),
-                                rx.button(rx.text("Enter Dashboard",  color="var(--gray-1)"), width="100%", background_color="var(--gray-12)", opacity=1, _hover={"opacity": 0.8}),
+                                rx.button(rx.text("Enter Dashboard",  color="var(--gray-1)"), width="100%", background_color="var(--gray-12)", opacity=1, _hover={"opacity": 0.8}, cursor="pointer", on_click=rx.redirect("/home")),
                             ),
                             rx.vstack(
                                 rx.text("Hosted with Cloudflare Tunnel.", opacity=0.8),
@@ -659,10 +681,10 @@ def landing() -> rx.Component:
                         height="100%",
                         spacing="2"
                     ),    
-                    min_height="100vh", 
+                    min_height="95vh", 
                     width="100%", 
                     background_color="var(--gray-2)",
-                    id="home"
+                    id="home",
                 ),
                 rx.box(
                     rx.hstack(
@@ -682,14 +704,55 @@ def landing() -> rx.Component:
                                         align="center",
                                     ),
                                     spacing="1",
-                                    align="center",
                                 ),
 
                                align="center",
                                width="100%",
                             ),
                             rx.vstack(
-                                rx.text("Widgets V1", font_size="16px", opacity=0.8, _hover={"opacity": 1}),
+                                rx.hstack(
+                                    rx.dialog.root(
+                                        rx.dialog.trigger(rx.text("Widgets V1", font_size="16px", opacity=0.8, _hover={"opacity": 1}, cursor="pointer")),
+                                        rx.dialog.content(
+                                            rx.box(
+                                                rx.vstack(
+                                                    rx.hstack(
+                                                        rx.text("Widgets Info", font_size="16px"),
+                                                        rx.dialog.close(rx.icon('x', size=16, opacity=0.8, _hover={"opacity": 1})),
+                                                        justify="between",
+                                                        align="center",
+                                                        width="100%",
+                                                    ),
+                                                    rx.vstack(
+                                                        rx.text("Widgets Version 1", weight="bold"),
+                                                        rx.text("These widgets are invented when the first project. They aren't that bad.", white_space="pre"),
+                                                        spacing="2",
+                                                    ),
+                                                    rx.spacer(),
+                                                    rx.vstack(
+                                                        rx.hstack(
+                                                            rx.text("Widgets exist since: PersonalDashboard V0, V1, V2", opacity=0.8),
+                                                            rx.separator(orientation="vertical", min_height="24px"),
+                                                            rx.text("FlexDash V3", opacity=0.8),
+                                                        ),
+                                                        rx.text("Crafted by Matthew :D", opacity=0.8),
+                                                        spacing="1"
+                                                    ),
+                                                    height="100%",
+                                                    spacing="4"
+                                                    
+                                                ),
+                                                width="100%",
+                                                height="100%",
+                                            ),
+                                            height="250px",
+                                            aspect_ratio="2/1",
+                                        ),
+
+                                    ),
+                                    rx.separator(orientation="vertical", min_height="16px"),
+                                    rx.text("Click images below for more details", font_size="16px", opacity=0.8)
+                                ),
                                 rx.scroll_area(
                                     rx.hstack(
                                         rx.foreach(
@@ -700,7 +763,7 @@ def landing() -> rx.Component:
                                                         rx.box(
                                                             rx.image(
                                                                 src=f"{item.image}_dark.svg",
-                                                                width="380px",
+                                                                width="320px",
                                                                 height="auto",
                                                                 opacity=1,
                                                                 _hover={"opacity": 0.8},
@@ -743,13 +806,12 @@ def landing() -> rx.Component:
                                                             width="100%"
                                                         ),
                                                         background_color="var(--gray-2)",
-                                                        width="376px",
+                                                        width="380px",
                                                     ),
                                                 ),
-                                                height="384px",
-                                                width="384px",
+                                                width="320px",
                                                 background_color="var(--gray-2)",
-                                                padding="4px",
+                                                padding="1px",
                                             ),
                                         )
                                     ),
@@ -760,21 +822,63 @@ def landing() -> rx.Component:
                                 width="100%",
                             ),
                             rx.vstack(
-                                rx.text("Widgets V2", font_size="16px", opacity=0.8, _hover={"opacity": 1}),
+                                rx.hstack(
+                                    rx.dialog.root(
+                                        rx.dialog.trigger(rx.text("Widgets V2", font_size="16px", opacity=0.8, _hover={"opacity": 1}, cursor="pointer")),
+                                        rx.dialog.content(
+                                            rx.box(
+                                                rx.vstack(
+                                                    rx.hstack(
+                                                        rx.text("Widgets Info", font_size="16px"),
+                                                        rx.dialog.close(rx.icon('x', size=16, opacity=0.8, _hover={"opacity": 1})),
+                                                        justify="between",
+                                                        align="center",
+                                                        width="100%",
+                                                    ),
+                                                    rx.vstack(
+                                                        rx.text("Widgets Version 2", weight="bold"),
+                                                        rx.text("These widgets are either refined from Widgets Version 1 or newly created.\nTheir designs are completely different from Version 1.", white_space="pre"),
+                                                        spacing="2"
+                                                    ),
+                                                    rx.spacer(),
+                                                    rx.vstack(
+                                                        rx.text("Widgets exist since: FlexDash V4, V5, V6", opacity=0.8),
+                                                        rx.text("Also Crafted by Matthew :D", opacity=0.8),
+                                                        spacing="1"
+                                                    ),
+                                                    height="100%",
+                                                    spacing="4",
+                                                ),
+                                                height="100%",
+                                                width="100%",
+                                            ),
+                                            height="250px",
+                                            aspect_ratio="2/1"
+                                        ),
+                                    ),
+                                    rx.separator(orientation="vertical", min_height="16px"),
+                                    rx.text("Click images below for more details", font_size="16px", opacity=0.8),
+                                    align="center"
+                                ),
                                 rx.scroll_area(
                                     rx.hstack(
                                         rx.foreach(
-                                            Dashboard.widget_storev2,
+                                            Dashboard.widgets_storev2, 
                                             lambda item : rx.box(
                                                 rx.dialog.root(
                                                     rx.dialog.trigger(
-                                                        rx.image(
-                                                            src=f"{item.image}_dark.svg",
-                                                            width="380px",
-                                                            height="auto",
+                                                        rx.box(
+                                                            rx.image(
+                                                                src=f"{item.image}_dark.svg",
+                                                                width="320px",
+                                                                height="auto",
+                                                                opacity=1,
+                                                                _hover={"opacity": 0.8},
+                                                                border_radius="8px",
+                                                            ),
                                                             opacity=1,
                                                             _hover={"opacity": 0.8},
-                                                            border_radius="8px",
+                                                            padding="0px",
                                                         ),
                                                     ),
                                                     rx.dialog.content(
@@ -790,49 +894,264 @@ def landing() -> rx.Component:
                                                                     src=f"{item.image}_dark.svg",
                                                                     width="360px",
                                                                     height="auto",
-                                                                    border_radius="8px",
+                                                                    border_radius="8px"
                                                                 ),
                                                                 rx.text(item.desc),
                                                                 rx.button(
-                                                                    rx.text("Add to my dashboard", color="var(--gray-1)"),
-                                                                    background_color="var(--gray-12)",
+                                                                    rx.text("Add to my dashboard", color="#000000"),
+                                                                    background_color="#FFFFFF",
                                                                     width="100%",
                                                                     opacity=1,
                                                                     _hover={"opacity": 0.8},
-                                                                    on_click=rx.toast("This Feature Is Coming Soon"), # TODO 
+                                                                    on_click=rx.toast("This Feature Is Coming Soon"), # TODO : Make 
                                                                 ),
                                                                 height="100%",
-                                                                justify="between"
+                                                                justify="between",
                                                             ),
                                                             padding="8px",
                                                             height="100%",
-                                                            width="100%",
+                                                            width="100%"
                                                         ),
                                                         background_color="var(--gray-2)",
-                                                        width="376px",
+                                                        width="380px",
                                                     ),
                                                 ),
-                                                opacity=1,
-                                                _hover={"opacity": 0.8},
-                                                padding="0px"
-                                            )
-                                        ),
-                                    
+                                                width="320px",
+                                                background_color="var(--gray-2)",
+                                                padding="1px",
+                                            ),
+                                        )
                                     ),
+                                    scroll_bars="horizontal",
+                                    max_height="100%",
+                                    max_width="100%",
                                 ),
+                                width="100%",
                             ),
-                            
                             width="70%",
+                            justify="center",
+                            height="100%",
                         ),
                         rx.box(width="15%"),
                         height="100%",
-                        id="explore_widgets"
+                        id="explore_widgets",
                     ),
-                    min_height="100vh",
+                    min_height="95vh",
                     width="100%",
                     background_color="var(--gray-2)",
                 ),
-
+                rx.box(
+                    rx.hstack(
+                        rx.box(width="15%"),
+                        rx.box(
+                            rx.hstack(
+                                rx.vstack(
+                                    rx.text("Try Now", weight="bold", font_size="48px"),
+                                    rx.vstack(
+                                        rx.text("Our widgets are live updates, interactive."),
+                                        rx.text("It's at right side, try it."),
+                                        rx.text("Still under testing, more widgets coming soon", opacity=0.8),
+                                    ),
+                                    spacing="1",
+                                ),
+                                rx.spacer(),
+                                rx.hstack(
+                                    rx.box(
+                                        rx.hstack(
+                                            rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="auto"),
+                                            rx.vstack(
+                                                rx.heading("Quick Notes", size="3"),
+                                                rx.text("A text area to make note."),
+                                                spacing="0",
+                                            ),
+                                            height="20%",
+                                        ),
+                                        rx.hstack(
+                                            rx.text_area(
+                                                placeholder="Start typing here...",  
+                                                width="100%",
+                                                height="100%"
+                                            ),
+                                            width="100%",
+                                            height="80%",
+                                            spacing="0"
+                                        ),
+                                        padding="8px",
+                                        width="50%",
+                                        aspect_ratio="1/1",
+                                        border_radius="8px",
+                                        border="1px dashed rgba(255, 255, 255, 0.1)"
+                                    ),
+                                    rx.box(
+                                        rx.hstack(
+                                            rx.image(src=f"/lucide_icons/clock_fading_dark.svg", width="30px"),
+                                            rx.text("TERRA COUNTDOWN", weight="bold", font_size="20px"),
+                                            rx.spacer(),
+                                            spacing="2",
+                                            align="center",
+                                            width="100%",
+                                            height="32px",
+                                        ),
+                                        rx.center(
+                                            rx.vstack(
+                                                rx.hstack(
+                                                    rx.vstack(circle_progress(Landing.time[0].to(float)/6, 125, Landing.time[0]), rx.text("Days"), align="center", spacing="0"), #type:ignore
+                                                    rx.vstack(circle_progress(Landing.time[0].to(float)/24, 125, Landing.time[1]), rx.text("Hours"), align="center", spacing="0"), #type:ignore
+                                                    width="100%",
+                                                ),
+                                                rx.hstack(
+                                                    rx.vstack(circle_progress(Landing.time[2].to(float)/60, 125, Landing.time[2]), rx.text("Minutes"), align="center", spacing="0"), #type:ignore
+                                                    rx.vstack(circle_progress(Landing.time[3].to(float)/60, 125, Landing.time[3]), rx.text("Seconds"), align="center", spacing="0"), #type:ignore
+                                                ),
+                                            ),
+                                            flex="1",
+                                            min_height = 0,
+                                        ),
+                                        rx.moment(
+                                          interval=1000,
+                                          on_change=Landing.update_time,
+                                          display="none",
+                                        ),
+                                        display="flex",
+                                        flex_direction="column",
+                                        padding="8px",
+                                        width="50%",
+                                        aspect_ratio="1/1",
+                                        border_radius="8px",
+                                        border="1px dashed rgba(255, 255, 255, 0.1)"
+                                    ),
+                                    width="60%",
+                                    align="center",
+                                    justify="center",
+                                ),
+                                width="100%",
+                                height="100%",
+                                align="center",
+                                id="try",
+                            ),
+                            height="100%",
+                            width="70%",
+                        ),
+                        rx.box(width="15%"),
+                        width="100%",
+                        height="100%",
+                    ),
+                    min_height="95vh",
+                    width="100%",
+                    background_color="var(--gray-2)",
+                ),
+                rx.box(
+                    rx.hstack(
+                        rx.box(width="15%"),
+                        rx.hstack(
+                            rx.vstack(
+                                rx.text("Tech Stack", weight="bold", font_size="48px"),
+                                rx.text("We uses these tools below to achieve this website.", opacity=0.8),
+                                tech_stack("python_logo.svg", "Main Language", "Python 3.14", "https://www.python.org/downloads/release/python-3140/"),
+                                tech_stack("reflex.svg", "Frontend and Backend", "Reflex Python", "https://reflex.dev"),
+                                tech_stack("dragonfly.svg", "Database", "DragonflyDB", "https://www.dragonflydb.io/"),
+                                tech_stack("cloudflared.svg", "Hosting", "Cloudflare Tunnel", "https://developers.cloudflare.com/tunnel/"),
+                                width="50%",
+                            ),
+                            rx.vstack(
+                                rx.text("How it Works", weight="bold", font_size="48px"),
+                                rx.text("Below is a simple working on FlexDash.", opacity=0.8),
+                                rx.box(
+                                    rx.vstack(
+                                        rx.text("Client / Website", padding="12px", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.15)", width="100%", align="center"),
+                                        rx.hstack(
+                                            rx.box(width="5%"),
+                                            rx.hstack(
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto"),
+                                                rx.text("HTTPS TLS", width="45%", align="center"),
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto", transform="rotate(180deg)"),
+                                                width="40%",
+                                                align="center",
+                                                justify="center"
+                                            ),
+                                            rx.box(width="10%"),
+                                            rx.hstack(
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto"),
+                                                rx.text("WEBSOCKET", width="45%", align="center"),
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto", transform="rotate(180deg)"),
+                                                width="40%",
+                                                align="center", 
+                                                justify="center"
+                                            ),
+                                            rx.box(width="5%"),
+                                            align="center",
+                                            width="100%"
+                                        ),
+                                        rx.text("Cloudflare Tunnel", padding="12px", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.15)", width="100%", align="center"),
+                                        rx.hstack(
+                                            rx.box(width="5%"),
+                                            rx.hstack(
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto"),
+                                                rx.text("FRONTEND", width="45%", align="center"),
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto", transform="rotate(180deg)"),
+                                                width="40%",
+                                                align="center",
+                                                justify="center"
+                                            ),
+                                            rx.box(width="10%"),
+                                            rx.hstack(
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto"),
+                                                rx.text("BACKEND", width="45%", align="center"),
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto", transform="rotate(180deg)"),
+                                                width="40%",
+                                                align="center",
+                                                justify="center"
+                                            ),
+                                            rx.box(width="5%"),
+                                            align="center",
+                                            width="100%"
+                                        ),     
+                                        rx.hstack(
+                                            rx.text("Reflex React / Node.js", padding="12px", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.15)", width="100%", align="center"),
+                                            rx.text("Reflex State", padding="12px", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.15)", width="100%", align="center"),
+                                            width="100%",
+                                        ),                                
+                                        rx.hstack(
+                                            rx.box(width="40%"),
+                                            rx.box(width="10%"),
+                                            rx.box(width="5%"), # TO MATCH HSTACK SPACING, used 3 rx.Box.
+                                            rx.hstack(
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto"),
+                                                rx.box(width="45%", padding="0px"),
+                                                rx.image(src="matthew_icons/arrow.svg", height="32px", width="auto", transform="rotate(180deg)"),
+                                                align="center",
+                                                justify="center",
+                                                width="40%",
+                                            ),
+                                            rx.box(width="5%"),
+                                            width="100%",
+                                        ),
+                                        rx.hstack(
+                                            rx.box(width="50%"),
+                                            rx.box(
+                                                rx.text("Dragonfly DB", padding="12px", border_radius="8px", border="1px solid rgba(255, 255, 255, 0.15)", width="100%", align="center"),
+                                                width="50%",
+                                            ),
+                                            width="100%",
+                                        ),
+                                    ),
+                                    width="100%",
+                                    padding="12px",
+                                    border_radius="8px",
+                                ),
+                                width="50%",
+                            ),
+                            width="70%",
+                        ),
+                        rx.box(width="15%"),
+                        width="100%",
+                    ),
+                    min_height="95vh",
+                    width="100%",
+                    background_color="var(--gray-2)",
+                    padding="32px",
+                    id="how_it_works"
+                ),
                 landing_footer(),
                 margin="0px",
                 padding_left="4px",
@@ -1031,3 +1350,4 @@ def account() -> rx.Component:
         background_color = Dashboard.colors["page"],
         color=Dashboard.colors["text"]
     )
+

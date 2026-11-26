@@ -142,7 +142,7 @@ class Dashboard(rx.State):
     
     widget_store_name: str = ""
     widgets_store: list[widgetStore] = load_json("FlexDashV6/FDwidgetsV1.json")
-    widget_storev2: list[widgetStore] = load_json("FlexDashV6/FDwidgetsV2.json")
+    widgets_storev2: list[widgetStore] = load_json("FlexDashV6/FDwidgetsV2.json")
     
     @rx.event
     def set_widget_store_name(self, value=""):
@@ -150,7 +150,7 @@ class Dashboard(rx.State):
 
     @rx.event
     def add_widget(self, name):
-        for widget in self.widgets_store + self.widget_storev2:
+        for widget in self.widgets_store + self.widgets_storev2:
             if name == widget["designed_type"]:
                 if widget["available"]:
 
@@ -469,3 +469,9 @@ class Landing(rx.State):
     @rx.event
     def init(self):
         self.on_page = self.router.url.path.lower()
+
+    time = terracd_get_countdown(False).split("|")
+
+    @rx.event
+    def update_time(self):
+        self.time = terracd_get_countdown(False).split("|")
