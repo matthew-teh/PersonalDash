@@ -91,6 +91,7 @@ class Dashboard(rx.State):
     @rx.event
     def edit_interval(self, value):
         self.interval = value
+
     widgets: list[widgetData] = []
     @rx.event
     async def sync_up_cloud(self):
@@ -305,7 +306,6 @@ class Dashboard(rx.State):
                 self.widget_name = ""
                 yield type(self).update_widget(widget_id)
 
-    # CRYPTO SPECIFIC 
     @rx.event
     def crypto_percentage(self, widget_id):
         for widget in self.widgets:
@@ -316,6 +316,7 @@ class Dashboard(rx.State):
                 continue
             value = -round(((float(widget["data00"][0]["price"]) - float(widget["data00"][-1]["price"])) / float(widget["data00"][0]["price"])) * 100, 2)
             widget["data03"] = float(value)
+    
     # POMODORO SPECIFIC
     pomodoro, short, long = "", "", ""
 
@@ -388,6 +389,7 @@ class Dashboard(rx.State):
         if types == "01": self.temp_data01 = value
         if types == "02": self.temp_data02 = value
         if types == "03": self.temp_data03 = value
+        print(self.temp_data01)
         
     @rx.event
     def apply_any(self, widget_id):
@@ -406,24 +408,29 @@ class Dashboard(rx.State):
                 yield type(self).clear_any
                 yield type(self).update_widget(widget_id)
 
-    @rx.event
+    @rx.event   
     def clear_any(self):
         self.temp_name, self.temp_data00, self.temp_data01, self.temp_data02, self.temp_data03 = "", [], "", "", 0
 
-    # V2 Quick Tasks Specific 
+    # V2 Quick Tasks Specific
+    task: str = ""
+    @rx.event
+    def set_task(self, value):
+        self.task = value 
+
     @rx.event
     def add_tasks(self, widget_id):
         for widget in self.widgets:
             if widget["id"] == widget_id:
-                if self.temp_data01 == "":
+                if self.task == "":
                     return rx.toast.warning("Tasks cannot be blank")
                 widget["data00"].insert(0,{
-                    "tasks": self.temp_data01,
+                    "tasks": self.task,
                     "status": "incomplete",
                     "wid" : widget_id,
                     "uid" : str(uuid.uuid4())
-                })
-                self.temp_data01 = ""   
+                })  
+                self.task = ""
         yield type(self).sync_up_cloud
     @rx.event
     def delete_tasks(self, uid, widget_id):
@@ -469,9 +476,84 @@ class Landing(rx.State):
     @rx.event
     def init(self):
         self.on_page = self.router.url.path.lower()
+        yield type(self).update_crypto()
 
+    # Landing - Try It.
     time = terracd_get_countdown(False).split("|")
-
     @rx.event
     def update_time(self):
         self.time = terracd_get_countdown(False).split("|")
+
+
+    crypto: widgetData= {
+        "id" : "",
+        "name": "BITCOIN BTC",
+        "type": "",
+        "data00": [],
+        "data01": "BTCUSDT",
+        "data02": "15m",
+        "data03": 0.00,
+    }
+
+    crypto_name, crypto_currency = "", ""
+    @rx.event
+    def update_crypto(self):
+        self.crypto["data00"] = crypto_get_price(
+            symbol=self.crypto["data01"],
+            window=self.crypto["data02"],
+        )
+        self.crypto["data03"] = float(-round(((float(self.crypto["data00"][0]["price"]) - float(self.crypto["data00"][-1]["price"])) / float(self.crypto["data00"][0]["price"])) * 100, 2))
+
+    @rx.event
+    def set_crypto(self):
+        if self.crypto_name:
+            self.crypto["name"] = self.crypto_name
+        if self.crypto_currency:
+            self.crypto["data01"] = self.crypto_currency
+            yield type(self).update_crypto
+        yield type(self).clear_crypto_fields
+
+    @rx.event
+    def edit_crypto_name(self, value):
+        self.crypto_name = value
+
+    @rx.event
+    def edit_crypto_currency(self, value):
+        self.crypto_currency = value
+
+    @rx.event
+    def clear_crypto_fields(self):
+        self.crypto_name, self.crypto_currency = "", ""
+
+
+    weather: widgetData= {
+        "id" : "",
+        "name" : "London",
+        "type" : "",
+        "data00" : [{'lat': 51.511470794677734, 'lng': -0.1307830810546875, 'relative_humid': 82, 'precip': 0.0, 'wetcode': 'Overcast', 'temp': 5, 'windspd': 13, 'feeltemp': 1, 'useimg': 'weather_icons/cloudy.svg', 'cloudcvr': 100}], # PRECODED PREVENT OVER REQUEST.
+        "data01" : "",
+        "data02": "",
+        "data03" : 0,
+    }
+
+    weather_name = ""
+
+    @rx.event
+    def edit_weather_name(self, value):
+        self.weather_name = value
+        self.weather["data01"] = weather_get_name(value)
+
+    @rx.event
+    def set_weather(self):
+        if self.weather_name:
+            self.weather["name"] = self.weather_name
+            yield type(self).update_weather
+
+    @rx.event
+    def update_weather(self):
+        name, data = weather_get_data(self.weather["name"])
+        if name:
+            self.weather["data00"] = data
+            print(self.weather["data00"])
+        else:
+            yield rx.toast("Failed to update, city not found.")

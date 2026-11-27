@@ -324,7 +324,7 @@ def circle_progress(progress, size, label) -> rx.Component:
 
 
 def create_link(text, link, external=False, paddin=False) -> rx.Component:
-    return rx.text(
+    return rx.el.a(
         text,
         font_size="16px",
         padding= rx.cond(
@@ -336,7 +336,8 @@ def create_link(text, link, external=False, paddin=False) -> rx.Component:
         _hover={"opacity": 2},
         cursor="pointer",
         opacity= rx.cond(Landing.on_page.lower() == link.lower(), 1, 0.8),
-        on_click=rx.redirect(link, is_external=external),
+        href=link,
+        is_external=external
     )
     
 def landing_header() -> rx.Component:
@@ -346,7 +347,7 @@ def landing_header() -> rx.Component:
         rx.text("FlexDash", weight="bold", font_size="20px"),
         rx.spacer(),
         rx.hstack(
-            create_link("Home", "#home", False, True),
+            create_link("Home", "home", False, True),
             create_link("Explore widgets", "#explore_widgets", False, True),
             create_link("Try it out", "#try", False, True),
             create_link("How it works", "#how_it_works", False, True),

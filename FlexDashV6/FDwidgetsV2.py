@@ -3,7 +3,7 @@ import reflex as rx
 from .FDstates import Dashboard
 from . import FDcomponents
 
-def crypto_widget(widget) -> rx.Component:
+def crypto_widget(widget) -> rx.Component: # TODO OPTIMIZE ALL WIDGETS, FORMAT WRONG.
     return rx.box(
         rx.vstack(
             rx.vstack(
@@ -57,8 +57,8 @@ def crypto_widget(widget) -> rx.Component:
 
                         direction="right",
                     ),
-                    rx.icon("rotate-cw", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.update_widget(widget["id"])),
-                    rx.icon("trash", size=16, color=Dashboard.colors["text"], opacity=0.5, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.delete_widget(widget["id"])),
+                    rx.icon("rotate-cw", size=16, color=Dashboard.colors["text"], opacity=0.6, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.update_widget(widget["id"])),
+                    rx.icon("trash", size=16, color=Dashboard.colors["text"], opacity=0.6, _hover={"opacity": 1.0}, on_click=lambda: Dashboard.delete_widget(widget["id"])),
                     height="32px",
                     spacing="2",
                     align="center",
@@ -90,11 +90,11 @@ def crypto_widget(widget) -> rx.Component:
                         rx.el.svg.stop(
                             offset="95%", stop_color=rx.cond(widget["data00"][-1]["price"] >= widget["data00"][0]["price"],"#40F698","#F64740",), stop_opacity=0.2,
                         ),
-                    id="area_gradient",
-                    x1=0,
-                    x2=0,
-                    y1=0,
-                    y2=1,
+                        id="area_gradient",
+                        x1=0,
+                        x2=0,
+                        y1=0,
+                        y2=1,
                     ),
                 ),
                 rx.recharts.area(
@@ -159,16 +159,15 @@ def checklist_widget(widget) -> rx.Component:
                 rx.input(
                     placeholder='Add tasks', 
                     width="90%", 
-                    value=Dashboard.temp_data01, 
-                    on_change=lambda val: Dashboard.edit_any(val, "01"), 
+                    value=Dashboard.task, 
+                    on_change=lambda : Dashboard.set_task, 
                     on_key_down= lambda key: rx.cond(
                         key == "Enter",
                         Dashboard.add_tasks(widget["id"]),
                         None,
-                    ),
-                    on_blur=Dashboard.clear_any
+                    ),  
                 ),
-                rx.icon('plus', opacity=0.5, _hover={"opacity": 1}, on_click=Dashboard.add_tasks(widget["id"])),
+                rx.icon('plus', opacity=0.5, _hover={"opacity": 1}, on_click=lambda: Dashboard.add_tasks(widget["id"])),
                 align="center",
                 width="100%",
             ),

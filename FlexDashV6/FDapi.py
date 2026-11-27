@@ -6,7 +6,8 @@ from datetime import datetime, timezone, timedelta, UTC
 from pytz import timezone
 
 ENV = "DEV" # DOCKER
-
+ # TODO REWRITE ENV SETUP. 
+ 
 session = requests_cache.CachedSession(
     'binance_cache',  # Name of the local cache file/storage
     expire_after=120,  # Cache time-to-live in seconds

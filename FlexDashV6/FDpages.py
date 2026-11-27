@@ -3,7 +3,6 @@ from reflex.style import set_color_mode, color_mode
 from .FDstates import Dashboard, System, Landing
 from .FDcomponents import *
 from .FDauth import Auth
-from .FDapi import terracd_get_countdown
 
 @rx.page("/home", title="FlexDash | Dashboard", on_load=[Dashboard.init_page, Dashboard.sync_down_cloud, Dashboard.update_all_widget(True)])
 def home() -> rx.Component:
@@ -950,79 +949,307 @@ def landing() -> rx.Component:
                                     rx.vstack(
                                         rx.text("Our widgets are live updates, interactive."),
                                         rx.text("It's at right side, try it."),
-                                        rx.text("Still under testing, more widgets coming soon", opacity=0.8),
+                                        rx.spacer(),
+                                        rx.text("Real widgets at Dashboard might have slight difference from here.", opacity=0.8),
+                                        height="100%"
                                     ),
                                     spacing="1",
+                                    height="80%",
                                 ),
                                 rx.spacer(),
-                                rx.hstack(
-                                    rx.box(
-                                        rx.hstack(
-                                            rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="auto"),
-                                            rx.vstack(
-                                                rx.heading("Quick Notes", size="3"),
-                                                rx.text("A text area to make note."),
-                                                spacing="0",
+                                rx.vstack(
+                                    rx.hstack(
+                                        rx.box(
+                                            rx.hstack(
+                                                rx.image(src="/lucide_icons/book_dark.svg", height="42px", width="auto"),
+                                                rx.vstack(
+                                                    rx.heading("Quick Notes", size="3"),
+                                                    rx.text("A text area to make note."),
+                                                    spacing="0",
+                                                ),
+                                                height="20%",
                                             ),
-                                            height="20%",
-                                        ),
-                                        rx.hstack(
-                                            rx.text_area(
-                                                placeholder="Start typing here...",  
+                                            rx.hstack(
+                                                rx.text_area(
+                                                    placeholder="Start typing here...",  
+                                                    width="100%",
+                                                    height="100%"
+                                                ),
                                                 width="100%",
-                                                height="100%"
+                                                height="80%",
+                                                spacing="0"
                                             ),
-                                            width="100%",
-                                            height="80%",
-                                            spacing="0"
+                                            padding="8px",
+                                            width="50%",
+                                            aspect_ratio="1/1",
+                                            border_radius="8px",
+                                            border="1px dashed rgba(255, 255, 255, 0.1)"
                                         ),
-                                        padding="8px",
-                                        width="50%",
-                                        aspect_ratio="1/1",
-                                        border_radius="8px",
-                                        border="1px dashed rgba(255, 255, 255, 0.1)"
+                                        rx.box(
+                                            rx.hstack(
+                                                rx.image(src=f"/lucide_icons/clock_fading_dark.svg", width="30px"),
+                                                rx.text("TERRA COUNTDOWN", weight="bold", font_size="20px"),
+                                                rx.spacer(),
+                                                spacing="2",
+                                                align="center",
+                                                width="100%",
+                                                height="32px",
+                                            ),
+                                            rx.center(
+                                                rx.vstack(
+                                                    rx.hstack(
+                                                        rx.vstack(circle_progress(Landing.time[0].to(float)/6, 125, Landing.time[0]), rx.text("Days"), align="center", spacing="0"), #type:ignore
+                                                        rx.vstack(circle_progress(Landing.time[0].to(float)/24, 125, Landing.time[1]), rx.text("Hours"), align="center", spacing="0"), #type:ignore
+                                                        width="100%",
+                                                    ),
+                                                    rx.hstack(
+                                                        rx.vstack(circle_progress(Landing.time[2].to(float)/60, 125, Landing.time[2]), rx.text("Minutes"), align="center", spacing="0"), #type:ignore
+                                                        rx.vstack(circle_progress(Landing.time[3].to(float)/60, 125, Landing.time[3]), rx.text("Seconds"), align="center", spacing="0"), #type:ignore
+                                                    ),
+                                                ),
+                                                flex="1",
+                                                min_height = 0,
+                                            ),
+                                            rx.moment(
+                                                interval=1000,
+                                                on_change=Landing.update_time,
+                                                display="none",
+                                            ),
+                                            display="flex",
+                                            flex_direction="column",
+                                            padding="8px",
+                                            width="50%",
+                                            aspect_ratio="1/1",
+                                            border_radius="8px",
+                                            border="1px dashed rgba(255, 255, 255, 0.1)"
+                                        ),
+                                        width="100%",
+                                        height="50%",
+                                        align="center",
+                                        justify="center",
+                                        overflow="hidden",
                                     ),
-                                    rx.box(
-                                        rx.hstack(
-                                            rx.image(src=f"/lucide_icons/clock_fading_dark.svg", width="30px"),
-                                            rx.text("TERRA COUNTDOWN", weight="bold", font_size="20px"),
-                                            rx.spacer(),
-                                            spacing="2",
-                                            align="center",
-                                            width="100%",
-                                            height="32px",
-                                        ),
-                                        rx.center(
+                                    rx.hstack(
+                                        rx.box(
                                             rx.vstack(
-                                                rx.hstack(
-                                                    rx.vstack(circle_progress(Landing.time[0].to(float)/6, 125, Landing.time[0]), rx.text("Days"), align="center", spacing="0"), #type:ignore
-                                                    rx.vstack(circle_progress(Landing.time[0].to(float)/24, 125, Landing.time[1]), rx.text("Hours"), align="center", spacing="0"), #type:ignore
+                                                rx.vstack(
+                                                    rx.hstack(
+                                                        rx.image(
+                                                            src=f"/crypto_icons/{Landing.crypto["data01"].replace("USDT", "").lower()}.png",
+                                                            alt="",
+                                                            width="28px",
+                                                        ),
+                                                        rx.heading(f"{Landing.crypto["name"].split(" ")[0]}", font_size="20px"),
+                                                        rx.text(f"{Landing.crypto["name"].split(" ")[1]}", font_size="12px", opacity=0.6),
+                                                        rx.spacer(),
+                                                        rx.hover_card.root(
+                                                            rx.hover_card.trigger(
+                                                                rx.icon("pencil-line", size=16, color="var(--gray-12)", opacity=0.6),
+                                                                background_color="transparent",
+                                                                padding="0px",
+                                                                cursor="pointer",
+                                                                _hover = {"opacity": 1},
+                                                            ),
+                                                            rx.hover_card.content(
+                                                                rx.vstack(
+                                                                    rx.hstack(
+                                                                        rx.text("EDIT WIDGET", weight="bold", font_size="16px"),
+                                                                        rx.button(rx.text("SAVE", color="var(--gray-12)"), background_color="var(--gray-8)", opacity=0.6, _hover={"opacity": 1.0}, on_click=Landing.set_crypto),
+                                                                        justify="between",
+                                                                        align="center",
+                                                                        width="100%"
+                                                                    ),
+                                                                    rx.vstack(
+                                                                        rx.text("Widget Name: "),
+                                                                        rx.input(
+                                                                            value=Landing.crypto_name,
+                                                                            placeholder=Landing.crypto["name"],
+                                                                            on_change=Landing.edit_crypto_name,
+                                                                        ),
+                                                                        rx.text("Cryptocurrency: "),
+                                                                        rx.input(
+                                                                            value=Landing.crypto_currency,
+                                                                            placeholder=Landing.crypto["data01"],
+                                                                            on_change=Landing.edit_crypto_currency,
+                                                                        ),
+                                                                    ),
+                                                                    width="100%",
+                                                                ),
+                                                                on_mouse_leave=Landing.clear_crypto_fields
+                                                            ),
+                                                            direction="right",
+                                                        ),
+                                                        rx.icon("rotate-cw", size=16, color="var(--gray-12)", opacity=0.6, _hover={"opacity": 1}, on_click=lambda: Landing.update_crypto),
+                                                        height="32px",
+                                                        spacing="2",
+                                                        align="center",
+                                                        padding_bottom="2px",
+                                                        width="100%",
+                                                    ),
+                                                    rx.text(f"Current price, interval {Landing.crypto["data02"]}", font_size="12px", opacity=0.6),
+                                                    rx.hstack(
+                                                        rx.heading(
+                                                            f"${Landing.crypto["data00"][-1]["price"]}",
+                                                            font_size="36px", # TODO FONT TYPES,
+                                                            color=rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"], "#40F698", "#F64740"),
+                                                        ),
+                                                        rx.image(src=rx.cond(Landing.crypto["data03"] > 0, "/matthew_icons/arrow_up.svg", "/matthew_icons/arrow_down.svg"), height="42px", width="auto"),
+                                                        rx.heading(f"{Landing.crypto["data03"]}%", font_size="18px", color=rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"], "#40f698", "#F64740")),
+                                                        spacing="1",
+                                                        align="center",
+                                                    ),
+                                                    padding="8px",
+                                                    spacing="0",
                                                     width="100%",
                                                 ),
-                                                rx.hstack(
-                                                    rx.vstack(circle_progress(Landing.time[2].to(float)/60, 125, Landing.time[2]), rx.text("Minutes"), align="center", spacing="0"), #type:ignore
-                                                    rx.vstack(circle_progress(Landing.time[3].to(float)/60, 125, Landing.time[3]), rx.text("Seconds"), align="center", spacing="0"), #type:ignore
+                                                rx.recharts.area_chart(
+                                                    rx.el.svg.defs(
+                                                        rx.el.svg.linear_gradient(
+                                                            rx.el.svg.stop(
+                                                                offset="5%", stop_color=rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"], "#40f698", "#F64740"), stop_opacity=0.8,
+                                                            ),
+                                                            rx.el.svg.stop(
+                                                                offset="95%", stop_color=rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"], "#40F698", "#F64740"), stop_opacity=0.2,
+                                                            ),
+                                                            id = "area_gradient",
+                                                            x1 = 0,
+                                                            x2 = 0,
+                                                            y1 = 0,
+                                                            y2 = 1,
+                                                        ),
+                                                    ),
+                                                    rx.recharts.area(
+                                                        data_key="price",
+                                                        stroke=rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"],"#40F698","#F64740",),
+                                                        fill = "url(#area_gradient)",
+                                                        type_ = "natural",
+                                                    ),
+                                                    rx.recharts.y_axis(domain=["auto", "auto"], hide=True),
+                                                    rx.recharts.graphing_tooltip(),
+                                                    data=Landing.crypto["data00"],
+                                                    wrapper_style={"backgroundColor": rx.cond(Landing.crypto["data00"][-1]["price"] >= Landing.crypto["data00"][0]["price"], "#40F698", "#F64740")},
+                                                    margin = {"top" : 10, "right" : 0, "bottom" : 0, "left" : 0,},
+                                                    height="100%",
                                                 ),
+                                                border_radius="8px",
+                                                border="1px dashed rgba(255, 255, 255, 0.1)",
+                                                padding="0px",
+                                                spacing="0",
+                                                width="100%",
+                                                height="100%",
                                             ),
-                                            flex="1",
-                                            min_height = 0,
+                                            overflow="hidden", 
+                                            width="100%",
+                                            aspect_ratio="1/1",
+                                            background_color="var(--gray-2)",
                                         ),
-                                        rx.moment(
-                                          interval=1000,
-                                          on_change=Landing.update_time,
-                                          display="none",
+                                        rx.box(
+                                            rx.hstack(
+                                                rx.image(
+                                                    src=f"/{Landing.weather["data00"][0]["useimg"]}",
+                                                    alt="",
+                                                    height="42px",
+                                                    width="auto",
+                                                ),
+                                                rx.vstack(
+                                                    rx.heading(Landing.weather["name"], size="3"),
+                                                    rx.text(Landing.weather["data00"][0]["wetcode"]),
+                                                    spacing="0",
+                                                ),
+                                                rx.spacer(),
+                                                rx.hover_card.root(
+                                                    rx.hover_card.trigger(rx.button(rx.icon("settings", size=16), variant="ghost")),
+                                                    rx.hover_card.content(
+                                                        rx.vstack(
+                                                            rx.hstack(
+                                                                rx.heading("Edit Widget", size="3"), # TODO SWAP V2 V1
+                                                                rx.button(rx.icon("check"), variant="ghost", on_click=Landing.set_weather),
+                                                                width="100%",
+                                                                justify="between",
+                                                            ),
+                                                            rx.text(f"City: {Landing.weather["data01"]}", size="2"),
+                                                            rx.input(
+                                                                value=Landing.weather_name,
+                                                                on_change=Landing.edit_weather_name,
+                                                                placeholder="New York",
+                                                            ),
+                                                        ),
+                                                        side="left",
+                                                        width="250px",
+                                                    ),
+                                                ),
+                                                rx.button(rx.icon("refresh_cw", size=16), variant="ghost", on_click=Landing.update_weather),
+                                                width="100%",
+                                                height="20%",
+                                            ),
+                                            rx.hstack(
+                                                rx.hstack(
+                                                    rx.text(f"{Landing.weather["data00"][0]["temp"]}", font_size="120px", weight="bold"),
+                                                    rx.text("℃"),
+                                                    width="50%",
+                                                    height="100%",
+                                                    align="center",
+                                                    justify="center",
+                                                ),
+                                                rx.grid(
+                                                    rx.card(
+                                                        rx.flex(rx.text("Feels Like", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                                                        rx.flex(
+                                                            rx.text(f"{Landing.weather["data00"][0]["feeltemp"]}", font_size="42px", weight="bold"),
+                                                            rx.text("℃", font_size="14px"),
+                                                            align_items="center", justify_content="center", width="100%", height="85%",
+                                                        ),
+                                                    ),
+                                                    rx.card(
+                                                        rx.flex(rx.text("Humidity", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                                                        rx.flex(
+                                                            rx.text(f"{Landing.weather["data00"][0]["relative_humid"]}", font_size="42px", weight="bold"),
+                                                            rx.text("%", font_size="14px"),
+                                                            align_items="center", justify_content="center", width="100%", height="85%",
+                                                        ),
+                                                    ),
+                                                    rx.card(
+                                                        rx.flex(rx.text("Wind speed", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                                                        rx.flex(
+                                                            rx.text(f"{Landing.weather["data00"][0]["windspd"]}", font_size="42px", weight="bold"),
+                                                            rx.text("km/h", font_size="14px"),
+                                                            align_items="center", justify_content="center", width="100%", height="85%",
+                                                        ),
+                                                    ),
+                                                    rx.card(
+                                                        rx.flex(rx.text("Cloud Cover", font_size="14px"), align_items="center", justify_content="center", width="100%", height="15%"),
+                                                        rx.flex(
+                                                            rx.text(f"{Landing.weather["data00"][0]["cloudcvr"]}", font_size="42px", weight="bold"),
+                                                            rx.text("%", font_size="14px"),
+                                                            align_items="center", justify_content="center", width="100%", height="85%",
+                                                        ),
+                                                    ),
+                                                    columns="2",
+                                                    width="50%",
+                                                    height="100%",
+                                                    gap="0.25rem",
+                                                ),
+                                                width="100%",
+                                                height="80%",
+                                                spacing="0",
+                                            ),
+                                            padding="8px",
+                                            overflow="hidden",
+                                            width="100%",
+                                            aspect_ratio="1/1",
+                                            background_color="var(--gray-2)",
+                                            border_radius="8px",
                                         ),
-                                        display="flex",
-                                        flex_direction="column",
-                                        padding="8px",
-                                        width="50%",
-                                        aspect_ratio="1/1",
-                                        border_radius="8px",
-                                        border="1px dashed rgba(255, 255, 255, 0.1)"
+                                        align="center",
+                                        justify="center",
+                                        width="100%",
+                                        height="50%",
                                     ),
+                                    
                                     width="60%",
-                                    align="center",
+                                    aspect_ratio="1/1",
                                     justify="center",
+                                    spacing="2",
                                 ),
                                 width="100%",
                                 height="100%",
@@ -1145,12 +1372,50 @@ def landing() -> rx.Component:
                         ),
                         rx.box(width="15%"),
                         width="100%",
+                        height="100%",
+                        align="center",
                     ),
                     min_height="95vh",
                     width="100%",
                     background_color="var(--gray-2)",
-                    padding="32px",
                     id="how_it_works"
+                ),
+                rx.box(
+                    rx.hstack(
+                        rx.box(width="15%"),
+                        rx.box(
+                            rx.text("FAQ", font_size="48px", weight="bold"),
+                            rx.accordion.root(
+                                rx.accordion.item(
+                                    header = "Is it completely free?",
+                                    content= "Yes, FlexDash is completely free, open sourced on GitHub. \n Though some widgets might get rate-limited as we using public api.", 
+                                ),
+                                rx.accordion.item(
+                                    header = "Who created this?",
+                                    content = "This website is fully designed by Matthew",
+                                ),
+                                rx.accordion.item(
+                                    header = "Will this website shutdown?",
+                                    content = "I will host this website until Terra Week 10 ( After Review ), because my school started. I couldn't update anymore."
+                                ),
+                                rx.accordion.item(
+                                    header = "Is my data secure?",
+                                    content = "Yes, we encrypt all passwords with Argon2, database are only accessible by Reflex Python using a .env password.",
+                                ),
+                                collapsible=True,
+                                width="100%",
+                                type="single",
+                                variant="soft",
+                            ),
+                            width="70%",
+                        ),
+                        rx.box(width="15%"),
+                        width="100%",
+                    ),
+                    min_height="60vh",
+                    width="100%",
+                    background_color="var(--gray-2)",
+                    id="faq"
                 ),
                 landing_footer(),
                 margin="0px",

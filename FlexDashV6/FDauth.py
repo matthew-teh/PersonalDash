@@ -13,6 +13,7 @@ from .FDapi import worldclock_get_time
 
 ph = PasswordHasher()
 ENV = 'DEV' 
+# TODO REWRITE ENV SETUP 
 
 if ENV == 'DEV':
     r = redis.Redis(
